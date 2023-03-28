@@ -55,6 +55,8 @@ build-iPhoneSimulator/
 # Used by RuboCop. Remote config files pulled in from inherit_from directive.
 # .rubocop-https?--*
 
+.env
+
 # I think these are right? sinatra will need these but we should do npm run build before actually deploying the app so it's okay
 public/assets
 public/index.html
