@@ -1,0 +1,9 @@
+source 'https://rubygems.org'
+
+gem "activesupport", "~> 7.0"
+gem "dotenv", "~> 2.8"
+gem "pg", "~> 1.4"
+gem "sequel", "~> 5.66"
+gem "sinatra", "~> 2.2"
+
+gem "puma", "~> 6.1"
