@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'sinatra/base'
+require "sinatra/base"
 
 class App < Sinatra::Application
   set :public_folder, File.expand_path("#{__dir__}/../public")
