@@ -12,6 +12,8 @@
     "format": "prettier --write web/src/"
   },
   "dependencies": {
+    "@tailwindcss/forms": "^0.5.3",
+    "@tailwindcss/line-clamp": "^0.4.4",
     "vue": "^3.2.47"
   },
   "devDependencies": {
