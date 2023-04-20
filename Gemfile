@@ -7,3 +7,7 @@ gem "sequel", "~> 5.66"
 gem "sinatra", "~> 2.2"
 
 gem "puma", "~> 6.1"
+
+gem "faraday", "~> 2.7"
+
+gem "nokogiri", "~> 1.14"
