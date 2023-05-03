@@ -24,7 +24,6 @@ module DecklistParsers
               set_code: c["set"].downcase,
               set_number: c["number"].to_i
             )
-          puts card
           { quantity: c["quantity"], card: card }
         end
       main_deck = cards[:main_deck].map(&card_lookup)
