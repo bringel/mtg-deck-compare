@@ -2,12 +2,16 @@
 
 module DecklistParsers
   class DecklistParser
-    def parse_deck(url)
+    def initialize(url)
+      @url = url
+    end
+
+    def load_deck
     end
 
     private
 
-    def get_card_info(url)
+    def get_card_info
     end
   end
 end
