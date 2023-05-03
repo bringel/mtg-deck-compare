@@ -10,9 +10,10 @@ class ScryfallService
   end
 
   def get_card_from_set(set_code:, set_number:)
-    res = @api.get("cards/#{set_code}/#{set_number}")
+    res = @api.get("cards/#{set_code.downcase}/#{set_number}")
 
     response_data = JSON.parse(res.body)
+    #TODO: handle dual faced cards, some things like mana cost and images are tucked in the faces key
     Models::Card.new(
       card_id: nil,
       name: response_data["name"],
