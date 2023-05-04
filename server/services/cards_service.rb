@@ -23,7 +23,11 @@ class CardsService
           c
             .to_h
             .except(:card_id)
-            .merge({ multiverse_ids: Sequel.pg_array(c["multiverse_ids"]) })
+            .merge(
+              multiverse_ids: Sequel.pg_array(c["multiverse_ids"]),
+              card_image_urls: Sequel.pg_array(c["card_image_urls"]),
+              card_art_urls: Sequel.pg_array(c["card_art_urls"])
+            )
         )
       end
       .first

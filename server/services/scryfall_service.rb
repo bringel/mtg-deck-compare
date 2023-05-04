@@ -15,23 +15,20 @@ class ScryfallService
     response_data = JSON.parse(res.body)
 
     mana_cost = response_data["mana_cost"]
-    card_image_url = response_data.dig("image_uris", "large")
-    card_art_url = response_data.dig("image_uris", "art_crop")
+    card_image_urls = [response_data.dig("image_uris", "large")]
+    card_art_urls = [response_data.dig("image_uris", "art_crop")]
     card_layout_type = response_data["layout"]
 
     if card_layout_type == "transform"
-      face = response_data["card_faces"].first
-      mana_cost = face["mana_cost"]
-      card_image_url = face.dig("image_uris", "large")
-      card_art_url = face.dig("image_uris", "art_crop")
+      faces = response_data["card_faces"]
+      mana_cost = faces.first["mana_cost"]
+      card_image_urls = faces.map { |f| f.dig("image_uris", "large") }
+      card_art_urls = faces.map { |f| f.dig("image_uris", "art_crop") }
     elsif card_layout_type == "modal_dfc"
       mana_cost =
         "#{response_data["card_faces"].first["mana_cost"]} / #{response_data["card_faces"].last["mana_cost"]}"
-      #TODO: handle multiple faces artwork
-      card_image_url =
-        response_data["card_faces"].first.dig("image_uris", "large")
-      card_art_url =
-        response_data["card_faces"].first.dig("image_uris", "art_crop")
+      card_image_urls = faces.map { |f| f.dig("image_uris", "large") }
+      card_art_urls = faces.map { |f| f.dig("image_uris", "art_crop") }
     end
 
     Models::Card.new(
@@ -41,8 +38,8 @@ class ScryfallService
       set_number: response_data["collector_number"],
       mana_cost: mana_cost,
       converted_mana_cost: response_data["cmc"],
-      card_image_url: card_image_url,
-      card_art_url: card_art_url,
+      card_image_urls: card_image_urls,
+      card_art_urls: card_art_urls,
       oracle_id: response_data["oracle_id"],
       multiverse_ids: response_data["multiverse_ids"],
       scryfall_url: response_data["scryfall_uri"]
