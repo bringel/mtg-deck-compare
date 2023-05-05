@@ -15,10 +15,12 @@ module Models
       :oracle_id,
       :multiverse_ids,
       :scryfall_url,
+      :rarity,
+      :card_type,
       keyword_init: true
     ) do
       def self.from_row(row)
-        new(**row)
+        new(**row.merge(card_type: row["card_type"].to_s))
       end
     end
 end
