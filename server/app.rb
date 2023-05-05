@@ -16,6 +16,7 @@ Sequel.extension :pg_json_ops
 
 class App < Sinatra::Application
   set :public_folder, File.expand_path("#{__dir__}/../public")
+  set :default_content_type, :json
 
   post "/load_deck" do
     body = JSON.parse(request.body.read)
