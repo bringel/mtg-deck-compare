@@ -4,6 +4,8 @@ require "sinatra/base"
 require "sequel"
 require "dotenv"
 
+require_relative "./decklist_parsers/parser_map.rb"
+
 Dotenv.load
 
 DB = Sequel.connect(ENV["DATABASE_URL"])
@@ -15,7 +17,11 @@ Sequel.extension :pg_json_ops
 class App < Sinatra::Application
   set :public_folder, File.expand_path("#{__dir__}/../public")
 
-  post "/deckurl" do
+  post "/load_deck" do
+    body = JSON.parse(request.body.read)
+    parser = DecklistParsers.get_parser(body["url"])
+
+    parser.new(body["url"]).load_deck.to_json
   end
 
   get "/*" do
