@@ -14,7 +14,7 @@ DB.extension :pg_json
 Sequel.extension :pg_array_ops
 Sequel.extension :pg_json_ops
 
-class App < Sinatra::Application
+class ApiApp < Sinatra::Application
   set :public_folder, File.expand_path("#{__dir__}/../public")
   set :default_content_type, :json
 
