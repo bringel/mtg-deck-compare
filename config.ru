@@ -1,3 +1,7 @@
-require_relative 'server/app'
+# frozen_string_literal: true
 
-run App
+require_relative 'server/api_app'
+require_relative 'server/static_app'
+
+map('/api') { run ApiApp }
+map('/') { run StaticApp }
