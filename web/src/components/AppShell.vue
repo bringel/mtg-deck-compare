@@ -9,10 +9,6 @@
 
 <script setup lang="ts">
 import HeaderBar from './HeaderBar.vue';
-
-
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
