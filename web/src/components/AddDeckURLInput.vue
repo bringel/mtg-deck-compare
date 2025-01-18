@@ -6,20 +6,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import Button from './Button.vue';
+import { ref } from 'vue'
+import Button from './Button.vue'
 
-const url = ref('');
+const url = ref('')
 
 function loadDeck() {
   fetch('/api/load_deck', {
     method: 'POST',
     body: JSON.stringify({
-      url: url
+      url: url.value
     }),
     headers: {
       'Content-Type': 'application/json'
     }
-  });
+  })
 }
 </script>

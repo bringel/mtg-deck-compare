@@ -11,3 +11,4 @@ gem "puma", "~> 6.1"
 gem "faraday", "~> 2.7"
 
 gem "nokogiri", "~> 1.14"
+gem "byebug"
