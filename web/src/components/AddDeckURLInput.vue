@@ -1,25 +1,12 @@
 <template>
   <div>
     <input type="text" class="rounded-sm mr-4" v-model="url" />
-    <Button @click="loadDeck">Add</Button>
+    <Button @click="$emit('remove')">Remove</Button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import Button from './Button.vue'
-
-const url = ref('')
-
-function loadDeck() {
-  fetch('/api/load_deck', {
-    method: 'POST',
-    body: JSON.stringify({
-      url: url.value
-    }),
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
-}
+import Button from './Button.vue';
+const url = defineModel<string>();
+defineEmits(['remove']);
 </script>
