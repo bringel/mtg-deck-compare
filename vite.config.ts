@@ -1,6 +1,6 @@
-import vue from '@vitejs/plugin-vue'
-import { URL, fileURLToPath } from 'node:url'
-import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue';
+import { URL, fileURLToPath } from 'node:url';
+import { defineConfig } from 'vite';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -19,6 +19,9 @@ export default defineConfig({
     proxy: {
       '/api': 'http://localhost:9292'
     },
-    open: '/'
+    open: '/',
+    watch: {
+      usePolling: true
+    }
   }
-})
+});
