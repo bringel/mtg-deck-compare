@@ -8,6 +8,11 @@ require_relative "../models/deck"
 
 module DecklistParsers
   class AetherhubParser < DecklistParser
+
+    def self.can_handle_url?(url)
+      url.match?(%r{(?:https?://)?aetherhub\.com/Deck/.*})
+    end
+
     def load_deck
       @page_content = Faraday.get(@url)
       @doc = Nokogiri.HTML(@page_content.body)
