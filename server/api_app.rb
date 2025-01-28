@@ -5,6 +5,7 @@ require "sequel"
 require "dotenv"
 
 require_relative "./decklist_parsers/parser_list.rb"
+require_relative "./lib/deck_comparer.rb"
 
 Dotenv.load
 
@@ -23,5 +24,11 @@ class ApiApp < Sinatra::Application
     parser = DecklistParsers::ParserList.get_parser(body["url"])
 
     parser.new(body["url"]).load_deck.to_json
+  end
+
+  post "/compare_decks" do
+    body = JSON.parse(request.body.read)
+
+    DeckComparer.new(deck_list_urls: body["deckListURLs"]).compare.to_json
   end
 end
