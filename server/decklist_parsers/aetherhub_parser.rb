@@ -8,7 +8,6 @@ require_relative "../models/deck"
 
 module DecklistParsers
   class AetherhubParser < DecklistParser
-
     def self.can_handle_url?(url)
       url.match?(%r{(?:https?://)?aetherhub\.com/Deck/.*})
     end
@@ -56,6 +55,10 @@ module DecklistParsers
 
       deck = JSON.parse(deck_response.body)
 
+      set_code_conversions = {
+        "dar" => "dom" # for some reason, some cards from Dominaria show up with the code DAR, but scryfall doesn't like it
+      }
+
       main_deck = []
       sideboard = []
 
@@ -71,6 +74,24 @@ module DecklistParsers
           end
         end
       end
+
+      main_deck =
+        main_deck.map do |c|
+          if set_code_conversions.key?(c["set"].downcase)
+            c.merge({ "set" => set_code_conversions[c["set"].downcase] })
+          else
+            c
+          end
+        end
+
+      sideboard =
+        sideboard.map do |c|
+          if set_code_conversions.key?(c["set"].downcase)
+            c.merge({ "set" => set_code_conversions[c["set"].downcase] })
+          else
+            c
+          end
+        end
 
       return { main_deck:, sideboard: }
     end

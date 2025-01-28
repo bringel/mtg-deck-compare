@@ -12,3 +12,4 @@ gem "faraday", "~> 2.7"
 
 gem "nokogiri", "~> 1.14"
 gem "byebug"
+gem "syntax_tree"
