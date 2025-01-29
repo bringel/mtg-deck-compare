@@ -28,7 +28,7 @@ class DeckComparer
           b_only[k] = b_deck[k] - a_deck[k]
 
           same_name =
-            a_deck[k].map { |c| c[:card] } & b_deck[k].map { |c| c[:card] }
+            a_only[k].map { |c| c[:card] } & b_only[k].map { |c| c[:card] }
           quantities_differ[k] = same_name.map do |c|
             a_value = a_deck[k].find { |v| v[:card] == c }
             b_value = b_deck[k].find { |v| v[:card] == c }
@@ -38,6 +38,10 @@ class DeckComparer
               :card => c
             }
           end
+
+          a_only[k] = a_only[k].reject { |c| same_name.include?(c[:card]) }
+
+          b_only[k] = b_only[k].reject { |c| same_name.include?(c[:card]) }
         end
 
         [
