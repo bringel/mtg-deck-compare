@@ -1,19 +1,14 @@
 <template>
   <AppShell>
     <div class="space-y-2 flex flex-col">
-      <AddDeckURLInput
-        v-for="(url, index) in deckURLs"
-        :key="index"
-        :model-value="url"
-        :removable="index >= 2"
-        @update:model-value="($event: string) => updateURL(index, $event)"
-        @remove="handleRemove(index)"
-      />
+      <AddDeckURLInput @addURL="handleAdd" />
     </div>
-    <div class="flex flex-row space-x-4 mt-4">
-      <Button @click="handleAdd">Add</Button>
-      <Button @click="startCompare">Compare</Button>
-    </div>
+    <ol class="list-decimal list-inside my-4 text-white">
+      <li v-for="url in deckURLs">
+        {{ url }}
+      </li>
+    </ol>
+    <Button @click="startCompare">Compare</Button>
   </AppShell>
 </template>
 
@@ -22,20 +17,17 @@ import AddDeckURLInput from './components/AddDeckURLInput.vue';
 import AppShell from './components/AppShell.vue';
 import { ref } from 'vue';
 import Button from './components/Button.vue';
+import bingo from './lib/bingo';
 
-const deckURLs = ref(['', '']);
+const deckURLs = ref([]);
 
-function updateURL(index: number, value: string) {
-  deckURLs.value.splice(index, 1, value);
+function handleAdd(url: string) {
+  deckURLs.value.push(url);
 }
 
-function handleRemove(index: number) {
-  deckURLs.value.splice(index, 1);
+function startCompare() {
+  bingo.post('/api/compare_decks', {
+    deckListURLs: deckURLs.value
+  });
 }
-
-function handleAdd() {
-  deckURLs.value.push('');
-}
-
-function startCompare() {}
 </script>
