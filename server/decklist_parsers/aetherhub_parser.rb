@@ -20,18 +20,8 @@ module DecklistParsers
       page_title = @doc.css("title").text
       name = page_title.split("-", 2).last.strip
 
-      card_lookup =
-        Proc.new do |c|
-          cards_service = CardsService.new
-          card =
-            cards_service.get_card_from_set(
-              set_code: c["set"].downcase,
-              set_number: c["number"].to_i
-            )
-          { quantity: c["quantity"], card: card }
-        end
-      main_deck = cards[:main_deck].map(&card_lookup)
-      sideboard = cards[:sideboard].map(&card_lookup)
+      main_deck = fetch_deck(deck: cards[:main_deck])
+      sideboard = fetch_deck(deck: cards[:sideboard])
 
       Models::Deck.new(
         name: name,
@@ -94,6 +84,34 @@ module DecklistParsers
         end
 
       return { main_deck:, sideboard: }
+    end
+
+    def fetch_deck(deck:)
+      cards_service = CardsService.new
+
+      fetched_deck =
+        deck.map do |c|
+          card =
+            cards_service.get_card_from_set(
+              set_code: c["set"].downcase,
+              set_number: c["number"].to_i
+            )
+          { quantity: c["quantity"], card: card }
+        end
+
+      quantities = {}
+      fetched_deck.each_with_object(quantities) do |c, quantities|
+        card_name = c.dig(:card, :name)
+        if quantities.key?(card_name)
+          quantities[card_name] += c[:quantity]
+        else
+          quantities[card_name] = c[:quantity]
+        end
+      end
+
+      cards = fetched_deck.map { |c| c[:card] }.uniq { |c| c[:name] }
+
+      { quantities:, cards: }
     end
   end
 end
