@@ -45,7 +45,13 @@ class DeckComparer
           cards =
             d.dig(:deck, k, :cards) - cards_in_all_decks -
               cards_in_more_than_one.to_a
-          [d[:index], cards]
+
+          card_names = cards.map { |c| c[:name] }
+          quantities =
+            d
+              .dig(:deck, k, :quantities)
+              .filter { |k, _v| card_names.include?(k) }
+          [d[:index], { cards: cards, quantities: quantities }]
         end
 
       v = {
