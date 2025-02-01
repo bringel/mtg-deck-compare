@@ -14,7 +14,9 @@ module Data
 
       yield DB[table_name] if block_given? && data.length.zero?
 
-      @dataset.all
+      ret_value = @dataset.all
+      @dataset = DB[table_name]
+      ret_value
     end
 
     def method_missing(m, *args, &block)
