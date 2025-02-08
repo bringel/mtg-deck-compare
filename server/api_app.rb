@@ -6,12 +6,15 @@ require "dotenv"
 
 require_relative "./decklist_parsers/parser_list.rb"
 require_relative "./lib/deck_comparer.rb"
+require_relative "./lib/sequel/extensions/read_through_database.rb"
 
 Dotenv.load
 
 DB = Sequel.connect(ENV["DATABASE_URL"])
 DB.extension :pg_array
 DB.extension :pg_json
+DB.extension :read_through_database
+
 Sequel.extension :pg_array_ops
 Sequel.extension :pg_json_ops
 

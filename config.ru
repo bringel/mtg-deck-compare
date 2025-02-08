@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
-require_relative 'server/api_app'
-require_relative 'server/static_app'
+$LOAD_PATH.unshift(File.join(__dir__, "server/lib"))
 
-map('/api') { run ApiApp }
-map('/') { run StaticApp }
+require_relative "server/api_app"
+require_relative "server/static_app"
+
+map("/api") { run ApiApp }
+map("/") { run StaticApp }

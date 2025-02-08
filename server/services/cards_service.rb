@@ -1,16 +1,14 @@
 # frozen_string_literal: true
 
-require_relative "../db/read_through_db"
 require_relative "./scryfall_service"
 
 class CardsService
   def initialize
-    @db = Data::ReadThroughDatabase.new(table_name: :cards)
     @scryfall_service = ScryfallService.new
   end
 
   def get_card_from_set(set_code:, set_number:)
-    @db
+    DB[:cards]
       .where(set_code: set_code, set_number: set_number)
       .read_through do |dataset|
         c =
