@@ -4,7 +4,6 @@ module Models
   Card =
     Struct.new(
       "Card",
-      :card_id,
       :name,
       :set_code,
       :set_number,

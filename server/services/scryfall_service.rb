@@ -35,7 +35,6 @@ class ScryfallService
     end
 
     Models::Card.new(
-      card_id: nil,
       name: response_data["name"],
       set_code: response_data["set"],
       set_number: response_data["collector_number"],
