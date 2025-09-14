@@ -51,4 +51,13 @@ class ApiApp < Sinatra::Application
         .to_h
     )
   end
+
+  post "/check_cards" do
+    JSON.generate(
+      ScryfallService
+        .new
+        .get_cards(card_hashes: JSON.parse(request.body.read))
+        .map(&:to_h)
+    )
+  end
 end

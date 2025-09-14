@@ -47,6 +47,6 @@ class CardsService
   end
 
   def get_cards(card_hashes:)
-    return card_hashes.map { |h| get_card_from_set(**h) }
+    return @scryfall_service.get_cards(card_hashes: card_hashes)
   end
 end
