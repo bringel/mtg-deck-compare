@@ -2,8 +2,7 @@
 
 module Models
   Card =
-    Struct.new(
-      "Card",
+    Data.define(
       :name,
       :set_code,
       :set_number,
@@ -15,8 +14,7 @@ module Models
       :multiverse_ids,
       :scryfall_url,
       :rarity,
-      :card_type,
-      keyword_init: true
+      :card_type
     ) do
       def self.from_row(row)
         new(**row.merge(card_type: row["card_type"].to_s))
