@@ -1,49 +1,82 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (7.0.4.3)
-      concurrent-ruby (~> 1.0, >= 1.0.2)
+    activesupport (7.2.2.2)
+      base64
+      benchmark (>= 0.3)
+      bigdecimal
+      concurrent-ruby (~> 1.0, >= 1.3.1)
+      connection_pool (>= 2.2.5)
+      drb
       i18n (>= 1.6, < 2)
+      logger (>= 1.4.2)
       minitest (>= 5.1)
-      tzinfo (~> 2.0)
-    byebug (11.1.3)
-    concurrent-ruby (1.2.2)
+      securerandom (>= 0.3)
+      tzinfo (~> 2.0, >= 2.0.5)
+    base64 (0.3.0)
+    benchmark (0.4.1)
+    bigdecimal (3.2.3)
+    byebug (12.0.0)
+    concurrent-ruby (1.3.5)
+    connection_pool (2.5.4)
     dotenv (2.8.1)
-    faraday (2.7.4)
-      faraday-net_http (>= 2.0, < 3.1)
-      ruby2_keywords (>= 0.0.4)
-    faraday-net_http (3.0.2)
-    i18n (1.12.0)
+    drb (2.2.3)
+    faraday (2.13.4)
+      faraday-net_http (>= 2.0, < 3.5)
+      json
+      logger
+    faraday-net_http (3.4.1)
+      net-http (>= 0.5.0)
+    i18n (1.14.7)
       concurrent-ruby (~> 1.0)
-    minitest (5.18.0)
-    mustermann (1.1.1)
+    json (2.13.2)
+    logger (1.7.0)
+    minitest (5.25.5)
+    multi_json (1.17.0)
+    mustermann (2.0.2)
       ruby2_keywords (~> 0.0.1)
-    nio4r (2.5.8)
-    nokogiri (1.14.3-x86_64-darwin)
+    net-http (0.6.0)
+      uri
+    nio4r (2.7.4)
+    nokogiri (1.18.9-x86_64-darwin)
       racc (~> 1.4)
-    pg (1.4.6)
+    pg (1.6.2-x86_64-darwin)
     prettier_print (1.2.1)
-    puma (6.1.1)
+    puma (6.6.1)
       nio4r (~> 2.0)
-    racc (1.6.2)
-    rack (2.2.3.1)
-    rack-protection (2.2.0)
+    racc (1.8.1)
+    rack (2.2.17)
+    rack-protection (2.2.4)
       rack
+    redis (5.4.1)
+      redis-client (>= 0.22.0)
+    redis-client (0.25.3)
+      connection_pool
     ruby2_keywords (0.0.5)
-    sequel (5.66.0)
-    sinatra (2.2.0)
-      mustermann (~> 1.0)
+    securerandom (0.4.1)
+    sequel (5.96.0)
+      bigdecimal
+    sinatra (2.2.4)
+      mustermann (~> 2.0)
       rack (~> 2.2)
-      rack-protection (= 2.2.0)
+      rack-protection (= 2.2.4)
       tilt (~> 2.0)
-    syntax_tree (6.2.0)
+    sinatra-contrib (2.2.4)
+      multi_json
+      mustermann (~> 2.0)
+      rack-protection (= 2.2.4)
+      sinatra (= 2.2.4)
+      tilt (~> 2.0)
+    syntax_tree (6.3.0)
       prettier_print (>= 1.2.0)
-    tilt (2.0.10)
+    tilt (2.6.1)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
+    uri (1.0.3)
 
 PLATFORMS
   x86_64-darwin-21
+  x86_64-darwin-22
 
 DEPENDENCIES
   activesupport (~> 7.0)
@@ -53,8 +86,10 @@ DEPENDENCIES
   nokogiri (~> 1.14)
   pg (~> 1.4)
   puma (~> 6.1)
+  redis (~> 5.4)
   sequel (~> 5.66)
   sinatra (~> 2.2)
+  sinatra-contrib (~> 2.2)
   syntax_tree
 
 BUNDLED WITH
