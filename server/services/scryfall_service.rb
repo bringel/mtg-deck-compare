@@ -21,7 +21,6 @@ class ScryfallService
         "(set:#{hash["set_code"]} number:#{hash["set_number"]})"
       end
     query = query_parts.join(" or ")
-    puts query
 
     res = @api.get("cards/search") { |req| req.params["q"] = query }
 

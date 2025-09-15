@@ -47,6 +47,41 @@ class CardsService
   end
 
   def get_cards(card_hashes:)
-    return @scryfall_service.get_cards(card_hashes: card_hashes)
+    all_card_keys = REDIS.scan_each(match: "card:*").to_a
+
+    existing_cards, missing_cards =
+      card_hashes.partition do |c|
+        all_card_keys.include?(
+          card_key(set_code: c["set_code"], set_number: c["set_number"])
+        )
+      end
+
+    existing_card_keys =
+      existing_cards.map do |c|
+        card_key(set_code: c["set_code"], set_number: c["set_number"])
+      end
+
+    existing_cards =
+      if existing_cards.empty?
+        []
+      else
+        REDIS
+          .mget(*existing_card_keys)
+          .map { |data| Models::Card.from_row(JSON.parse(data)) }
+      end
+    missing_cards = @scryfall_service.get_cards(card_hashes: missing_cards)
+
+    missing_card_data =
+      missing_cards.to_h do |card|
+        data = card.to_h
+        key = card_key(**data.slice(:set_code, :set_number))
+        [key, JSON.generate(data)]
+      end
+    REDIS.mapped_mset(missing_card_data)
+    existing_cards + missing_cards
+  end
+
+  def card_key(set_code:, set_number:)
+    "cards:#{set_code}:#{set_number}"
   end
 end
