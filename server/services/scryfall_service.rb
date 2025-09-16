@@ -28,7 +28,11 @@ class ScryfallService
 
     return [] unless response_data["data"]
 
-    response_data["data"].map { |card_data| parse_card_data(card_data) }
+    response_data["data"]
+      .map { |card_data| parse_card_data(card_data) }
+      .to_h do |card|
+        [{ set_code: card.set_code, set_number: card.set_number }, card]
+      end
   end
 
   private

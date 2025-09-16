@@ -57,7 +57,7 @@ class ApiApp < Sinatra::Application
       CardsService
         .new
         .get_cards(card_hashes: JSON.parse(request.body.read))
-        .map(&:to_h)
+        .transform_values(&:to_h)
     )
   end
 end
