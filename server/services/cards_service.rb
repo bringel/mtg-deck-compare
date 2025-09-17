@@ -5,8 +5,11 @@ require_relative "../models/card"
 require "json"
 
 class CardsService
-  def initialize
+  attr_reader :scryfall_service, :redis
+
+  def initialize(redis: nil)
     @scryfall_service = ScryfallService.new
+    @redis = redis
   end
 
   def get_card_from_set(set_code:, set_number:)
@@ -33,21 +36,21 @@ class CardsService
     #   end
     #   .first
     key = "cards:#{set_code}:#{set_number}"
-    if REDIS.exists?(key)
-      return Models::Card.from_row(JSON.parse(REDIS.get(key)))
+    if redis.exists?(key)
+      return Models::Card.from_row(JSON.parse(redis.get(key)))
     else
       card =
         @scryfall_service.get_card_from_set(
           set_code: set_code,
           set_number: set_number
         )
-      REDIS.set(key, JSON.dump(card.to_h))
+      redis.set(key, JSON.dump(card.to_h))
       card
     end
   end
 
   def get_cards(card_hashes:)
-    all_card_keys = REDIS.scan_each(match: "card:*").to_a
+    all_card_keys = redis.scan_each(match: "cards:*").to_a
 
     existing_card_hashes, missing_card_hashes =
       card_hashes.partition do |c|
@@ -65,7 +68,7 @@ class CardsService
       if existing_card_hashes.empty?
         {}
       else
-        REDIS
+        redis
           .mget(*existing_card_keys)
           .map { |data| Models::Card.from_row(JSON.parse(data)) }
           .to_h do |card|
@@ -81,7 +84,7 @@ class CardsService
         key = card_key(**data.slice(:set_code, :set_number))
         [key, JSON.generate(data)]
       end
-    REDIS.mapped_mset(missing_card_data)
+    redis.mapped_mset(missing_card_data)
     existing_cards.merge(missing_cards)
   end
 

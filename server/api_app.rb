@@ -5,6 +5,7 @@ require "json"
 require "sequel"
 require "dotenv"
 require "redis"
+require "connection_pool"
 
 require_relative "./decklist_parsers/parser_list.rb"
 require_relative "./lib/deck_comparer.rb"
@@ -25,7 +26,12 @@ REDIS = Redis.new
 class ApiApp < Sinatra::Application
   set :public_folder, File.expand_path("#{__dir__}/../public")
   set :default_content_type, :json
-  # set :redis, Redis.new #Redis.new(url: ENV["REDIS_URL"])
+
+  configure do
+    r = ConnectionPool::Wrapper.new { Redis.new(url: ENV["REDIS_URL"]) }
+
+    set :redis, r
+  end
 
   post "/load_deck" do
     body = JSON.parse(request.body.read)
@@ -43,7 +49,7 @@ class ApiApp < Sinatra::Application
   get "/check_card/:set/:number" do
     JSON.dump(
       CardsService
-        .new
+        .new(redis: settings.redis)
         .get_card_from_set(
           set_code: params["set"],
           set_number: params["number"]
@@ -55,7 +61,7 @@ class ApiApp < Sinatra::Application
   post "/check_cards" do
     JSON.generate(
       CardsService
-        .new
+        .new(redis: settings.redis)
         .get_cards(card_hashes: JSON.parse(request.body.read))
         .transform_values(&:to_h)
     )
