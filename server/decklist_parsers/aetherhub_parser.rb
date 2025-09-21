@@ -87,21 +87,27 @@ module DecklistParsers
     end
 
     def fetch_deck(deck:)
-      cards_service = CardsService.new
+      cards_service = CardsService.new(redis: ApiApp.settings.redis)
+
+      deck_card_hashes =
+        deck.map do |c|
+          { set_code: c["set"].downcase, set_number: c["number"].to_i }
+        end
+
+      deck_cards = cards_service.get_cards(card_hashes: deck_card_hashes)
 
       fetched_deck =
         deck.map do |c|
           card =
-            cards_service.get_card_from_set(
-              set_code: c["set"].downcase,
-              set_number: c["number"].to_i
-            )
+            deck_cards[
+              { set_code: c["set"].downcase, set_number: c["number"].to_i }
+            ]
           { quantity: c["quantity"], card: card }
         end
 
       quantities = {}
       fetched_deck.each_with_object(quantities) do |c, quantities|
-        card_name = c.dig(:card, :name)
+        card_name = c[:card].name
         if quantities.key?(card_name)
           quantities[card_name] += c[:quantity]
         else
@@ -109,7 +115,7 @@ module DecklistParsers
         end
       end
 
-      cards = fetched_deck.map { |c| c[:card] }.uniq { |c| c[:name] }
+      cards = fetched_deck.map { |c| c[:card] }.uniq { |c| c.name }
 
       { quantities:, cards: }
     end

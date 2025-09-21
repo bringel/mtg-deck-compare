@@ -54,41 +54,49 @@ class CardsService
 
     existing_card_hashes, missing_card_hashes =
       card_hashes.partition do |c|
-        all_card_keys.include?(
-          card_key(set_code: c["set_code"], set_number: c["set_number"])
-        )
+        all_card_keys.include?(card_key(card_hash: c))
       end
 
-    existing_card_keys =
-      existing_card_hashes.map do |c|
-        card_key(set_code: c["set_code"], set_number: c["set_number"])
-      end
+    existing_card_keys = existing_card_hashes.map { |c| card_key(card_hash: c) }
 
     existing_cards =
       if existing_card_hashes.empty?
         {}
       else
-        redis
-          .mget(*existing_card_keys)
-          .map { |data| Models::Card.from_row(JSON.parse(data)) }
-          .to_h do |card|
-            [{ set_code: card.set_code, set_number: card.set_number }, card]
-          end
+        index_cards_by_set_code_number(
+          cards:
+            redis
+              .mget(*existing_card_keys)
+              .map { |data| Models::Card.from_row(JSON.parse(data)) }
+        )
       end
     missing_cards =
       @scryfall_service.get_cards(card_hashes: missing_card_hashes)
 
-    missing_card_data =
-      missing_cards.to_h do |card|
-        data = card.to_h
-        key = card_key(**data.slice(:set_code, :set_number))
-        [key, JSON.generate(data)]
-      end
-    redis.mapped_mset(missing_card_data)
+    unless missing_cards.empty?
+      missing_card_data =
+        missing_cards.to_h do |k, card|
+          data = card.to_h
+          key = card_key(card_hash: k)
+          [key, JSON.generate(data)]
+        end
+      redis.mapped_mset(missing_card_data)
+    end
     existing_cards.merge(missing_cards)
   end
 
-  def card_key(set_code:, set_number:)
-    "cards:#{set_code}:#{set_number}"
+  def card_key(card_hash:)
+    set_code, set_number =
+      card_hash.transform_keys(&:to_sym).values_at(:set_code, :set_number)
+    "cards:#{set_code.downcase}:#{set_number.to_i}"
+  end
+
+  def index_cards_by_set_code_number(cards:)
+    cards.to_h do |card|
+      [
+        { set_code: card.set_code.downcase, set_number: card.set_number.to_i },
+        card
+      ]
+    end
   end
 end

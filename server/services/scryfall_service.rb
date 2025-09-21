@@ -18,7 +18,7 @@ class ScryfallService
   def get_cards(card_hashes:)
     query_parts =
       card_hashes.map do |hash|
-        "(set:#{hash["set_code"]} number:#{hash["set_number"]})"
+        "(set:#{hash[:set_code]} number:#{hash[:set_number]})"
       end
     query = query_parts.join(" or ")
 
@@ -26,12 +26,18 @@ class ScryfallService
 
     response_data = JSON.parse(res.body)
 
-    return [] unless response_data["data"]
+    return {} unless response_data["data"]
 
     response_data["data"]
       .map { |card_data| parse_card_data(card_data) }
       .to_h do |card|
-        [{ set_code: card.set_code, set_number: card.set_number }, card]
+        [
+          {
+            set_code: card.set_code.downcase,
+            set_number: card.set_number.to_i
+          },
+          card
+        ]
       end
   end
 
