@@ -18,9 +18,9 @@ class DeckComparer
         cards_in_all_decks.to_h do |c|
           card_quantities =
             parsed_decks.to_h do |d|
-              [d[:index], d.dig(:deck, k, :quantities, c[:name])]
+              [d[:index], d.dig(:deck, k, :quantities, c.name)]
             end
-          [c[:name], card_quantities]
+          [c.name, card_quantities]
         end
 
       decks_without_common = deck_cards.map { |deck| deck - cards_in_all_decks }
@@ -34,10 +34,10 @@ class DeckComparer
         cards_in_more_than_one.to_h do |c|
           card_quantities =
             parsed_decks.to_h do |d|
-              [d[:index], d.dig(:deck, k, :quantities, c[:name])]
+              [d[:index], d.dig(:deck, k, :quantities, c.name)]
             end
 
-          [c[:name], card_quantities.compact]
+          [c.name, card_quantities.compact]
         end
 
       decks_remaining =
@@ -46,7 +46,7 @@ class DeckComparer
             d.dig(:deck, k, :cards) - cards_in_all_decks -
               cards_in_more_than_one.to_a
 
-          card_names = cards.map { |c| c[:name] }
+          card_names = cards.map { |c| c.name }
           quantities =
             d
               .dig(:deck, k, :quantities)
