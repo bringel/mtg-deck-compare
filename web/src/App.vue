@@ -4,30 +4,38 @@
       <AddDeckURLInput @addURL="handleAdd" />
     </div>
     <ol class="list-decimal list-inside my-4 text-white">
-      <li v-for="url in deckURLs">
-        {{ url }}
+      <li v-for="url in store.deckURLs">
+        {{ url }} - {{ getDeckName(store.deckFetchers.get(url)) }}
       </li>
     </ol>
-    <Button @click="startCompare">Compare</Button>
+    <Button theme="primary" @click="startCompare">Compare</Button>
   </AppShell>
 </template>
 
 <script setup lang="ts">
 import AddDeckURLInput from './components/AddDeckURLInput.vue';
 import AppShell from './components/AppShell.vue';
-import { ref } from 'vue';
 import Button from './components/Button.vue';
 import bingo from './lib/bingo';
+import { useDeckStore } from './store/deckStore';
 
-const deckURLs = ref([]);
+const store = useDeckStore();
 
 function handleAdd(url: string) {
-  deckURLs.value.push(url);
+  store.loadDeck(url);
+}
+
+function getDeckName(deckFetcher: any) {
+  if (deckFetcher?.isFetching) {
+    return '';
+  } else {
+    return deckFetcher?.data['name'];
+  }
 }
 
 function startCompare() {
   bingo.post('/api/compare_decks', {
-    deckListURLs: deckURLs.value
+    deckListURLs: store.deckURLs
   });
 }
 </script>
