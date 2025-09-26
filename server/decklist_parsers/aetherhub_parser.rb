@@ -12,24 +12,24 @@ module DecklistParsers
       url.match?(%r{(?:https?://)?aetherhub\.com/Deck/.*})
     end
 
-    def load_deck
+    def load_deck_info
       @page_content = Faraday.get(@url)
       @doc = Nokogiri.HTML(@page_content.body)
-      cards = get_card_info
 
       page_title = @doc.css("title").text
       name = page_title.split("-", 2).last.strip
 
+      { name: name, source_type: :aetherhub, source_url: @url }
+    end
+
+    def load_deck
+      info = load_deck_info
+      cards = get_card_info
+
       main_deck = fetch_deck(deck: cards[:main_deck])
       sideboard = fetch_deck(deck: cards[:sideboard])
 
-      Models::Deck.new(
-        name: name,
-        source_type: :aetherhub,
-        source_url: @url,
-        main_deck: main_deck,
-        sideboard: sideboard
-      )
+      Models::Deck.new(**info, main_deck: main_deck, sideboard: sideboard)
     end
 
     private

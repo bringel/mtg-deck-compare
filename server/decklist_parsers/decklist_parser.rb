@@ -9,6 +9,9 @@ module DecklistParsers
     def self.can_handle_url?(url)
     end
 
+    def load_deck_info
+    end
+
     def load_deck
     end
 

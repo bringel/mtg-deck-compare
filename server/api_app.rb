@@ -33,6 +33,12 @@ class ApiApp < Sinatra::Application
     set :redis, r
   end
 
+  get "/deck_info" do
+    parser = DecklistParsers::ParserList.get_parser(request.params["url"])
+
+    parser.new(request.params["url"]).load_deck_info.to_json
+  end
+
   post "/load_deck" do
     body = JSON.parse(request.body.read)
     parser = DecklistParsers::ParserList.get_parser(body["url"])
