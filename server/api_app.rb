@@ -40,10 +40,9 @@ class ApiApp < Sinatra::Application
   end
 
   post "/load_deck" do
-    body = JSON.parse(request.body.read)
-    parser = DecklistParsers::ParserList.get_parser(body["url"])
+    parser = DecklistParsers::ParserList.get_parser(request.params["url"])
 
-    parser.new(body["url"]).load_deck.to_json
+    parser.new(request.params["url"]).load_deck.to_json
   end
 
   post "/compare_decks" do
