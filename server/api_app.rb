@@ -39,10 +39,10 @@ class ApiApp < Sinatra::Application
     parser.new(request.params["url"]).load_deck_info.to_json
   end
 
-  post "/load_deck" do
+  get "/load_deck" do
     parser = DecklistParsers::ParserList.get_parser(request.params["url"])
 
-    parser.new(request.params["url"]).load_deck.to_json
+    JSON.generate(parser.new(request.params["url"]).load_deck.to_h)
   end
 
   post "/compare_decks" do
