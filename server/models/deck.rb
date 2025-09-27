@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require "json"
 
 module Models
   Deck =
@@ -20,8 +21,8 @@ module Models
         value.dig(*keys)
       end
 
-      def to_json
-        self.to_h.to_json
+      def to_json(opts)
+        JSON.generate(self.to_h, opts)
       end
     end
 end

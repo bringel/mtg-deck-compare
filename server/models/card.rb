@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require "json"
 
 module Models
   Card =
@@ -35,6 +36,10 @@ module Models
 
       def self.from_row(row)
         new(**row.merge(card_type: row["card_type"].to_s))
+      end
+
+      def to_json(opts)
+        JSON.generate(self.to_h, opts)
       end
     end
 end
