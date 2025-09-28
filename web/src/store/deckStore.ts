@@ -1,23 +1,23 @@
-import { useFetch } from '@vueuse/core';
+import { useFetch, type UseFetchReturn } from '@vueuse/core';
 import { defineStore } from 'pinia';
-import { reactive, ref } from 'vue';
-
-interface Data {
-  something: string;
-}
+import { reactive, ref, type Reactive } from 'vue';
+import { type Deck } from '../types/Deck';
 
 export const useDeckStore = defineStore('decks', () => {
   const deckURLs = ref<Array<string>>([]);
 
-  const deckFetchers = reactive(new Map());
+  const deckFetchers = reactive(
+    new Map<string, Reactive<UseFetchReturn<Deck>> | { isFetching: boolean }>()
+  );
 
   async function loadDeck(url: string) {
     if (!deckFetchers.has(url)) {
+      deckFetchers.set(url, { isFetching: true });
       deckURLs.value = [...deckURLs.value, url];
 
       const apiURL = `/api/load_deck?url=${url}`;
-      const fetcher = await useFetch<Data>(apiURL).json();
-      deckFetchers.set(url, fetcher);
+      const fetcher = await useFetch(apiURL).json<Deck>();
+      deckFetchers.set(url, reactive(fetcher));
     }
   }
 
