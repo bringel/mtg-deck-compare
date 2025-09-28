@@ -3,11 +3,13 @@
     <AddDeckURLInput @addURL="handleAdd" />
   </div>
   <ol class="list-decimal list-inside my-4 text-white">
-    <li v-for="url in store.deckURLs">{{ url }} - {{ deckNamesMap[url] }}</li>
+    <li v-for="url in deckStore.deckURLs">
+      {{ url }}<template v-if="!deckFetchingMap[url]">&nbsp;- {{ deckNamesMap[url] }}</template>
+    </li>
   </ol>
-  <Button theme="primary" @click="startCompare" :disabled="store.deckURLs.length < 2"
-    >Compare</Button
-  >
+  <Button theme="primary" @click="startCompare" :disabled="deckStore.deckURLs.length < 2">
+    Compare
+  </Button>
 </template>
 
 <script setup lang="ts">
@@ -17,29 +19,38 @@ import AddDeckURLInput from './components/AddDeckURLInput.vue';
 import Button from './components/Button.vue';
 import bingo from './lib/bingo';
 import { useDeckStore } from './store/deckStore';
+import { useDeckComparisonStoreStore } from './store/deckComparisonStore';
 
-const store = useDeckStore();
+const deckStore = useDeckStore();
+const comparisonStore = useDeckComparisonStoreStore();
 
 function handleAdd(url: string) {
-  store.loadDeck(url);
+  deckStore.loadDeck(url);
 }
 
-const deckNamesMap = computed(() => {
+const deckNamesMap = computed<{ [url: string]: string }>(() => {
   return Object.fromEntries(
-    Array.from(store.deckFetchers.keys()).map((k) => {
-      const fetcher = store.deckFetchers.get(k);
-      if (fetcher.isFetching) {
+    Array.from(deckStore.deckFetchers.keys()).map((k: string) => {
+      if (deckFetchingMap.value[k]) {
         return [k, ''];
       } else {
-        return [k, fetcher.data['name']];
+        // @ts-ignore - object will have a data property if the fetcher isn't loading
+        return [k, deckStore.deckFetchers.get(k)?.data['name']];
       }
     })
   );
 });
 
+const deckFetchingMap = computed<{ [url: string]: boolean }>(() => {
+  return Object.fromEntries(
+    Array.from(deckStore.deckFetchers.keys()).map((k) => {
+      const fetcher = deckStore.deckFetchers.get(k);
+      return [k, fetcher?.isFetching ?? true];
+    })
+  );
+});
+
 function startCompare() {
-  bingo.post('/api/compare_decks', {
-    deckListURLs: store.deckURLs
-  });
+  comparisonStore.getComparison(deckStore.deckURLs);
 }
 </script>
