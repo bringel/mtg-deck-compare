@@ -10,6 +10,8 @@
   <Button theme="primary" @click="startCompare" :disabled="deckStore.deckURLs.length < 2">
     Compare
   </Button>
+  <hr class="mt-4" />
+  <DeckComparison />
 </template>
 
 <script setup lang="ts">
@@ -17,7 +19,7 @@ import { computed } from 'vue';
 import AddDeckURLInput from './components/AddDeckURLInput.vue';
 
 import Button from './components/Button.vue';
-import bingo from './lib/bingo';
+import DeckComparison from './components/DeckComparison.vue';
 import { useDeckStore } from './store/deckStore';
 import { useDeckComparisonStoreStore } from './store/deckComparisonStore';
 
@@ -35,7 +37,7 @@ const deckNamesMap = computed<{ [url: string]: string }>(() => {
         return [k, ''];
       } else {
         // @ts-ignore - object will have a data property if the fetcher isn't loading
-        return [k, deckStore.deckFetchers.get(k)?.data['name']];
+        return [k, (deckStore.deckFetchers.get(k)?.data ?? {})['name']];
       }
     })
   );
@@ -51,6 +53,6 @@ const deckFetchingMap = computed<{ [url: string]: boolean }>(() => {
 });
 
 function startCompare() {
-  comparisonStore.getComparison(deckStore.deckURLs);
+  comparisonStore.getComparison();
 }
 </script>
