@@ -20,7 +20,8 @@ const outerClasses = computed(() => {
     'border',
     'items-center',
     'first:border-r-0',
-    'last:border-l-0'
+    'last:border-l-0',
+    'flex-1'
   ];
 });
 
