@@ -3,17 +3,13 @@
     <div>
       <h2>Cards in all decks</h2>
       <div v-if="comparisonStore.comparison?.isFinished">
-        <ul>
-          <li
-            class="list-none flex flex-row justify-between hover:bg-background-600"
+        <div class="grid grid-cols-[max-content_1fr_1fr] items-center gap-y-1">
+          <CardRow
             v-for="card in comparisonStore.comparison?.data?.main_deck.common.cards"
-          >
-            <CardRow
-              :card="card"
-              :quantities="comparisonStore.comparison?.data?.main_deck.common.quantities[card.name]"
-            />
-          </li>
-        </ul>
+            :card="card"
+            :quantities="comparisonStore.comparison?.data?.main_deck.common.quantities[card.name]"
+          />
+        </div>
       </div>
     </div>
     <div><h2>Cards in multiple decks</h2></div>

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="flex">
     <CardQuantity
       v-for="(quantity, deck) in quantities"
       :deck-index="Number(deck)"
