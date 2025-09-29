@@ -5,12 +5,12 @@
       <div v-if="comparisonStore.comparison?.isFinished">
         <ul>
           <li
-            class="list-none flex flex-row justify-between"
-            v-for="card in comparisonStore.comparison?.data.main_deck.common.cards"
+            class="list-none flex flex-row justify-between hover:bg-background-600"
+            v-for="card in comparisonStore.comparison?.data?.main_deck.common.cards"
           >
             <CardRow
               :card="card"
-              :quantities="comparisonStore.comparison?.data.main_deck.common.quantities[card.name]"
+              :quantities="comparisonStore.comparison?.data?.main_deck.common.quantities[card.name]"
             />
           </li>
         </ul>
