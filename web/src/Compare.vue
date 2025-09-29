@@ -30,7 +30,7 @@ function handleAdd(url: string) {
   deckStore.loadDeck(url);
 }
 
-const deckNamesMap = computed<{ [url: string]: string }>(() => {
+const deckNamesMap = computed<{ [url: string]: string | undefined }>(() => {
   return Object.fromEntries(
     Array.from(deckStore.deckFetchers.keys()).map((k: string) => {
       if (deckFetchingMap.value[k]) {
