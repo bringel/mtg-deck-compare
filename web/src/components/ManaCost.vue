@@ -1,14 +1,12 @@
 <template>
-  <template v-if="manaCost">
+  <span v-if="manaCost" class="space-x-1">
     <i
       v-for="symbol in manaSymbols"
       :class="['ms', 'ms-cost', `ms-${symbol.toLocaleLowerCase()}`, 'justify-self-end']"
       >{{ symbol }}</i
     >
-  </template>
-  <template v-else>
-    <span></span>
-  </template>
+  </span>
+  <span v-else></span>
 </template>
 
 <script setup lang="ts">
