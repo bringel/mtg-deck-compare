@@ -19,5 +19,5 @@ import CardQuantity from './CardQuantity.vue';
 import ManaCost from './ManaCost.vue';
 import SetIcon from './SetIcon.vue';
 
-defineProps<{ card: Card; deckIndex: number; quantity: number }>();
+defineProps<{ card: Card; deckIndex: number; quantity: number | undefined }>();
 </script>

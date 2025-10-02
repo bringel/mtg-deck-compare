@@ -10,12 +10,12 @@
 </template>
 
 <script setup lang="ts">
-import type { DeckSection } from '../types/DeckSection';
+import type { RemainingDeckSection } from '../types/DeckSection';
 import DeckRemainingCardRow from './DeckRemainingCardRow.vue';
 
 defineProps<{
   deckIndex: number;
-  mainDeck: DeckSection | undefined;
-  sideboard: DeckSection | undefined;
+  mainDeck: RemainingDeckSection | undefined;
+  sideboard: RemainingDeckSection | undefined;
 }>();
 </script>

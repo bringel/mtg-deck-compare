@@ -9,8 +9,8 @@
 </template>
 
 <script setup lang="ts">
-import type { DeckSection } from '../types/DeckSection';
+import type { ComparisonDeckSection } from '../types/DeckSection';
 import ComparisonCardRow from './ComparisonCardRow.vue';
 
-const props = defineProps<{ section: DeckSection | undefined }>();
+const props = defineProps<{ section: ComparisonDeckSection | undefined }>();
 </script>
