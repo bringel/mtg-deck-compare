@@ -1,24 +1,42 @@
 <template>
   <div class="grid grid-cols-2">
     <div>
-      <h2>Cards in all decks</h2>
-      <div v-if="comparisonStore.comparison?.isFinished">
-        <ComparisonSection :section="comparisonStore.comparison?.data?.main_deck.common" />
-        <ComparisonSection :section="comparisonStore.comparison?.data?.sideboard.common" />
+      <h2 class="text-white text-2xl">Cards in all decks</h2>
+      <div v-if="comparisonStore.comparison?.isFinished" class="flex">
+        <div>
+          <h3 class="text-white text-lg">Main Deck</h3>
+          <ComparisonSection :section="comparisonStore.comparison?.data?.main_deck.common" />
+        </div>
+        <div>
+          <h3 class="text-white text-lg">Sideboard</h3>
+          <ComparisonSection :section="comparisonStore.comparison?.data?.sideboard.common" />
+        </div>
       </div>
     </div>
     <template v-if="showMultipleSection">
-      <div><h2>Cards in multiple decks</h2></div>
-      <ComparisonSection :section="comparisonStore.comparison?.data?.main_deck.multiple" />
-      <ComparisonSection :section="comparisonStore.comparison?.data?.sideboard.multiple" />
+      <div>
+        <h2 class="text-white text-2xl">Cards in multiple decks</h2>
+        <div>
+          <h3 class="text-white text-lg">Main Deck</h3>
+          <ComparisonSection :section="comparisonStore.comparison?.data?.main_deck.multiple" />
+        </div>
+        <div>
+          <h3 class="text-white text-lg">Sideboard</h3>
+          <ComparisonSection :section="comparisonStore.comparison?.data?.sideboard.multiple" />
+        </div>
+      </div>
     </template>
-    <div class="col-span-2"><h2>Cards in only one deck</h2></div>
-    <RemainingDeckList
-      v-for="(remaining, index) in remainingDecks"
-      :deck-index="index"
-      :main-deck="remaining.mainDeck"
-      :sideboard="remaining.sideboard"
-    />
+    <div class="col-span-2">
+      <h2 class="text-white text-2xl">Cards in only one deck</h2>
+      <div class="flex">
+        <RemainingDeckList
+          v-for="(remaining, index) in remainingDecks"
+          :deck-index="index"
+          :main-deck="remaining.mainDeck"
+          :sideboard="remaining.sideboard"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
