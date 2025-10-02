@@ -1,9 +1,9 @@
-import type { DeckSection } from './DeckSection';
+import type { ComparisonDeckSection, RemainingDeckSection } from './DeckSection';
 
 interface Comparison {
-  common: DeckSection;
-  multiple: DeckSection;
-  decks_remaining: { [index: number]: DeckSection };
+  common: ComparisonDeckSection;
+  multiple: ComparisonDeckSection;
+  decks_remaining: { [index: number]: RemainingDeckSection };
 }
 
 export interface DeckComparison {

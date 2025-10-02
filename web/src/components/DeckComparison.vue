@@ -46,8 +46,8 @@ const remainingDecks = computed(() => {
   const remainingSideboards = comparisonStore.comparison?.data?.sideboard.decks_remaining;
   return deckStore.deckURLs.map((deck, index) => {
     return {
-      mainDeck: remainingMainDecks[index],
-      sideboard: remainingSideboards[index]
+      mainDeck: remainingMainDecks?.[index],
+      sideboard: remainingSideboards?.[index]
     };
   });
 });

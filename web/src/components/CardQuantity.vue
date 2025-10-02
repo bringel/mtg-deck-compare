@@ -8,7 +8,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import type { DeckColor } from '../lib/deckColors';
-const props = defineProps<{ deckIndex: number; color: DeckColor; quantity: number }>();
+const props = defineProps<{ deckIndex: number; color: DeckColor; quantity: number | undefined }>();
 
 const outerClasses = computed(() => {
   return [

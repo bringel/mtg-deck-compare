@@ -1,6 +1,11 @@
 import type { Card } from './Card';
 
-export interface DeckSection {
+export interface ComparisonDeckSection {
   cards: Card[];
-  quantities: Record<string, Record<string, number>> | Record<string, number>;
+  quantities: Record<string, Record<string, number>>;
+}
+
+export interface RemainingDeckSection {
+  cards: Card[];
+  quantities: Record<string, number>;
 }
