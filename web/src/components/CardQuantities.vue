@@ -3,7 +3,7 @@
     <CardQuantity
       v-for="(quantity, deck) in quantities"
       :deck-index="Number(deck)"
-      :color="colors[Number(deck)]"
+      :color="deckColors[Number(deck)]"
       :quantity="quantity"
     />
   </div>
@@ -11,7 +11,7 @@
 
 <script setup lang="ts">
 import CardQuantity from './CardQuantity.vue';
+import { deckColors } from '../lib/deckColors';
 
-const props = defineProps<{ quantities: Record<string, number> | undefined }>();
-const colors = ['orange', 'cyan', 'violet', 'pink'];
+defineProps<{ quantities: Record<string, number> | undefined }>();
 </script>
