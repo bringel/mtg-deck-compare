@@ -1,6 +1,6 @@
 <template>
   <div class="grid grid-cols-[max-content_1fr_1fr] items-end gap-y-1">
-    <CardRow
+    <ComparisonCardRow
       v-for="card in section?.cards"
       :card="card"
       :quantities="section?.quantities[card.name]"
@@ -10,7 +10,7 @@
 
 <script setup lang="ts">
 import type { DeckSection } from '../types/DeckSection';
-import CardRow from './CardRow.vue';
+import ComparisonCardRow from './ComparisonCardRow.vue';
 
 const props = defineProps<{ section: DeckSection | undefined }>();
 </script>

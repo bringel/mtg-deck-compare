@@ -7,7 +7,8 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-const props = defineProps<{ deckIndex: number; color: string; quantity: number }>();
+import type { DeckColor } from '../lib/deckColors';
+const props = defineProps<{ deckIndex: number; color: DeckColor; quantity: number }>();
 
 const outerClasses = computed(() => {
   return [
@@ -34,7 +35,7 @@ const bottomClasses = computed(() => {
   return [textClass(props.color), 'px-2'];
 });
 
-function borderClass(color: string) {
+function borderClass(color: DeckColor) {
   switch (color) {
     case 'orange':
       return 'border-orange-500';

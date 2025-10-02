@@ -13,13 +13,11 @@
       <ComparisonSection :section="comparisonStore.comparison?.data?.sideboard.multiple" />
     </template>
     <div class="col-span-2"><h2>Cards in only one deck</h2></div>
-    <ComparisonSection
-      v-for="remaining in comparisonStore.comparison?.data?.main_deck.decks_remaining"
-      :section="remaining"
-    />
-    <ComparisonSection
-      v-for="remaining in comparisonStore.comparison?.data?.sideboard.decks_remaining"
-      :section="remaining"
+    <RemainingDeckList
+      v-for="(remaining, index) in remainingDecks"
+      :deck-index="index"
+      :main-deck="remaining.mainDeck"
+      :sideboard="remaining.sideboard"
     />
   </div>
 </template>
@@ -28,9 +26,12 @@
 import { computed } from 'vue';
 import { useDeckComparisonStoreStore } from '../store/deckComparisonStore';
 import ComparisonSection from './ComparisonSection.vue';
+import RemainingDeckList from './RemainingDeckList.vue';
+import { useDeckStore } from '../store/deckStore';
 
 const comparisonStore = useDeckComparisonStoreStore();
 
+const deckStore = useDeckStore();
 const showMultipleSection = computed(() => {
   const comparisonData = comparisonStore.comparison?.data;
 
@@ -38,5 +39,16 @@ const showMultipleSection = computed(() => {
     comparisonData?.main_deck.multiple.cards.length ||
     comparisonData?.sideboard.multiple.cards.length
   );
+});
+
+const remainingDecks = computed(() => {
+  const remainingMainDecks = comparisonStore.comparison?.data?.main_deck.decks_remaining;
+  const remainingSideboards = comparisonStore.comparison?.data?.sideboard.decks_remaining;
+  return deckStore.deckURLs.map((deck, index) => {
+    return {
+      mainDeck: remainingMainDecks[index],
+      sideboard: remainingSideboards[index]
+    };
+  });
 });
 </script>
