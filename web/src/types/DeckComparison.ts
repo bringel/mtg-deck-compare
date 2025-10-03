@@ -1,12 +1,14 @@
-import type { ComparisonDeckSection, RemainingDeckSection } from './DeckSection';
-
-interface Comparison {
-  common: ComparisonDeckSection;
-  multiple: ComparisonDeckSection;
-  decks_remaining: { [index: number]: RemainingDeckSection };
-}
+import type { ComparisonDeckSection } from './ComparisonDeckSection';
+import type { DeckSection } from './DeckSection';
 
 export interface DeckComparison {
-  main_deck: Comparison;
-  sideboard: Comparison;
+  common: {
+    main_deck: ComparisonDeckSection;
+    sideboard: ComparisonDeckSection;
+  };
+  multiple: {
+    main_deck: ComparisonDeckSection;
+    sideboard: ComparisonDeckSection;
+  };
+  decks_remaining: { [index: number]: { main_deck: DeckSection; sideboard: DeckSection } };
 }

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3 class="text-white text-lg">Deck {{ deckIndex + 1 }}</h3>
+    <h3 class="text-white text-lg">Deck {{ Number(deckIndex) + 1 }}</h3>
     <div class="flex">
       <div>
         <h3 class="text-white text-lg">Main Deck</h3>
@@ -9,7 +9,7 @@
             v-for="card in mainDeck?.cards"
             :card="card"
             :quantity="mainDeck?.quantities[card.name]"
-            :deck-index="deckIndex"
+            :deck-index="Number(deckIndex)"
           />
         </div>
       </div>
@@ -20,7 +20,7 @@
             v-for="card in sideboard?.cards"
             :card="card"
             :quantity="sideboard?.quantities[card.name]"
-            :deck-index="deckIndex"
+            :deck-index="Number(deckIndex)"
           />
         </div>
       </div>
@@ -29,12 +29,12 @@
 </template>
 
 <script setup lang="ts">
-import type { RemainingDeckSection } from '../types/DeckSection';
+import type { DeckSection } from '../types/DeckSection';
 import DeckRemainingCardRow from './DeckRemainingCardRow.vue';
 
 defineProps<{
   deckIndex: number;
-  mainDeck: RemainingDeckSection | undefined;
-  sideboard: RemainingDeckSection | undefined;
+  mainDeck: DeckSection | undefined;
+  sideboard: DeckSection | undefined;
 }>();
 </script>
