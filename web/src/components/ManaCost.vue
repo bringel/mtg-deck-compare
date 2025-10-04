@@ -2,7 +2,13 @@
   <span v-if="manaCost" class="space-x-1">
     <i
       v-for="symbol in manaSymbols"
-      :class="['ms', 'ms-cost', `ms-${symbol.toLocaleLowerCase()}`, 'justify-self-end']"
+      :class="[
+        'ms',
+        'ms-cost',
+        `ms-${symbol.toLocaleLowerCase()}`,
+        'justify-self-end',
+        'text-[1.5em]'
+      ]"
       >{{ symbol }}</i
     >
   </span>

@@ -15,15 +15,15 @@ const outerClasses = computed(() => {
     borderClass(props.color),
     'inline-flex',
     'flex-col',
-    'first:rounded-l-md',
-    'last:rounded-r-md',
+    'first-of-type:rounded-l-md',
+    'last-of-type:rounded-r-md',
     'overflow-hidden',
     'border',
     'items-center',
-    'first:border-r-0',
-    'last:border-l-0',
+    'first-of-type:border-r-0',
+    'last-of-type:border-l-0',
     'flex-1',
-    'only:border-x'
+    'only-of-type:border-x'
   ];
 });
 
