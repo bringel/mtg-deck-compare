@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="flex space-x-4">
-      <div class="flex-grow">
-        <h3 class="text-white text-lg">Main Deck</h3>
+      <div class="grow">
+        <h3 class="text-lg text-white">Main Deck</h3>
         <div class="grid grid-cols-[max-content_1fr_max-content] items-end gap-y-3">
           <DeckRemainingCardRow
             v-for="card in mainDeck?.cards"
@@ -12,8 +12,8 @@
           />
         </div>
       </div>
-      <div class="flex-grow">
-        <h3 class="text-white text-lg">Sideboard</h3>
+      <div class="grow">
+        <h3 class="text-lg text-white">Sideboard</h3>
         <div class="grid grid-cols-[max-content_1fr_max-content] items-end gap-y-3">
           <DeckRemainingCardRow
             v-for="card in sideboard?.cards"

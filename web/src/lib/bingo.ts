@@ -19,7 +19,12 @@ function formatURL(url: string, method: string, parameters: object = {}) {
   }
 }
 
-function request<T>(url: string, method: string, parameters: object, responseType: string = 'json'): Promise<T> {
+function request<T>(
+  url: string,
+  method: string,
+  parameters: object,
+  responseType: string = 'json'
+): Promise<T> {
   const params = {
     method: method,
     body: method !== 'GET' ? JSON.stringify(parameters) : undefined,

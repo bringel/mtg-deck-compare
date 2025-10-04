@@ -1,7 +1,7 @@
 <template>
   <div class="flex space-x-4">
-    <div class="flex-grow">
-      <h3 class="text-white text-lg">Main Deck</h3>
+    <div class="grow">
+      <h3 class="text-lg text-white">Main Deck</h3>
       <div class="grid grid-cols-[max-content_1fr_max-content] items-end gap-y-3">
         <ComparisonCardRow
           v-for="card in section?.main_deck.cards"
@@ -10,8 +10,8 @@
         />
       </div>
     </div>
-    <div class="flex-grow">
-      <h3 class="text-white text-lg">Sidboard</h3>
+    <div class="grow">
+      <h3 class="text-lg text-white">Sidboard</h3>
       <div class="grid grid-cols-[max-content_1fr_max-content] items-end gap-y-3">
         <ComparisonCardRow
           v-for="card in section?.sideboard.cards"

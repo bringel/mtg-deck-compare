@@ -1,5 +1,5 @@
 <template>
-  <button :class="['rounded-sm px-4 py-2 relative', ...themeClasses, 'disabled:bg-gray-500']">
+  <button :class="['relative rounded-xs px-4 py-2', ...themeClasses, 'disabled:bg-gray-500']">
     <slot></slot>
   </button>
 </template>

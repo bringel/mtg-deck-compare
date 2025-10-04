@@ -1,8 +1,8 @@
 <template>
-  <div class="space-y-2 flex flex-col">
+  <div class="flex flex-col space-y-2">
     <AddDeckURLInput @addURL="handleAdd" />
   </div>
-  <ol class="list-decimal list-inside my-4 text-white">
+  <ol class="my-4 list-inside list-decimal text-white">
     <li v-for="url in deckStore.deckURLs">
       {{ url }}<template v-if="!deckFetchingMap[url]">&nbsp;- {{ deckNamesMap[url] }}</template>
     </li>
