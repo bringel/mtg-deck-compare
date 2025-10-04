@@ -1,10 +1,9 @@
 <template>
   <div>
-    <h3 class="text-white text-lg">Deck {{ Number(deckIndex) + 1 }}</h3>
-    <div class="flex">
-      <div>
+    <div class="flex space-x-4">
+      <div class="flex-grow">
         <h3 class="text-white text-lg">Main Deck</h3>
-        <div class="grid grid-cols-[max-content_1fr_1fr] items-end gap-y-1">
+        <div class="grid grid-cols-[max-content_1fr_max-content] items-end gap-y-3">
           <DeckRemainingCardRow
             v-for="card in mainDeck?.cards"
             :card="card"
@@ -13,9 +12,9 @@
           />
         </div>
       </div>
-      <div>
+      <div class="flex-grow">
         <h3 class="text-white text-lg">Sideboard</h3>
-        <div class="grid grid-cols-[max-content_1fr_1fr] items-end gap-y-1">
+        <div class="grid grid-cols-[max-content_1fr_max-content] items-end gap-y-3">
           <DeckRemainingCardRow
             v-for="card in sideboard?.cards"
             :card="card"

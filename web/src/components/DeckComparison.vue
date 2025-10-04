@@ -1,26 +1,23 @@
 <template>
-  <div class="grid grid-cols-2">
-    <div>
-      <h2 class="text-white text-2xl">Cards in all decks</h2>
+  <div class="grid grid-cols-2 gap-6">
+    <Card>
+      <template #header><h2 class="text-white text-2xl">Cards in all decks</h2></template>
       <ComparisonSection :section="comparisonStore.comparison?.data?.common" />
-    </div>
-    <template v-if="showMultipleSection">
-      <div>
-        <h2 class="text-white text-2xl">Cards in multiple decks</h2>
-        <ComparisonSection :section="comparisonStore.comparison?.data?.multiple" />
-      </div>
-    </template>
-    <div class="col-span-2">
-      <h2 class="text-white text-2xl">Cards in only one deck</h2>
-      <div class="flex">
-        <RemainingDeckList
-          v-for="(remaining, index) in comparisonStore.comparison?.data?.decks_remaining"
-          :deck-index="index"
-          :main-deck="remaining.main_deck"
-          :sideboard="remaining.sideboard"
-        />
-      </div>
-    </div>
+    </Card>
+    <Card v-if="showMultipleSection">
+      <template #header><h2 class="text-white text-2xl">Cards in multiple decks</h2></template>
+      <ComparisonSection :section="comparisonStore.comparison?.data?.multiple" />
+    </Card>
+    <Card v-for="(remaining, index) in comparisonStore.comparison?.data?.decks_remaining">
+      <template #header>
+        <h2 class="text-white text-2xl">Deck {{ Number(index) + 1 }} Remaining Cards</h2>
+      </template>
+      <RemainingDeckList
+        :deck-index="index"
+        :main-deck="remaining.main_deck"
+        :sideboard="remaining.sideboard"
+      />
+    </Card>
   </div>
 </template>
 
@@ -29,6 +26,7 @@ import { computed } from 'vue';
 import { useDeckComparisonStoreStore } from '../store/deckComparisonStore';
 import ComparisonSection from './ComparisonSection.vue';
 import RemainingDeckList from './RemainingDeckList.vue';
+import Card from './Card.vue';
 
 const comparisonStore = useDeckComparisonStoreStore();
 

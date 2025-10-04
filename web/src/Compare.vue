@@ -10,7 +10,7 @@
   <Button theme="primary" @click="startCompare" :disabled="deckStore.deckURLs.length < 2">
     Compare
   </Button>
-  <hr class="mt-4" />
+  <hr class="my-4" />
   <DeckComparison />
 </template>
 
