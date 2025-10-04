@@ -1,5 +1,5 @@
 <template>
-  <div class="border-2 rounded-md border-background-300 pt-2 pb-8 px-8">
+  <div class="border-background-300 rounded-md border-2 px-8 pt-2 pb-8">
     <div class="mb-3">
       <slot name="header"></slot>
     </div>

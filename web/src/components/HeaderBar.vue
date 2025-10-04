@@ -1,6 +1,6 @@
 <template>
-  <nav class="flex items-center py-4 px-6 bg-background-800">
-    <span class="text-2xl text-primary-600"> MTG Deck Compare </span>
+  <nav class="bg-background-800 flex items-center px-6 py-4">
+    <span class="text-primary-600 text-2xl"> MTG Deck Compare </span>
   </nav>
 </template>
 

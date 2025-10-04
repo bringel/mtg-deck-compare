@@ -8,7 +8,7 @@
   </span>
   <span class="justify-self-end">
     <ManaCost :mana-cost="card.mana_cost" />
-    <SetIcon :set="card.set_code" :rarity="card.rarity" class="text-[1.5em] ml-3" />
+    <SetIcon :set="card.set_code" :rarity="card.rarity" class="ml-3 text-[1.5em]" />
   </span>
 </template>
 

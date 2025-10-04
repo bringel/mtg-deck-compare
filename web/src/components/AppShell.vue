@@ -1,7 +1,7 @@
 <template>
-  <div class="min-h-screen bg-background-700">
+  <div class="bg-background-700 min-h-screen">
     <HeaderBar />
-    <div class="py-4 px-8">
+    <div class="px-8 py-4">
       <slot></slot>
     </div>
   </div>
