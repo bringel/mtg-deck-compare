@@ -3,7 +3,7 @@
     <div class="flex space-x-4">
       <div class="grow">
         <h3 class="text-lg text-white">Main Deck</h3>
-        <div class="grid grid-cols-[max-content_1fr_max-content] items-end gap-y-3">
+        <div class="grid grid-cols-[max-content_1fr_max-content] items-end">
           <DeckRemainingCardRow
             v-for="card in mainDeck?.cards"
             :card="card"
@@ -14,7 +14,7 @@
       </div>
       <div class="grow">
         <h3 class="text-lg text-white">Sideboard</h3>
-        <div class="grid grid-cols-[max-content_1fr_max-content] items-end gap-y-3">
+        <div class="grid grid-cols-[max-content_1fr_max-content] items-end">
           <DeckRemainingCardRow
             v-for="card in sideboard?.cards"
             :card="card"
