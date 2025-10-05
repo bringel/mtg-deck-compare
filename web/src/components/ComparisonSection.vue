@@ -5,9 +5,9 @@
       <div class="grid grid-cols-[max-content_1fr_max-content] items-end">
         <template v-for="cardType in cardTypes">
           <template v-if="sortedMainDeck[cardType].length > 0">
-            <div class="col-span-3 flex items-center py-1 text-base">
-              <i :class="['ms', `ms-${cardType}`, 'ms-fw', 'mr-1']"></i>{{ capitalize(cardType) }}
-            </div>
+            <span class="text-background-300 col-span-3 flex items-center py-1 text-base">
+              <CardTypeIcon :card-type="cardType" />{{ capitalize(cardType) }}
+            </span>
             <ComparisonCardRow
               v-for="card in sortedMainDeck[cardType]"
               :card="card"
@@ -36,6 +36,8 @@ import ComparisonCardRow from './ComparisonCardRow.vue';
 import { groupByCardTypes } from '../lib/cardTypeSorter';
 import { computed } from 'vue';
 import { cardTypes } from '../types/Card';
+import { capitalize } from 'lodash-es';
+import CardTypeIcon from './CardTypeIcon.vue';
 
 const props = defineProps<{
   section: { main_deck: ComparisonDeckSection; sideboard: ComparisonDeckSection } | undefined;
@@ -44,8 +46,4 @@ const props = defineProps<{
 const sortedMainDeck = computed(() => {
   return groupByCardTypes(props.section?.main_deck.cards ?? []);
 });
-
-function capitalize(str: String) {
-  return `${str.charAt(0).toLocaleUpperCase()}${str.slice(1)}`;
-}
 </script>
