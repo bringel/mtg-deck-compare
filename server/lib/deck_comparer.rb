@@ -16,30 +16,34 @@ class DeckComparer
       deck_cards = parsed_decks.map { |deck| deck.dig(:deck, section, :cards) }
 
       cards_in_all_decks = find_common_cards(deck_cards)
-      cards_in_all_decks_quantities = cards_to_quantities(section: section, cards: cards_in_all_decks)
+      cards_in_all_decks_quantities =
+        cards_to_quantities(section: section, cards: cards_in_all_decks)
 
       decks_without_common = deck_cards.map { |deck| deck - cards_in_all_decks }
       cards_in_multiple = find_cards_in_multiple_decks(decks_without_common)
-      cards_in_multiple_quantities = cards_to_quantities(section: section, cards: cards_in_multiple)
+      cards_in_multiple_quantities =
+        cards_to_quantities(section: section, cards: cards_in_multiple)
 
-      decks_remaining = build_remaining_decks_for_section(
-        section: section,
-        cards_in_all: cards_in_all_decks,
-        cards_in_multiple: cards_in_multiple
-      )
+      decks_remaining =
+        build_remaining_decks_for_section(
+          section: section,
+          cards_in_all: cards_in_all_decks,
+          cards_in_multiple: cards_in_multiple
+        )
 
       comparison[:common][section] = {
-        cards: cards_in_all_decks,
-        quantities: cards_in_all_decks_quantities
+        cards: cards_in_all_decks.compact,
+        quantities: cards_in_all_decks_quantities.transform_values(&:compact)
       }
       comparison[:multiple][section] = {
-        cards: cards_in_multiple.to_a,
-        quantities: cards_in_multiple_quantities
+        cards: cards_in_multiple.to_a.compact,
+        quantities: cards_in_multiple_quantities.transform_values(&:compact)
       }
 
       decks_remaining.each do |index, deck_portion|
-        comparison[:decks_remaining][index] =
-          comparison[:decks_remaining][index].merge!({ section => deck_portion })
+        comparison[:decks_remaining][index] = comparison[:decks_remaining][
+          index
+        ].merge!({ section => deck_portion })
       end
     end
     comparison
@@ -53,15 +57,25 @@ class DeckComparer
 
   def find_cards_in_multiple_decks(decks_without_common)
     cards_in_multiple = Set.new
-    decks_without_common.combination(2).each { |a, b| cards_in_multiple.merge(a & b) }
+    decks_without_common
+      .combination(2)
+      .each { |a, b| cards_in_multiple.merge(a & b) }
     cards_in_multiple
   end
 
-  def build_remaining_decks_for_section(section:, cards_in_all:, cards_in_multiple:)
+  def build_remaining_decks_for_section(
+    section:,
+    cards_in_all:,
+    cards_in_multiple:
+  )
     parsed_decks.to_h do |deck|
-      remaining_cards = deck.dig(:deck, section, :cards) - cards_in_all - cards_in_multiple.to_a
+      remaining_cards =
+        deck.dig(:deck, section, :cards) - cards_in_all - cards_in_multiple.to_a
       card_names = remaining_cards.map(&:name)
-      quantities = deck.dig(:deck, section, :quantities).filter { |name, _| card_names.include?(name) }
+      quantities =
+        deck
+          .dig(:deck, section, :quantities)
+          .filter { |name, _| card_names.include?(name) }
 
       [deck[:index], { cards: remaining_cards, quantities: quantities }]
     end
@@ -69,9 +83,10 @@ class DeckComparer
 
   def cards_to_quantities(section:, cards:)
     cards.to_h do |card|
-      card_quantities = parsed_decks.to_h do |deck|
-        [deck[:index], deck.dig(:deck, section, :quantities, card.name)]
-      end
+      card_quantities =
+        parsed_decks.to_h do |deck|
+          [deck[:index], deck.dig(:deck, section, :quantities, card.name)]
+        end
       [card.name, card_quantities]
     end
   end

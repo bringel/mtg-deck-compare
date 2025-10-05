@@ -20,25 +20,33 @@ class ScryfallService
       card_hashes.map do |hash|
         "(set:#{hash[:set_code]} number:#{hash[:set_number]})"
       end
-    query = query_parts.join(" or ")
 
-    res = @api.get("cards/search") { |req| req.params["q"] = query }
+    card_data =
+      query_parts
+        .each_slice(20)
+        .map do |queries|
+          query = queries.join(" or ")
 
-    response_data = JSON.parse(res.body)
+          res = @api.get("cards/search") { |req| req.params["q"] = query }
 
-    return {} unless response_data["data"]
+          response_data = JSON.parse(res.body)
 
-    response_data["data"]
-      .map { |card_data| parse_card_data(card_data) }
-      .to_h do |card|
-        [
-          {
-            set_code: card.set_code.downcase,
-            set_number: card.set_number.to_i
-          },
-          card
-        ]
-      end
+          next {} unless response_data["data"]
+
+          response_data["data"]
+            .map { |card_data| parse_card_data(card_data) }
+            .to_h do |card|
+              [
+                {
+                  set_code: card.set_code.downcase,
+                  set_number: card.set_number.to_i
+                },
+                card
+              ]
+            end
+        end
+
+    card_data.reduce({}, &:merge)
   end
 
   private
