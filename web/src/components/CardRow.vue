@@ -1,5 +1,7 @@
 <template>
-  <div class="even:bg-background-700/50 col-span-3 grid grid-cols-subgrid items-end px-2 py-1">
+  <div
+    class="nth-of-type-[2n]:bg-background-700/50 col-span-3 grid grid-cols-subgrid items-end px-2 py-1"
+  >
     <slot name="quanties"></slot>
     <span class="ml-2 text-white">
       {{ card.name }}
