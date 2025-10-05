@@ -1,3 +1,17 @@
+// these are in display order for the UI
+export const cardTypes = [
+  'creature',
+  'planeswalker',
+  'instant',
+  'sorcery',
+  'artifact',
+  'enchantment',
+  'battle',
+  'land'
+] as const;
+
+export type CardType = (typeof cardTypes)[number];
+
 export interface Card {
   name: string;
   set_code: string;
@@ -10,5 +24,5 @@ export interface Card {
   multiverse_ids: number[];
   scryfall_url: string;
   rarity: string;
-  card_type: string;
+  card_type: CardType;
 }
