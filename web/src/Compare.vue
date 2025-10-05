@@ -3,7 +3,10 @@
     <AddDeckURLInput @addURL="handleAdd" />
   </div>
   <ol class="my-4 list-inside list-decimal text-white">
-    <li v-for="url in deckStore.deckURLs">
+    <li
+      v-for="(url, index) in deckStore.deckURLs"
+      :class="`underline ${underlineColors[deckColors[index]]} decoration-2 underline-offset-2`"
+    >
       {{ url }}<template v-if="!deckFetchingMap[url]">&nbsp;- {{ deckNamesMap[url] }}</template>
     </li>
   </ol>
@@ -22,6 +25,7 @@ import Button from './components/Button.vue';
 import DeckComparison from './components/DeckComparison.vue';
 import { useDeckStore } from './store/deckStore';
 import { useDeckComparisonStoreStore } from './store/deckComparisonStore';
+import { deckColors } from './lib/deckColors';
 
 const deckStore = useDeckStore();
 const comparisonStore = useDeckComparisonStoreStore();
@@ -55,4 +59,14 @@ const deckFetchingMap = computed<{ [url: string]: boolean }>(() => {
 function startCompare() {
   comparisonStore.getComparison();
 }
+
+const underlineColors = computed(() => {
+  return {
+    orange: 'decoration-orange-500',
+    cyan: 'decoration-cyan-500',
+    violet: 'decoration-violet-500',
+    pink: 'decoration-pink-500',
+    white: 'decoration-white'
+  };
+});
 </script>

@@ -6,7 +6,9 @@
         <div class="grid grid-cols-[max-content_1fr_max-content] items-end">
           <template v-for="cardType in cardTypes">
             <template v-if="sortedMainDeck[cardType].length > 0">
-              <span class="text-background-300 col-span-3 flex items-center py-1 text-base">
+              <span
+                class="text-background-300 border-background-300 col-span-3 flex items-center border-b py-1 text-base"
+              >
                 <CardTypeIcon :card-type="cardType" />{{ capitalize(cardType) }}
               </span>
               <DeckRemainingCardRow
