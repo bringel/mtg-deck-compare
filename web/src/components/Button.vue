@@ -1,5 +1,12 @@
 <template>
-  <button :class="['relative rounded-xs px-4 py-2', ...themeClasses, 'disabled:bg-gray-500']">
+  <button
+    :class="[
+      'relative rounded-xs px-4 py-2',
+      ...themeClasses,
+      'disabled:bg-gray-500',
+      'cursor-pointer'
+    ]"
+  >
     <slot></slot>
   </button>
 </template>

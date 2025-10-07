@@ -12,6 +12,7 @@
     "format": "prettier --write web/src/"
   },
   "dependencies": {
+    "@floating-ui/vue": "^1.1.9",
     "@tailwindcss/line-clamp": "^0.4.4",
     "@vueuse/core": "^13.9.0",
     "lodash-es": "^4.17.21",

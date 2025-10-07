@@ -40,15 +40,18 @@ const showAllSection = computed(() => {
   }
 
   return (
-    comparisonData.value.common.main_deck.cards.length ||
-    comparisonData.value.common.sideboard.cards.length
+    comparisonData.value.common.main_deck.cards.length > 0 ||
+    comparisonData.value.common.sideboard.cards.length > 0
   );
 });
 
 const showMultipleSection = computed(() => {
+  if (!comparisonData.value) {
+    return false;
+  }
   return (
-    comparisonData.value?.multiple.main_deck.cards.length ||
-    comparisonData.value?.multiple.sideboard.cards.length
+    comparisonData.value.multiple.main_deck.cards.length > 0 ||
+    comparisonData.value.multiple.sideboard.cards.length > 0
   );
 });
 
