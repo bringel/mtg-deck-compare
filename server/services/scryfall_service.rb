@@ -89,8 +89,11 @@ class ScryfallService
   end
 
   def parse_card_type(type_line:)
+    # if this is any type of creature (enchantment, artifact etc), return that type
+    return :creature if type_line.match?(/creature/i)
+
     matcher =
-      /(artifact|battle|creature|enchantment|instant|land|planeswalker|sorcery)/i
+      /(creature|artifact|battle|enchantment|instant|land|planeswalker|sorcery)/i
 
     matcher.match(type_line)&.captures[0].downcase.to_sym
   end
