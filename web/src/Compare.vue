@@ -8,9 +8,15 @@
       :class="`underline ${underlineColors[deckColors[index]]} decoration-2 underline-offset-2`"
     >
       {{ url }}<template v-if="!deckFetchingMap[url]">&nbsp;- {{ deckNamesMap[url] }}</template>
+      <template v-else><LoadingIndicator class="fill-white pl-2" /></template>
     </li>
   </ol>
-  <Button theme="primary" @click="startCompare" :disabled="deckStore.deckURLs.length < 2">
+  <Button
+    theme="primary"
+    @click="startCompare"
+    :disabled="deckStore.deckURLs.length < 2"
+    :loading="comparisonStore.comparison?.isFetching"
+  >
     Compare
   </Button>
   <hr class="my-4" />
@@ -21,6 +27,7 @@
 import { computed } from 'vue';
 import AddDeckURLInput from './components/AddDeckURLInput.vue';
 
+import LoadingIndicator from './components/LoadingIndicator.vue';
 import Button from './components/Button.vue';
 import DeckComparison from './components/DeckComparison.vue';
 import { useDeckStore } from './store/deckStore';
