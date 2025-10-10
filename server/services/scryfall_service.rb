@@ -84,7 +84,8 @@ class ScryfallService
       multiverse_ids: response_data["multiverse_ids"],
       scryfall_url: response_data["scryfall_uri"],
       rarity: response_data["rarity"],
-      card_type: card_type
+      card_type: card_type,
+      layout: parse_card_layout(card: response_data)
     )
   end
 
@@ -96,5 +97,25 @@ class ScryfallService
       /(creature|artifact|battle|enchantment|instant|land|planeswalker|sorcery)/i
 
     matcher.match(type_line)&.captures[0].downcase.to_sym
+  end
+
+  def parse_card_layout(card:)
+    dual_faced_card_layouts = %w[transform modal_dfc]
+    flip_layouts = %w[flip]
+    split_layouts = %w[split]
+
+    if split_layouts.include?(card["layout"])
+      if card["keywords"].map(&:downcase).include?("aftermath")
+        return "aftermath"
+      end
+      "split"
+    elsif flip_layouts.include?(card["layout"])
+      "flip"
+    elsif dual_faced_card_layouts.include?(card["layout"])
+      return "battle" if card["type_line"].match?(/battle/i)
+      "dual"
+    else
+      "normal"
+    end
   end
 end
