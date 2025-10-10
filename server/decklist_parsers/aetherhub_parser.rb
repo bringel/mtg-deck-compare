@@ -57,7 +57,7 @@ module DecklistParsers
         category = card["name"] if card["quantity"].nil?
 
         if card["quantity"] && card["name"]
-          if category.downcase == "deck"
+          if category.downcase == "deck" || category.downcase == "commander"
             main_deck << card.except("cardId")
           elsif category.downcase == "sideboard"
             sideboard << card.except("cardId")
@@ -89,19 +89,17 @@ module DecklistParsers
     def fetch_deck(deck:)
       cards_service = CardsService.new(redis: ApiApp.settings.redis)
 
-      deck_card_hashes =
-        deck.map do |c|
-          { set_code: c["set"].downcase, set_number: c["number"].to_i }
-        end
+      deck_card_hashes = deck.map { |c| card_hash(card: c) }
 
       deck_cards = cards_service.get_cards(card_hashes: deck_card_hashes)
 
       fetched_deck =
         deck.map do |c|
+          card = deck_cards[card_hash(card: c)]
           card =
-            deck_cards[
-              { set_code: c["set"].downcase, set_number: c["number"].to_i }
-            ]
+            deck_cards.values.find do |card|
+              card.name == c["name"]
+            end if card.nil?
           { quantity: c["quantity"], card: card }
         end
 
@@ -118,6 +116,19 @@ module DecklistParsers
       cards = fetched_deck.map { |c| c[:card] }.uniq { |c| c.name }
 
       { quantities:, cards: }
+    end
+
+    def card_hash(card:)
+      if card["number"].match?(/\d+-\w+/) or card["number"].to_i > 9999
+        # for some reason, there are some cards with "numbers" like 999-AC or 999-E
+        # or the number is greater than 4 digits which shouldn't be possible right now
+        # but currently is on aether hub for pioneer masters
+        # I think maybe they're older alchemy cards that aetherhub is representing wierdly
+        # if that's the case scryfall wont find them so we can just search them by name
+        { name: card["name"] }
+      else
+        { set_code: card["set"].downcase, set_number: card["number"].to_i }
+      end
     end
   end
 end

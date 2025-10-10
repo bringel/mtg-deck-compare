@@ -18,7 +18,12 @@ class ScryfallService
   def get_cards(card_hashes:)
     query_parts =
       card_hashes.map do |hash|
-        "(set:#{hash[:set_code]} number:#{hash[:set_number]})"
+        if hash.has_key?(:name)
+          # see note in aetherhub_parser.rb about why some cards may have just a name
+          "(!\"#{hash[:name]}\")"
+        else
+          "(set:#{hash[:set_code]} number:#{hash[:set_number]})"
+        end
       end
 
     card_data =

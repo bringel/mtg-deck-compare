@@ -86,6 +86,8 @@ class CardsService
   end
 
   def card_key(card_hash:)
+    return nil if card_hash.has_key?(:name)
+
     set_code, set_number =
       card_hash.transform_keys(&:to_sym).values_at(:set_code, :set_number)
     "cards:#{set_code.downcase}:#{set_number.to_i}"
