@@ -15,7 +15,8 @@ module Models
       :multiverse_ids,
       :scryfall_url,
       :rarity,
-      :card_type
+      :card_type,
+      :layout
     ) do
       def dig(*keys)
         return unless keys.size.positive?

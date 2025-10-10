@@ -11,11 +11,7 @@
       <ManaCost :mana-cost="card.mana_cost" />
       <SetIcon :set="card.set_code" :rarity="card.rarity" class="ml-2" />
     </span>
-    <FloatingCardImage
-      ref="floating"
-      :card-image-urls="card.card_image_urls"
-      :style="floatingStyles"
-    />
+    <FloatingCardImage ref="floating" :card="card" :style="floatingStyles" />
   </div>
 </template>
 

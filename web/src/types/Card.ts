@@ -25,4 +25,5 @@ export interface Card {
   scryfall_url: string;
   rarity: string;
   card_type: CardType;
+  layout: 'normal' | 'split' | 'aftermath' | 'flip' | 'battle' | 'dual';
 }
