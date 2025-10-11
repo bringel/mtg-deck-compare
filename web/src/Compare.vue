@@ -8,7 +8,9 @@
       :class="`underline ${underlineColors[deckColors[index]]} decoration-2 underline-offset-2`"
     >
       {{ url }}<template v-if="!deckFetchingMap[url]">&nbsp;- {{ deckNamesMap[url] }}</template>
-      <template v-else><LoadingIndicator class="fill-white pl-2" /></template>
+      <template v-else
+        ><LoadingIndicator class="h-[30px] w-[30px] pl-2 align-middle text-white"
+      /></template>
     </li>
   </ol>
   <Button
