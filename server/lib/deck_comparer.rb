@@ -93,8 +93,12 @@ class DeckComparer
 
   def parsed_decks
     @deck_list_urls.map.with_index do |url, index|
-      parser = DecklistParsers::ParserList.get_parser(url)
-      { index: index, url: url, deck: parser.new(url).load_deck }
+      parser =
+        DecklistParsers::ParserList.get_parser(
+          url,
+          redis: ApiApp.settings.redis
+        )
+      { index: index, url: url, deck: parser.new(url).get_deck }
     end
   end
 end

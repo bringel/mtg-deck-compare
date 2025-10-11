@@ -41,8 +41,9 @@ class ApiApp < Sinatra::Application
 
   get "/load_deck" do
     parser = DecklistParsers::ParserList.get_parser(request.params["url"])
-
-    JSON.generate(parser.new(request.params["url"]).load_deck.to_h)
+    JSON.generate(
+      parser.new(request.params["url"], redis: settings.redis).get_deck.to_h
+    )
   end
 
   post "/compare_decks" do

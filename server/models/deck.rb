@@ -24,5 +24,9 @@ module Models
       def to_json(opts)
         JSON.generate(self.to_h, opts)
       end
+
+      def self.from_row(row)
+        new(**row)
+      end
     end
 end
