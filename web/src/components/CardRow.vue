@@ -21,13 +21,7 @@ import type { Card } from '../types/Card';
 import ManaCost from './ManaCost.vue';
 import SetIcon from './SetIcon.vue';
 import FloatingCardImage from './FloatingCardImage.vue';
-import {
-  useFloating,
-  autoUpdate,
-  type UseFloatingReturn,
-  autoPlacement,
-  shift
-} from '@floating-ui/vue';
+import { useFloating, autoUpdate, type UseFloatingReturn, autoPlacement, shift } from '@floating-ui/vue';
 
 defineProps<{ card: Card }>();
 
