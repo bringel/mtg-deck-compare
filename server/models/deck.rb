@@ -26,7 +26,28 @@ module Models
       end
 
       def self.from_row(row)
-        new(**row)
+        new(**row.transform_keys(&:to_sym))
+      end
+
+      def self.from_json(str)
+        data = JSON.parse(str, { symbolize_names: true })
+        data =
+          data.merge(
+            {
+              main_deck: deserialize_section(section: data[:main_deck]),
+              sideboard: deserialize_section(section: data[:sideboard])
+            }
+          )
+        new(**data)
+      end
+
+      def self.deserialize_section(section:)
+        section.merge(
+          {
+            cards: section[:cards].map { |c| Models::Card.from_row(c) },
+            quantities: section[:quantities].transform_keys(&:to_s)
+          }
+        )
       end
     end
 end

@@ -57,19 +57,22 @@ class ScryfallService
   private
 
   def parse_card_data(response_data)
+    name = response_data["name"]
     mana_cost = response_data["mana_cost"]
     card_image_urls = [response_data.dig("image_uris", "large")]
     card_art_urls = [response_data.dig("image_uris", "art_crop")]
     card_layout_type = response_data["layout"]
-    card_type = parse_card_type(type_line: response_data["type_line"])
+    card_type = parse_card_type(type_line: response_data["type_line"] || "")
 
-    if card_layout_type == "transform"
+    if card_layout_type == "transform" || card_layout_type == "reversible_card"
       faces = response_data["card_faces"]
+      name = faces.map { |f| f["name"] }.join(" // ")
       mana_cost = faces.first["mana_cost"]
       card_image_urls = faces.map { |f| f.dig("image_uris", "large") }
       card_art_urls = faces.map { |f| f.dig("image_uris", "art_crop") }
       card_type = parse_card_type(type_line: faces.first["type_line"])
     elsif card_layout_type == "modal_dfc"
+      name = faces.map { |f| f["name"] }.join(" // ")
       mana_cost =
         "#{response_data["card_faces"].first["mana_cost"]} / #{response_data["card_faces"].last["mana_cost"]}"
       card_image_urls = faces.map { |f| f.dig("image_uris", "large") }
@@ -78,7 +81,7 @@ class ScryfallService
     end
 
     Models::Card.new(
-      name: response_data["name"],
+      name: name,
       set_code: response_data["set"],
       set_number: response_data["collector_number"],
       mana_cost: mana_cost,
@@ -101,7 +104,9 @@ class ScryfallService
     matcher =
       /(creature|artifact|battle|enchantment|instant|land|planeswalker|sorcery)/i
 
-    matcher.match(type_line)&.captures[0].downcase.to_sym
+    return nil unless matcher.match?(type_line)
+
+    matcher.match(type_line).captures.first.downcase.to_sym
   end
 
   def parse_card_layout(card:)

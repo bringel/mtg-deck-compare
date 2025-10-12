@@ -37,7 +37,7 @@ class CardsService
     #   .first
     key = "cards:#{set_code}:#{set_number}"
     if redis.exists?(key)
-      return Models::Card.from_row(JSON.parse(redis.get(key)))
+      return Models::Card.from_json(redis.get(key))
     else
       card =
         @scryfall_service.get_card_from_set(
@@ -67,7 +67,7 @@ class CardsService
           cards:
             redis
               .mget(*existing_card_keys)
-              .map { |data| Models::Card.from_row(JSON.parse(data)) }
+              .map { |data| Models::Card.from_json(data) }
         )
       end
     missing_cards =
