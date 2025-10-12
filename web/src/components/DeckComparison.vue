@@ -1,17 +1,17 @@
 <template>
   <div class="grid grid-cols-2 gap-6">
     <Card v-if="showAllSection">
-      <template #header><h2 class="text-2xl text-white">Cards in all decks</h2></template>
+      <template #header><h2 class="text-2xl dark:text-white">Cards in all decks</h2></template>
       <ComparisonSection :section="comparisonData?.common" />
     </Card>
     <Card v-if="showMultipleSection">
-      <template #header><h2 class="text-2xl text-white">Cards in multiple decks</h2></template>
+      <template #header><h2 class="text-2xl dark:text-white">Cards in multiple decks</h2></template>
       <ComparisonSection :section="comparisonData?.multiple" />
     </Card>
     <template v-if="showRemainingSection">
       <Card v-for="(remaining, index) in comparisonData?.decks_remaining">
         <template #header>
-          <h2 class="text-2xl text-white">Deck {{ Number(index) + 1 }} Remaining Cards</h2>
+          <h2 class="text-2xl dark:text-white">Deck {{ Number(index) + 1 }} Remaining Cards</h2>
         </template>
         <RemainingDeckList
           :deck-index="index"
