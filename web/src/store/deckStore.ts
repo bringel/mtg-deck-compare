@@ -18,9 +18,14 @@ export const useDeckStore = defineStore('decks', () => {
     }
   }
 
+  function removeDeck(url: string) {
+    deckURLs.value = deckURLs.value.filter((v) => v !== url);
+  }
+
   return {
     deckURLs,
     deckFetchers,
-    loadDeck
+    loadDeck,
+    removeDeck
   };
 });
