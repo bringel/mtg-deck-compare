@@ -30,9 +30,6 @@ module DecklistParsers
 
     private
 
-    def get_card_info
-    end
-
     def deck_key
       "decks:#{url}"
     end
