@@ -38,13 +38,13 @@ const bottomClasses = computed(() => {
 function borderClass(color: DeckColor) {
   switch (color) {
     case 'orange':
-      return 'border-orange-500';
+      return 'border-orange-600 dark:border-orange-500';
     case 'cyan':
-      return 'border-cyan-500';
+      return 'border-cyan-600 dark:border-cyan-500';
     case 'violet':
-      return 'border-violet-500';
+      return 'border-violet-600 dark:border-violet-500';
     case 'pink':
-      return 'border-pink-500';
+      return 'border-pink-600 dark:border-pink-500';
     case 'white':
       return 'border-white';
   }
@@ -53,13 +53,13 @@ function borderClass(color: DeckColor) {
 function backgroundClass(color: string) {
   switch (color) {
     case 'orange':
-      return 'bg-orange-500';
+      return 'bg-orange-600 dark:bg-orange-500';
     case 'cyan':
-      return 'bg-cyan-500';
+      return 'bg-cyan-600 dark:bg-cyan-500';
     case 'violet':
-      return 'bg-violet-500';
+      return 'bg-violet-600 dark:bg-violet-500';
     case 'pink':
-      return 'bg-pink-500';
+      return 'bg-pink-600 dark:bg-pink-500';
     case 'white':
       return 'bg-white';
   }
@@ -68,13 +68,13 @@ function backgroundClass(color: string) {
 function textClass(color: string) {
   switch (color) {
     case 'orange':
-      return 'text-orange-500';
+      return 'text-orange-600 dark:text-orange-500';
     case 'cyan':
-      return 'text-cyan-500';
+      return 'text-cyan-600 dark:text-cyan-500';
     case 'violet':
-      return 'text-violet-500';
+      return 'text-violet-600 dark:text-violet-500';
     case 'pink':
-      return 'text-pink-500';
+      return 'text-pink-600 dark:text-pink-500';
     case 'white':
       return 'text-white';
   }

@@ -2,7 +2,7 @@
   <div class="flex flex-col space-y-2">
     <AddDeckURLInput @addURL="handleAdd" />
   </div>
-  <ol class="my-4 list-inside list-decimal text-white">
+  <ol class="my-4 list-inside list-decimal dark:text-white">
     <li
       v-for="(url, index) in deckStore.deckURLs"
       :class="`underline ${underlineColors[deckColors[index]]} decoration-2 underline-offset-2`"
@@ -11,7 +11,7 @@
         >{{ deckNamesMap[url]?.name }} by {{ deckNamesMap[url]?.author }}&nbsp;-&nbsp;</template
       >
       <template v-else
-        ><LoadingIndicator class="h-[30px] w-[30px] pl-2 align-middle text-white"
+        ><LoadingIndicator class="h-[30px] w-[30px] pl-2 align-middle dark:text-white"
       /></template>
       {{ url }}
     </li>

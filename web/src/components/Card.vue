@@ -1,5 +1,7 @@
 <template>
-  <div class="bg-background-600 shadow-background-400/50 rounded-md px-8 pt-2 pb-8 shadow-sm">
+  <div
+    class="bg-background-50 shadow-background-700/50 dark:bg-background-600 dark:shadow-background-400/50 rounded-md px-8 pt-2 pb-8 shadow-md dark:shadow-sm"
+  >
     <div class="mb-3">
       <slot name="header"></slot>
     </div>
