@@ -36,11 +36,16 @@ module Models
       end
 
       def self.from_row(row)
-        new(**row.merge(card_type: row["card_type"].to_s))
+        new(**row.transform_keys(&:to_sym))
       end
 
       def to_json(opts)
         JSON.generate(self.to_h, opts)
+      end
+
+      def self.from_json(str)
+        data = JSON.parse(str, { symbolize_names: true })
+        new(**data.merge(card_type: data[:card_type].to_s))
       end
     end
 end

@@ -15,7 +15,7 @@ module DecklistParsers
 
     def get_deck
       if redis.exists?(deck_key)
-        return Models::Deck.from_row(JSON.parse(redis.get(deck_key)))
+        return Models::Deck.from_json(redis.get(deck_key))
       end
       deck = load_deck
       redis.set(deck_key, JSON.generate(deck.to_h), ex: (5 * 60))
