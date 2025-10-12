@@ -22,14 +22,11 @@
 import { computed } from 'vue';
 import LoadingIndicator from './LoadingIndicator.vue';
 
-const props = withDefaults(
-  defineProps<{ theme: 'primary' | 'secondary'; loading?: boolean; disabled?: boolean }>(),
-  {
-    theme: 'primary',
-    loading: false,
-    disabled: false
-  }
-);
+const props = withDefaults(defineProps<{ theme: 'primary' | 'secondary'; loading?: boolean; disabled?: boolean }>(), {
+  theme: 'primary',
+  loading: false,
+  disabled: false
+});
 
 const isDisabled = computed(() => {
   return props.disabled || props.loading;

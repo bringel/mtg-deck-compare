@@ -13,11 +13,7 @@
         <template #header>
           <h2 class="text-2xl dark:text-white">Deck {{ Number(index) + 1 }} Remaining Cards</h2>
         </template>
-        <RemainingDeckList
-          :deck-index="index"
-          :main-deck="remaining.main_deck"
-          :sideboard="remaining.sideboard"
-        />
+        <RemainingDeckList :deck-index="index" :main-deck="remaining.main_deck" :sideboard="remaining.sideboard" />
       </Card>
     </template>
   </div>
@@ -40,8 +36,7 @@ const showAllSection = computed(() => {
   }
 
   return (
-    comparisonData.value.common.main_deck.cards.length > 0 ||
-    comparisonData.value.common.sideboard.cards.length > 0
+    comparisonData.value.common.main_deck.cards.length > 0 || comparisonData.value.common.sideboard.cards.length > 0
   );
 });
 
@@ -50,8 +45,7 @@ const showMultipleSection = computed(() => {
     return false;
   }
   return (
-    comparisonData.value.multiple.main_deck.cards.length > 0 ||
-    comparisonData.value.multiple.sideboard.cards.length > 0
+    comparisonData.value.multiple.main_deck.cards.length > 0 || comparisonData.value.multiple.sideboard.cards.length > 0
   );
 });
 

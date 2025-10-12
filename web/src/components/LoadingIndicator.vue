@@ -1,13 +1,7 @@
 <!-- sourced from https://github.com/n3r4zzurr0/svg-spinners/tree/main -->
 <template>
   <span class="inline-block h-6 w-6">
-    <svg
-      width="24"
-      height="24"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="24" height="24" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <g id="ring">
         <circle cx="12" cy="12" r="9.5" fill="none" stroke-width="3" stroke-linecap="round">
           <animate
