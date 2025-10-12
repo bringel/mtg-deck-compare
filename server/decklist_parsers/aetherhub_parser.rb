@@ -17,9 +17,10 @@ module DecklistParsers
       @doc = Nokogiri.HTML(@page_content.body)
 
       page_title = @doc.css("title").text
-      name = page_title.split("-", 2).last.strip
+      name = page_title.split("-", 2).last.gsub(/youtube video/i, "").strip
+      user = @doc.css('a[href^="/User"]').first.text.strip
 
-      { name: name, source_type: :aetherhub, source_url: @url }
+      { name: name, author: user, source_type: :aetherhub, source_url: @url }
     end
 
     def load_deck

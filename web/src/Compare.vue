@@ -7,10 +7,13 @@
       v-for="(url, index) in deckStore.deckURLs"
       :class="`underline ${underlineColors[deckColors[index]]} decoration-2 underline-offset-2`"
     >
-      {{ url }}<template v-if="!deckFetchingMap[url]">&nbsp;- {{ deckNamesMap[url] }}</template>
+      <template v-if="!deckFetchingMap[url]"
+        >{{ deckNamesMap[url]?.name }} by {{ deckNamesMap[url]?.author }}&nbsp;-&nbsp;</template
+      >
       <template v-else
         ><LoadingIndicator class="h-[30px] w-[30px] pl-2 align-middle text-white"
       /></template>
+      {{ url }}
     </li>
   </ol>
   <Button
@@ -43,18 +46,21 @@ function handleAdd(url: string) {
   deckStore.loadDeck(url);
 }
 
-const deckNamesMap = computed<{ [url: string]: string | undefined }>(() => {
-  return Object.fromEntries(
-    Array.from(deckStore.deckFetchers.keys()).map((k: string) => {
-      if (deckFetchingMap.value[k]) {
-        return [k, ''];
-      } else {
-        // @ts-ignore - object will have a data property if the fetcher isn't loading
-        return [k, (deckStore.deckFetchers.get(k)?.data ?? {})['name']];
-      }
-    })
-  );
-});
+const deckNamesMap = computed<{ [url: string]: { name: string; author: string } | undefined }>(
+  () => {
+    return Object.fromEntries(
+      Array.from(deckStore.deckFetchers.keys()).map((k: string) => {
+        if (deckFetchingMap.value[k]) {
+          return [k, { name: '', author: '' }];
+        } else {
+          const data = deckStore.deckFetchers.get(k)?.data ?? {};
+          // @ts-ignore - object will have a data property if the fetcher isn't loading
+          return [k, { name: data['name'], author: data['author'] }];
+        }
+      })
+    );
+  }
+);
 
 const deckFetchingMap = computed<{ [url: string]: boolean }>(() => {
   return Object.fromEntries(

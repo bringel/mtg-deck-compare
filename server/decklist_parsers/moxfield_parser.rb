@@ -18,6 +18,7 @@ module DecklistParsers
       deck_data = api.get("https://api.moxfield.com/v2/decks/all/#{deck_id}")
 
       name = deck_data.body["name"]
+      author = deck_data.body["authors"].map { |u| u["displayName"] }.join(", ")
 
       main_deck_cards =
         deck_data.body["mainboard"].values.map do |v|
@@ -41,6 +42,7 @@ module DecklistParsers
 
       Models::Deck.new(
         name: name,
+        author: author,
         source_type: :moxfield,
         source_url: url,
         main_deck: main_deck,

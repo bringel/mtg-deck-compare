@@ -3,7 +3,14 @@ require "json"
 
 module Models
   Deck =
-    Data.define(:name, :source_type, :source_url, :main_deck, :sideboard) do
+    Data.define(
+      :name,
+      :author,
+      :source_type,
+      :source_url,
+      :main_deck,
+      :sideboard
+    ) do
       def dig(*keys)
         return unless keys.size.positive?
 
