@@ -1,8 +1,8 @@
 <template>
-  <div class="flex space-x-4">
-    <div class="flex-grow">
+  <div class="xl:flex xl:space-x-4">
+    <div class="md:flex-grow">
       <h3 class="text-lg dark:text-white">Main Deck</h3>
-      <div class="grid grid-cols-[max-content_1fr_max-content] items-end">
+      <div class="flex flex-col md:grid md:grid-cols-[max-content_1fr_max-content] md:items-end">
         <template v-for="cardType in cardTypes">
           <template v-if="sortedMainDeck[cardType].length > 0">
             <CardTypeHeader :card-type="cardType" />
@@ -15,9 +15,9 @@
         </template>
       </div>
     </div>
-    <div class="flex-grow">
+    <div class="md:flex-grow">
       <h3 class="text-lg dark:text-white">Sideboard</h3>
-      <div class="grid grid-cols-[max-content_1fr_max-content] items-end">
+      <div class="flex flex-col md:grid md:grid-cols-[max-content_1fr_max-content] md:items-end">
         <ComparisonCardRow
           v-for="card in section?.sideboard.cards"
           :card="card"

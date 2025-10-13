@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-2 gap-6">
+  <div class="space-y-4 lg:grid lg:grid-cols-2 lg:gap-6 lg:space-y-0">
     <Card v-if="showAllSection">
       <template #header><h2 class="text-2xl dark:text-white">Cards in all decks</h2></template>
       <ComparisonSection :section="comparisonData?.common" />
