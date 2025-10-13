@@ -15,6 +15,11 @@ import { computed } from 'vue';
 const props = defineProps<{ manaCost: string }>();
 
 const manaSymbols = computed(() => {
-  return Array.from(props.manaCost.matchAll(/\{(\w+)\}/g)).map((m) => m[1]);
+  const manaCostMatcher = /\{([\w\/]+)\}/g;
+  return Array.from(props.manaCost.matchAll(manaCostMatcher)).map((m) => m[1].replace('/', ''));
+});
+
+const hasMultipleCosts = computed(() => {
+  return /\/\//.test(props.manaCost);
 });
 </script>
