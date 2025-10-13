@@ -18,6 +18,7 @@ module DecklistParsers
 
       page_title = @doc.css("title").text
       name = page_title.split("-", 2).last.gsub(/youtube video/i, "").strip
+      puts @page_content.body
       user = @doc.css('a[href^="/User"]').first.text.strip
 
       { name: name, author: user, source_type: :aetherhub, source_url: @url }
