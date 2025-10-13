@@ -22,21 +22,12 @@ module DecklistParsers
 
       main_deck_cards =
         deck_data.body["mainboard"].values.map do |v|
-          {
-            set_code: v.dig("card", "set"),
-            set_number: v.dig("card", "cn").to_i,
-            quantity: v["quantity"]
-          }
+          card_to_hash(card_data: v)
         end
       sideboard_cards =
         deck_data.body["sideboard"].values.map do |v|
-          {
-            set_code: v.dig("card", "set"),
-            set_number: v.dig("card", "cn").to_i,
-            quantity: v["quantity"]
-          }
+          card_to_hash(card_data: v)
         end
-
       main_deck = fetch_cards(card_hashes: main_deck_cards)
       sideboard = fetch_cards(card_hashes: sideboard_cards)
 
@@ -77,6 +68,20 @@ module DecklistParsers
       cards = fetched_deck.map { |h| h[:card] }.uniq { |c| c.name }
 
       { quantities:, cards: }
+    end
+
+    def card_to_hash(card_data:)
+      if card_data.dig("card", "set") == "plst"
+        set, number = card_data.dig("card", "cn").split("-")
+      else
+        set = card_data.dig("card", "set")
+        number = card_data.dig("card", "cn")
+      end
+      {
+        set_code: set.downcase,
+        set_number: number.to_i,
+        quantity: card_data["quantity"]
+      }
     end
 
     def api
