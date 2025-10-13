@@ -40,7 +40,10 @@ GEM
     nio4r (2.7.4)
     nokogiri (1.18.9-x86_64-darwin)
       racc (~> 1.4)
+    nokogiri (1.18.9-x86_64-linux-gnu)
+      racc (~> 1.4)
     pg (1.6.2-x86_64-darwin)
+    pg (1.6.2-x86_64-linux)
     prettier_print (1.2.1)
     puma (6.6.1)
       nio4r (~> 2.0)
@@ -77,6 +80,7 @@ GEM
 PLATFORMS
   x86_64-darwin-21
   x86_64-darwin-22
+  x86_64-linux
 
 DEPENDENCIES
   activesupport (~> 7.0)
@@ -92,6 +96,9 @@ DEPENDENCIES
   sinatra (~> 2.2)
   sinatra-contrib (~> 2.2)
   syntax_tree
+
+RUBY VERSION
+   ruby 3.3.2p78
 
 BUNDLED WITH
    2.3.7
