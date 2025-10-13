@@ -8,7 +8,10 @@
       {{ card.name }}
     </span>
     <span class="justify-self-end">
-      <ManaCost :mana-cost="card.mana_cost" />
+      <template v-for="(cost, index) in manaCosts">
+        <ManaCost :mana-cost="cost" />
+        <span v-if="index < manaCosts.length - 1">&nbsp;//&nbsp;</span>
+      </template>
       <SetIcon :set="card.set_code" :rarity="card.rarity" class="ml-2" />
     </span>
     <FloatingCardImage ref="floating" :card="card" :style="floatingStyles" />
@@ -16,14 +19,14 @@
 </template>
 
 <script setup lang="ts">
-import { useTemplateRef, type Ref, type ComponentPublicInstance } from 'vue';
+import { useTemplateRef, type Ref, type ComponentPublicInstance, computed } from 'vue';
 import type { Card } from '../types/Card';
 import ManaCost from './ManaCost.vue';
 import SetIcon from './SetIcon.vue';
 import FloatingCardImage from './FloatingCardImage.vue';
 import { useFloating, autoUpdate, type UseFloatingReturn, autoPlacement, shift } from '@floating-ui/vue';
 
-defineProps<{ card: Card }>();
+const props = defineProps<{ card: Card }>();
 
 const anchor: Ref<HTMLElement | null> = useTemplateRef('anchor');
 const cardImageRef: Ref<ComponentPublicInstance | null> = useTemplateRef('floating');
@@ -32,4 +35,6 @@ const { floatingStyles }: UseFloatingReturn = useFloating(anchor, cardImageRef, 
   whileElementsMounted: autoUpdate,
   middleware: [autoPlacement(), shift()]
 });
+
+const manaCosts = computed(() => props.card.mana_cost.split('//'));
 </script>
