@@ -1,6 +1,6 @@
 <template>
-  <div class="flex grow-0">
-    <input type="text" class="mr-4 w-96 rounded-xs" v-model="url" />
+  <div class="flex grow-0 flex-col gap-2 md:flex-row">
+    <input type="text" class="mr-4 w-full rounded-xs md:w-96" v-model="url" />
     <Button theme="primary" @click="handleAdd">Add URL</Button>
   </div>
 </template>

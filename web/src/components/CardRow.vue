@@ -1,13 +1,13 @@
 <template>
   <div
-    class="nth-of-type-[2n]:bg-background-200 dark:nth-of-type-[2n]:bg-background-700/50 group col-span-3 grid cursor-pointer grid-cols-subgrid items-end px-2 py-1"
+    class="nth-of-type-[2n]:bg-background-200 dark:nth-of-type-[2n]:bg-background-700/50 group flex cursor-pointer flex-col px-2 py-1 md:col-span-3 md:grid md:grid-cols-subgrid md:items-end"
     ref="anchor"
   >
     <slot name="quanties"></slot>
-    <span class="ml-2 dark:text-white">
+    <span class="md:ml-2 dark:text-white">
       {{ card.name }}
     </span>
-    <span class="justify-self-end">
+    <span class="md:justify-self-end">
       <template v-for="(cost, index) in manaCosts">
         <ManaCost :mana-cost="cost" />
         <span v-if="index < manaCosts.length - 1">&nbsp;//&nbsp;</span>

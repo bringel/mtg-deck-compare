@@ -1,7 +1,6 @@
 <template>
-  <div class="flex flex-col space-y-2">
-    <AddDeckURLInput @addURL="handleAdd" />
-  </div>
+  <AddDeckURLInput @addURL="handleAdd" />
+
   <ol class="my-4 list-inside list-decimal dark:text-white">
     <li
       v-for="(url, index) in deckStore.deckURLs"
@@ -19,6 +18,7 @@
     @click="startCompare"
     :disabled="deckStore.deckURLs.length < 2"
     :loading="comparisonStore.comparison?.isFetching"
+    class="w-full md:w-[unset]"
   >
     Compare
   </Button>
