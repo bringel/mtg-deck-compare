@@ -1,4 +1,5 @@
-source 'https://rubygems.org'
+ruby "3.3.2"
+source "https://rubygems.org"
 
 gem "activesupport", "~> 7.0"
 gem "dotenv", "~> 2.8"
