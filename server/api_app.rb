@@ -28,7 +28,15 @@ class ApiApp < Sinatra::Application
   set :default_content_type, :json
 
   configure do
-    r = ConnectionPool::Wrapper.new { Redis.new(url: ENV["REDIS_URL"]) }
+    r =
+      ConnectionPool::Wrapper.new do
+        Redis.new(
+          url: ENV["REDIS_URL"],
+          ssl_params: {
+            verify_mode: OpenSSL::SSL::VERIFY_NONE
+          }
+        )
+      end
 
     set :redis, r
   end
