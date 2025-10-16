@@ -43,33 +43,6 @@ module DecklistParsers
 
     private
 
-    def fetch_cards(card_hashes:)
-      cards_service = CardsService.new(redis: redis)
-
-      cards = cards_service.get_cards(card_hashes: card_hashes)
-
-      fetched_deck =
-        card_hashes.map do |h|
-          key = h.except(:quantity)
-
-          card = cards[key]
-          { quantity: h[:quantity], card: card }
-        end
-      quantities = {}
-      fetched_deck.each_with_object(quantities) do |card, quantities|
-        card_name = card[:card].name
-        if quantities.key?(card_name)
-          quantities[card_name] += card[:quantity]
-        else
-          quantities[card_name] = card[:quantity]
-        end
-      end
-
-      cards = fetched_deck.map { |h| h[:card] }.uniq { |c| c.name }
-
-      { quantities:, cards: }
-    end
-
     def card_to_hash(card_data:)
       if card_data.dig("card", "set") == "plst"
         set, number = card_data.dig("card", "cn").split("-")

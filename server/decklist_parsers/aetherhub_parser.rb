@@ -28,8 +28,12 @@ module DecklistParsers
       info = load_deck_info
       cards = get_card_info
 
-      main_deck = fetch_deck(deck: cards[:main_deck])
-      sideboard = fetch_deck(deck: cards[:sideboard])
+      main_deck_card_hashes =
+        cards[:main_deck].map { |c| card_to_hash(card_data: c) }
+      sideboard_card_hashes =
+        cards[:sideboard].map { |c| card_to_hash(card_data: c) }
+      main_deck = fetch_cards(card_hashes: main_deck_card_hashes)
+      sideboard = fetch_cards(card_hashes: sideboard_card_hashes)
 
       Models::Deck.new(**info, main_deck: main_deck, sideboard: sideboard)
     end
@@ -88,48 +92,26 @@ module DecklistParsers
       return { main_deck:, sideboard: }
     end
 
-    def fetch_deck(deck:)
-      cards_service = CardsService.new(redis: ApiApp.settings.redis)
-
-      deck_card_hashes = deck.map { |c| card_hash(card: c) }
-
-      deck_cards = cards_service.get_cards(card_hashes: deck_card_hashes)
-
-      fetched_deck =
-        deck.map do |c|
-          card = deck_cards[card_hash(card: c)]
-          card =
-            deck_cards.values.find do |card|
-              card.name == c["name"]
-            end if card.nil?
-          { quantity: c["quantity"], card: card }
-        end
-
-      quantities = {}
-      fetched_deck.each_with_object(quantities) do |c, quantities|
-        card_name = c[:card].name
-        if quantities.key?(card_name)
-          quantities[card_name] += c[:quantity]
-        else
-          quantities[card_name] = c[:quantity]
-        end
-      end
-
-      cards = fetched_deck.map { |c| c[:card] }.uniq { |c| c.name }
-
-      { quantities:, cards: }
+    def lookup_card_fallback(cards, card_hash)
+      # Fallback to name lookup for cards with invalid set/number
+      cards.values.find { |c| c.name == card_hash[:name] } if card_hash[:name]
     end
 
-    def card_hash(card:)
-      if card["number"].match?(/\d+-\w+/) or card["number"].to_i > 9999
+    def card_to_hash(card_data:)
+      if card_data["number"].match?(/\d+-\w+/) or
+           card_data["number"].to_i > 9999
         # for some reason, there are some cards with "numbers" like 999-AC or 999-E
         # or the number is greater than 4 digits which shouldn't be possible right now
         # but currently is on aether hub for pioneer masters
         # I think maybe they're older alchemy cards that aetherhub is representing wierdly
         # if that's the case scryfall wont find them so we can just search them by name
-        { name: card["name"] }
+        { name: card_data["name"], quantity: card_data["quantity"] }
       else
-        { set_code: card["set"].downcase, set_number: card["number"].to_i }
+        {
+          set_code: card_data["set"].downcase,
+          set_number: card_data["number"].to_i,
+          quantity: card_data["quantity"]
+        }
       end
     end
   end
