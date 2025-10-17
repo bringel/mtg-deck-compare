@@ -59,7 +59,15 @@ module DecklistParsers
 
     def api
       options = { headers: { "user-agent" => ENV["MOXFIELD_USER_AGENT"] } }
-      @api ||= Faraday.new(url, options) { |f| f.response :json }
+      @api ||=
+        Faraday.new(url, options) do |f|
+          f.use Middleware::RateLimiter,
+                redis: ServiceRegistry.redis,
+                requests: 1,
+                period: 1,
+                unit: :seconds
+          f.response :json
+        end
     end
   end
 end
