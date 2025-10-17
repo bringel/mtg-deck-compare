@@ -2,13 +2,14 @@
 
 require_relative "./scryfall_service"
 require_relative "../models/card"
+require_relative "../lib/service_registry"
 require "json"
 
 class CardsService
   attr_reader :scryfall_service, :redis
 
-  def initialize(redis: nil)
-    @scryfall_service = ScryfallService.new(redis: redis)
+  def initialize(redis: ServiceRegistry.redis)
+    @scryfall_service = ScryfallService.new
     @redis = redis
   end
 
