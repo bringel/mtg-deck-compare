@@ -8,14 +8,15 @@ require_relative "../lib/service_registry"
 
 class ScryfallService
   def initialize
-    @api = Faraday.new(url: "https://api.scryfall.com") do |f|
-      f.use Middleware::RateLimiter,
-            redis: ServiceRegistry.redis,
-            requests: 10,
-            period: 1,
-            unit: :seconds
-      f.adapter Faraday.default_adapter
-    end
+    @api =
+      Faraday.new(url: "https://api.scryfall.com") do |f|
+        f.use Middleware::RateLimiter,
+              redis: ServiceRegistry.redis,
+              requests: 10,
+              period: 1,
+              unit: :seconds
+        f.adapter Faraday.default_adapter
+      end
   end
 
   def get_card_from_set(set_code:, set_number:)
