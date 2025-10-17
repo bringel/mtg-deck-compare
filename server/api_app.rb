@@ -10,6 +10,7 @@ require "connection_pool"
 require_relative "./decklist_parsers/parser_list.rb"
 require_relative "./lib/deck_comparer.rb"
 require_relative "./lib/sequel/extensions/read_through_database.rb"
+require_relative "./lib/service_registry.rb"
 
 Dotenv.load
 
@@ -21,25 +22,22 @@ Dotenv.load
 # Sequel.extension :pg_array_ops
 # Sequel.extension :pg_json_ops
 
-REDIS = Redis.new
+# Configure shared services
+ServiceRegistry.register(
+  :redis,
+  ConnectionPool::Wrapper.new do
+    Redis.new(
+      url: ENV["REDIS_URL"],
+      ssl_params: {
+        verify_mode: OpenSSL::SSL::VERIFY_NONE
+      }
+    )
+  end
+)
 
 class ApiApp < Sinatra::Application
   set :public_folder, File.expand_path("#{__dir__}/../public")
   set :default_content_type, :json
-
-  configure do
-    r =
-      ConnectionPool::Wrapper.new do
-        Redis.new(
-          url: ENV["REDIS_URL"],
-          ssl_params: {
-            verify_mode: OpenSSL::SSL::VERIFY_NONE
-          }
-        )
-      end
-
-    set :redis, r
-  end
 
   get "/deck_info" do
     parser = DecklistParsers::ParserList.get_parser(request.params["url"])
@@ -49,9 +47,7 @@ class ApiApp < Sinatra::Application
 
   get "/load_deck" do
     parser = DecklistParsers::ParserList.get_parser(request.params["url"])
-    JSON.generate(
-      parser.new(request.params["url"], redis: settings.redis).get_deck.to_h
-    )
+    JSON.generate(parser.new(request.params["url"]).get_deck.to_h)
   end
 
   post "/compare_decks" do
@@ -63,7 +59,7 @@ class ApiApp < Sinatra::Application
   get "/check_card/:set/:number" do
     JSON.dump(
       CardsService
-        .new(redis: settings.redis)
+        .new
         .get_card_from_set(
           set_code: params["set"],
           set_number: params["number"]
@@ -75,7 +71,7 @@ class ApiApp < Sinatra::Application
   post "/check_cards" do
     JSON.generate(
       CardsService
-        .new(redis: settings.redis)
+        .new
         .get_cards(card_hashes: JSON.parse(request.body.read))
         .transform_values(&:to_h)
     )

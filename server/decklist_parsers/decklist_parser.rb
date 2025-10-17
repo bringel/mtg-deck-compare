@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 require "json"
 require_relative "../services/cards_service"
+require_relative "../lib/service_registry"
 
 module DecklistParsers
   class DecklistParser
     attr_reader :url, :redis
 
-    def initialize(url, redis:)
+    def initialize(url, redis: ServiceRegistry.redis)
       @url = url
       @redis = redis
     end

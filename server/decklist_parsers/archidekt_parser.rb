@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 require_relative "../middleware/rate_limiter"
+require_relative "../lib/service_registry"
 
 module DecklistParsers
   class ArchidektParser < DecklistParser
@@ -68,7 +69,7 @@ module DecklistParsers
       @api ||=
         Faraday.new("https://archidekt.com") do |f|
           f.use Middleware::RateLimiter,
-                redis: redis,
+                redis: ServiceRegistry.redis,
                 requests: 20,
                 period: 1,
                 unit: :minutes
