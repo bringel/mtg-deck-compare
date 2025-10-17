@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require_relative "../middleware/rate_limiter"
 
 module DecklistParsers
   class ArchidektParser < DecklistParser
@@ -64,7 +65,16 @@ module DecklistParsers
     end
 
     def api
-      @api ||= Faraday.new("https://archidekt.com") { |f| f.response :json }
+      @api ||=
+        Faraday.new("https://archidekt.com") do |f|
+          f.use Middleware::RateLimiter,
+                redis: redis,
+                requests: 20,
+                period: 1,
+                unit: :minutes
+          f.response :json
+          f.adapter Faraday.default_adapter
+        end
     end
   end
 end
