@@ -3,10 +3,20 @@ require "faraday"
 require "json"
 
 require_relative "../models/card"
+require_relative "../middleware/rate_limiter"
 
 class ScryfallService
-  def initialize
-    @api = Faraday.new(url: "https://api.scryfall.com")
+  def initialize(redis: nil)
+    @api = Faraday.new(url: "https://api.scryfall.com") do |f|
+      if redis
+        f.use Middleware::RateLimiter,
+              redis: redis,
+              requests: 10,
+              period: 1,
+              unit: :seconds
+      end
+      f.adapter Faraday.default_adapter
+    end
   end
 
   def get_card_from_set(set_code:, set_number:)

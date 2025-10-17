@@ -8,7 +8,7 @@ class CardsService
   attr_reader :scryfall_service, :redis
 
   def initialize(redis: nil)
-    @scryfall_service = ScryfallService.new
+    @scryfall_service = ScryfallService.new(redis: redis)
     @redis = redis
   end
 
