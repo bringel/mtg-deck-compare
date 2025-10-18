@@ -56,9 +56,8 @@ class ApiApp < Sinatra::Application
 
   post "/compare_decks" do
     body = JSON.parse(request.body.read)
-    puts body
 
-    DeckComparer.new(deck_list_urls: body["deckListURLs"]).compare.to_json
+    DeckComparer.new(deck_list_urls: body["deck_list_urls"]).compare.to_json
   end
 
   get "/check_card/:set/:number" do

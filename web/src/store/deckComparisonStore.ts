@@ -11,7 +11,7 @@ export const useDeckComparisonStoreStore = defineStore('deckComparisonStore', ()
   const comparison = ref<UseFetchReturn<DeckComparison> | null>(null);
 
   function getComparison() {
-    comparison.value = useFetch('/api/compare_decks').post({ deckListURLs: deckStore.deckURLs }).json<DeckComparison>();
+    comparison.value = useFetch('/api/compare_decks').post({ deckListUrls: deckStore.deckURLs }).json<DeckComparison>();
   }
   return { comparison, getComparison };
 });

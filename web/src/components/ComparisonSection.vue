@@ -9,7 +9,7 @@
             <ComparisonCardRow
               v-for="card in sortedMainDeck[cardType]"
               :card="card"
-              :quantities="section?.main_deck.quantities[card.name]"
+              :quantities="section?.mainDeck.quantities[card.name]"
             />
           </template>
         </template>
@@ -37,10 +37,10 @@ import { cardTypes } from '../types/Card';
 import CardTypeHeader from './CardTypeHeader.vue';
 
 const props = defineProps<{
-  section: { main_deck: ComparisonDeckSection; sideboard: ComparisonDeckSection } | undefined;
+  section: { mainDeck: ComparisonDeckSection; sideboard: ComparisonDeckSection } | undefined;
 }>();
 
 const sortedMainDeck = computed(() => {
-  return groupByCardTypes(props.section?.main_deck.cards ?? []);
+  return groupByCardTypes(props.section?.mainDeck.cards ?? []);
 });
 </script>
