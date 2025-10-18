@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "../decklist_parsers/parser_list.rb"
+require_relative "../lib/service_registry.rb"
 
 class DeckComparer
   attr_reader :deck_list_urls
@@ -97,7 +98,7 @@ class DeckComparer
       {
         index: index,
         url: url,
-        deck: parser.new(url, redis: ApiApp.settings.redis).get_deck
+        deck: parser.new(url, redis: ServiceRegistry.redis).get_deck
       }
     end
   end

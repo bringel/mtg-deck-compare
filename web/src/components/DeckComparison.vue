@@ -9,11 +9,11 @@
       <ComparisonSection :section="comparisonData?.multiple" />
     </Card>
     <template v-if="showRemainingSection">
-      <Card v-for="(remaining, index) in comparisonData?.decks_remaining">
+      <Card v-for="(remaining, index) in comparisonData?.decksRemaining">
         <template #header>
           <h2 class="text-2xl dark:text-white">Deck {{ Number(index) + 1 }} Remaining Cards</h2>
         </template>
-        <RemainingDeckList :deck-index="index" :main-deck="remaining.main_deck" :sideboard="remaining.sideboard" />
+        <RemainingDeckList :deck-index="index" :main-deck="remaining.mainDeck" :sideboard="remaining.sideboard" />
       </Card>
     </template>
   </div>
@@ -36,7 +36,7 @@ const showAllSection = computed(() => {
   }
 
   return (
-    comparisonData.value.common.main_deck.cards.length > 0 || comparisonData.value.common.sideboard.cards.length > 0
+    comparisonData.value.common.mainDeck.cards.length > 0 || comparisonData.value.common.sideboard.cards.length > 0
   );
 });
 
@@ -45,7 +45,7 @@ const showMultipleSection = computed(() => {
     return false;
   }
   return (
-    comparisonData.value.multiple.main_deck.cards.length > 0 || comparisonData.value.multiple.sideboard.cards.length > 0
+    comparisonData.value.multiple.mainDeck.cards.length > 0 || comparisonData.value.multiple.sideboard.cards.length > 0
   );
 });
 
@@ -54,6 +54,6 @@ const showRemainingSection = computed(() => {
     return false;
   }
 
-  return Object.keys(comparisonData.value.decks_remaining).length > 0;
+  return Object.keys(comparisonData.value.decksRemaining).length > 0;
 });
 </script>

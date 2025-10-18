@@ -2,7 +2,7 @@
   <figure class="z-10 hidden flex-col gap-2 group-hover:flex">
     <div class="flex flex-row gap-1">
       <div
-        v-for="(imageURL, index) in card.card_image_urls"
+        v-for="(imageURL, index) in card.cardImageUrls"
         :class="{
           'flex h-[535px] w-[535px] items-center justify-center': frontRotated && index === 0
         }"
