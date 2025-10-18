@@ -11,6 +11,7 @@ require_relative "./decklist_parsers/parser_list.rb"
 require_relative "./lib/deck_comparer.rb"
 require_relative "./lib/sequel/extensions/read_through_database.rb"
 require_relative "./lib/service_registry.rb"
+require_relative "./middleware/camel_case_to_snake_case"
 
 Dotenv.load
 
@@ -38,6 +39,7 @@ ServiceRegistry.register(
 class ApiApp < Sinatra::Application
   set :public_folder, File.expand_path("#{__dir__}/../public")
   set :default_content_type, :json
+  use CamelCaseToSnakeCase
 
   get "/deck_info" do
     parser = DecklistParsers::ParserList.get_parser(request.params["url"])
@@ -52,6 +54,7 @@ class ApiApp < Sinatra::Application
 
   post "/compare_decks" do
     body = JSON.parse(request.body.read)
+    puts body
 
     DeckComparer.new(deck_list_urls: body["deckListURLs"]).compare.to_json
   end
