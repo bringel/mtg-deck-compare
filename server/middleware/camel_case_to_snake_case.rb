@@ -8,11 +8,13 @@ class CamelCaseToSnakeCase
   end
 
   def call(env)
-    body = JSON.parse(env["rack.input"].gets)
+    if env["REQUEST_METHOD"] == "POST"
+      body = JSON.parse(env["rack.input"].gets)
 
-    transformed_body = to_snake_case(body)
+      transformed_body = to_snake_case(body)
 
-    env["rack.input"] = StringIO.new(JSON.generate(transformed_body))
+      env["rack.input"] = StringIO.new(JSON.generate(transformed_body))
+    end
     @app.call(env)
   end
 
