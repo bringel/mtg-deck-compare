@@ -6,13 +6,6 @@ module DecklistParsers
   class ArchidektParser < DecklistParser
     URL_PATTERN = %r{(?:https?://)?archidekt.com\/decks\/(\d+)/}
 
-    def self.can_handle_url?(url)
-      url.match?(URL_PATTERN)
-    end
-
-    def load_deck_info
-    end
-
     def load_deck
       deck_id = URL_PATTERN.match(url).captures.first
 

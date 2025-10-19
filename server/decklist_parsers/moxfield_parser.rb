@@ -7,13 +7,10 @@ require_relative "../models/deck"
 
 module DecklistParsers
   class MoxfieldParser < DecklistParser
-    def self.can_handle_url?(url)
-      url.match?(%r{(?:https?://)?moxfield\.com/decks/.*})
-    end
+    URL_PATTERN = %r{(?:https?://)?moxfield\.com/decks/(.*)}
 
     def load_deck
-      deck_id =
-        %r{(?:https?://)?moxfield\.com/decks/(.*)}.match(url).captures.first
+      deck_id = URL_PATTERN.match(url).captures.first
 
       deck_data = api.get("https://api.moxfield.com/v2/decks/all/#{deck_id}")
 

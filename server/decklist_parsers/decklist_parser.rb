@@ -13,6 +13,7 @@ module DecklistParsers
     end
 
     def self.can_handle_url?(url)
+      url.match?(self::URL_PATTERN)
     end
 
     def get_deck
