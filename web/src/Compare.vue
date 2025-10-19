@@ -1,16 +1,25 @@
 <template>
+  <div class="text-background-800 mb-10 text-xl font-semibold">
+    MTG Deck Compare lets you instantly compare multiple MTG deck lists side-by-side by dropping in URLs from your
+    favorite deckbuilding sites. <br />
+    See what they share, what sets them apart, and make smarter decisions for analyzing the meta or refining your own
+    builds.
+  </div>
   <AddDeckURLInput @addURL="handleAdd" />
 
-  <ol class="my-4 list-inside list-decimal dark:text-white">
+  <ol class="my-4 ml-4 max-w-fit list-outside list-decimal space-y-2 dark:text-white">
     <li
       v-for="(url, index) in deckStore.deckURLs"
       :class="`underline ${underlineColors[deckColors[index]]} decoration-2 underline-offset-2`"
     >
-      <template v-if="!deckFetchingMap[url]">
-        {{ deckNamesMap[url]?.name }} by {{ deckNamesMap[url]?.author }}&nbsp;-
-      </template>
-      <template v-else><LoadingIndicator class="h-[30px] w-[30px] pl-2 align-middle dark:text-white" /></template>
-      {{ url }}<XCircleIcon class="ml-2 inline-block size-6 cursor-pointer text-red-700" @click="removeURL(url)" />
+      <div class="flex items-center" v-if="!deckFetchingMap[url]">
+        <a class="flex grow cursor-pointer flex-col" :href="url" rel="noopener noreferrer" target="_blank">
+          <span>{{ deckNamesMap[url]?.name }} by {{ deckNamesMap[url]?.author }}</span>
+          <span> {{ url }}</span>
+        </a>
+        <XCircleIcon class="ml-2 inline-block size-6 shrink-0 cursor-pointer text-red-700" @click="removeURL(url)" />
+      </div>
+      <LoadingIndicator v-else class="h-[30px] w-[30px] pl-2 align-middle dark:text-white" />
     </li>
   </ol>
   <Button
