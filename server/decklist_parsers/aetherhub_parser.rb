@@ -8,9 +8,7 @@ require_relative "../models/deck"
 
 module DecklistParsers
   class AetherhubParser < DecklistParser
-    def self.can_handle_url?(url)
-      url.match?(%r{(?:https?://)?aetherhub\.com/Deck/.*})
-    end
+    URL_PATTERN = %r{(?:https?://)?aetherhub\.com/Deck/.*}
 
     def load_deck_info
       @page_content = Faraday.get(@url)
