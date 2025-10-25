@@ -9,3 +9,4 @@ end
 
 port ENV["PORT"] || 5000
 environment ENV["RACK_ENV"] || "development"
+worker_timeout 600 if ENV["RACK_ENV"] == "development"
