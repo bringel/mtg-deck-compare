@@ -5,6 +5,7 @@ require "json"
 require_relative "../models/card"
 require_relative "../middleware/rate_limiter"
 require_relative "../lib/service_registry"
+require_relative "../models/card_key"
 
 class ScryfallService
   def initialize
@@ -50,15 +51,7 @@ class ScryfallService
 
           response_data["data"]
             .map { |card_data| parse_card_data(card_data) }
-            .to_h do |card|
-              [
-                {
-                  set_code: card.set_code.downcase,
-                  set_number: card.set_number.to_i
-                },
-                card
-              ]
-            end
+            .to_h { |card| [Models::CardKey.from_card(card), card] }
         end
 
     card_data.reduce({}, &:merge)
@@ -82,6 +75,7 @@ class ScryfallService
       card_art_urls = faces.map { |f| f.dig("image_uris", "art_crop") }
       card_type = parse_card_type(type_line: faces.first["type_line"])
     elsif card_layout_type == "modal_dfc"
+      faces = response_data["card_faces"]
       name = faces.map { |f| f["name"] }.join(" // ")
       mana_cost =
         "#{response_data["card_faces"].first["mana_cost"]} / #{response_data["card_faces"].last["mana_cost"]}"

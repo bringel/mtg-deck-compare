@@ -113,13 +113,5 @@ module DecklistParsers
         sideboard: fetch_cards(card_hashes: sideboard_cards)
       }
     end
-
-    def lookup_card_fallback(cards, card_hash)
-      if card_hash[:name]
-        cards.values.find do |c|
-          c.name.split(" // ").include?(card_hash[:name])
-        end
-      end
-    end
   end
 end

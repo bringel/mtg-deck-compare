@@ -50,8 +50,6 @@ module DecklistParsers
         end
       end
 
-      require "byebug"
-      byebug
       main_deck = fetch_cards(card_hashes: main_deck_cards)
       sideboard = fetch_cards(card_hashes: sideboard_cards)
 
