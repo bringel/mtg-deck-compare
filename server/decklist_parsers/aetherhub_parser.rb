@@ -16,7 +16,6 @@ module DecklistParsers
 
       page_title = @doc.css("title").text
       name = page_title.split("-", 2).last.gsub(/youtube video/i, "").strip
-      puts @page_content.body
       user = @doc.css('a[href^="/User"]').first.text.strip
 
       { name: name, author: user, source_type: :aetherhub, source_url: @url }
@@ -90,13 +89,8 @@ module DecklistParsers
       return { main_deck:, sideboard: }
     end
 
-    def lookup_card_fallback(cards, card_hash)
-      # Fallback to name lookup for cards with invalid set/number
-      cards.values.find { |c| c.name == card_hash[:name] } if card_hash[:name]
-    end
-
     def card_to_hash(card_data:)
-      if card_data["number"].match?(/\d+-\w+/) or
+      if card_data["number"].nil? || card_data["number"].match?(/\d+-\w+/) ||
            card_data["number"].to_i > 9999
         # for some reason, there are some cards with "numbers" like 999-AC or 999-E
         # or the number is greater than 4 digits which shouldn't be possible right now
