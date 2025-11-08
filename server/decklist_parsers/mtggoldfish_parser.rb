@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 require "faraday"
 require "nokogiri"
+require "byebug"
 
 require_relative "./decklist_parser"
 require_relative "../services/cards_service"
 require_relative "../models/deck"
+require_relative "./text_list_parser"
 
 module DecklistParsers
   class MtggoldfishParser < DecklistParser
@@ -42,29 +44,13 @@ module DecklistParsers
       # Try h1.deck-view-title first (user decks)
       name = doc.css(".deck-container h1.title").first&.text&.strip
 
-      # Fall back to page title
-      if name.nil? || name.empty?
-        title = doc.css("title").first&.text&.strip || ""
-        # Remove " - MTGGoldfish" suffix and author prefix if present
-        name = title.split(" - ").first&.strip || "Unknown Deck"
-        # Remove "by [author]" suffix if present
-        name = name.sub(/\s+by\s+.+$/i, "").strip
-      end
-
-      name
+      name.sub(/\s+by\s+.+$/i, "").strip
     end
 
     def extract_author(doc)
       # Try to find author link in deck-view-author
       author_elem = doc.css(".deck-container span.author").first
-      return author_elem.text.strip if author_elem
-
-      # Try to extract from title (format: "Deck Name by Author")
-      title = doc.css("title").first&.text&.strip || ""
-      match = title.match(/by\s+([^-]+)/i)
-      return match[1].strip if match
-
-      "Unknown"
+      return author_elem.text.sub(/\s*by\s*/i, "").strip
     end
 
     def parse_decklist_text(text)
@@ -77,40 +63,11 @@ module DecklistParsers
         )
       end
 
-      main_deck_cards = []
-      sideboard_cards = []
-      current_section = :main_deck
-
-      text.each_line do |line|
-        line = line.strip
-        next if line.empty?
-
-        if line.downcase == "sideboard" ||
-             line.downcase.start_with?("sideboard")
-          current_section = :sideboard
-          next
-        end
-
-        match = line.match(/^(\d+)\s+(.+)$/)
-        next unless match
-
-        quantity = match[1].to_i
-        card_name = match[2].strip
-
-        # no set information on the goldfish pages so we have to fall back
-        # to name based searches
-        card_hash = { name: card_name, quantity: quantity }
-
-        if current_section == :sideboard
-          sideboard_cards << card_hash
-        else
-          main_deck_cards << card_hash
-        end
-      end
+      cards = DecklistParsers::TextListParser.parse_decklist(text)
 
       {
-        main_deck: fetch_cards(card_hashes: main_deck_cards),
-        sideboard: fetch_cards(card_hashes: sideboard_cards)
+        main_deck: fetch_cards(card_hashes: cards[:main_deck]),
+        sideboard: fetch_cards(card_hashes: cards[:sideboard])
       }
     end
   end
