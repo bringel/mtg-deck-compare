@@ -19,3 +19,5 @@ gem "syntax_tree"
 gem "sinatra-contrib", "~> 2.2"
 
 gem "connection_pool", "~> 2.5"
+
+gem "debug", "~> 1.11"
