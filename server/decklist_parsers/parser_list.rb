@@ -5,6 +5,7 @@ require_relative "./moxfield_parser"
 require_relative "./archidekt_parser"
 require_relative "./deckstats_parser"
 require_relative "./mtggoldfish_parser"
+require_relative "./mtgdecks_parser"
 
 module DecklistParsers
   class ParserList
@@ -13,7 +14,8 @@ module DecklistParsers
       MoxfieldParser,
       ArchidektParser,
       DeckstatsParser,
-      MtggoldfishParser
+      MtggoldfishParser,
+      MtgDecksParser
     ]
 
     def self.get_parser(url)
