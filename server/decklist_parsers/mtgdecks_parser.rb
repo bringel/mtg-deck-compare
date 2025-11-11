@@ -11,29 +11,39 @@ module DecklistParsers
   class MtgDecksParser < DecklistParser
     URL_PATTERN = %r{(?:https?://)?(?:www\.)?mtgdecks.net/\w+/(.+)}
 
-    def load_deck
-      response = Faraday.get(url)
-      doc = Nokogiri.HTML(response.body)
-
-      deck_header = doc.css("h1:has(+ div#deck-tags-area)")
+    def deck_name
       match = deck_header.text.match(/(?:MTG Arena)?(.*) deck, by(.*)/)
+      match[1].strip
+    end
 
-      name = match[1].strip
-      author = match[2].strip
+    def author
+      match = deck_header.text.match(/(?:MTG Arena)?(.*) deck, by(.*)/)
+      match[2].strip
+    end
 
+    def card_hashes
       decklist_element = doc.css("textarea#arena_deck").first
 
-      parsed_list =
-        DecklistParsers::TextListParser.parse_decklist(decklist_element.text)
+      DecklistParsers::TextListParser.parse_decklist(decklist_element.text)
+    end
 
-      Models::Deck.new(
-        name: name,
-        author: author,
-        source_type: :mtg_decks,
-        source_url: url,
-        main_deck: fetch_cards(card_hashes: parsed_list[:main_deck]),
-        sideboard: fetch_cards(card_hashes: parsed_list[:sideboard])
-      )
+    def source_type
+      :mtg_decks
+    end
+
+    private
+
+    def deck_header
+      @deck_header ||= doc.css("h1:has(+ div#deck-tags-area)")
+    end
+
+    def doc
+      if @doc
+        @doc
+      else
+        response = Faraday.get(url)
+        @doc = Nokogiri.HTML(response.body)
+      end
     end
   end
 end

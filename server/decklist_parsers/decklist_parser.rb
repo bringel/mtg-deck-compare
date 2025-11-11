@@ -26,10 +26,31 @@ module DecklistParsers
       deck
     end
 
-    def load_deck_info
+    def load_deck
+      Models::Deck.new(
+        name: deck_name,
+        author: author,
+        source_type: source_type,
+        source_url: url,
+        main_deck: fetch_cards(card_hashes: card_hashes[:main_deck]),
+        sideboard: fetch_cards(card_hashes: card_hashes[:sideboard])
+      )
     end
 
-    def load_deck
+    def deck_name
+      raise NotImplementedError
+    end
+
+    def author
+      raise NotImplementedError
+    end
+
+    def card_hashes
+      rase NotImplementedError
+    end
+
+    def source_type
+      raise NotImplementedError
     end
 
     private
