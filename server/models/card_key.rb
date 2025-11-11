@@ -23,11 +23,19 @@ module Models
       end
 
       def self.from_json_response(str)
-        data = JSON.parse(str, { symbolize_names: true })
+        data = str.is_a?(String) ? JSON.parse(str) : str
+        # For cards with printed_name (like Spider-Man set), store both names
+        # separated by "|||" so we can match against either in eql?
+        name =
+          if data["printed_name"]
+            "#{data["name"]}|||#{data["printed_name"]}"
+          else
+            data["name"]
+          end
         new(
-          set_code: data[:set],
-          card_number: data[:collector_number].to_i,
-          name: data[:name]
+          set_code: data["set"],
+          card_number: data["collector_number"].to_i,
+          name: name
         )
       end
 
@@ -37,6 +45,23 @@ module Models
           card_number: card.set_number.to_i,
           name: card.name
         )
+      end
+
+      # Helper method to match card names, handling printed_name variants and split cards
+      # For cards with printed_name (stored as "name|||printed_name"), match against either name
+      # For split cards ("//"), only compares the first face to maintain original behavior
+      def name_matches?(other)
+        self_names = extract_names(name)
+        other_names = extract_names(other.name)
+
+        self_names.any? { |sn| other_names.any? { |on| sn == on } }
+      end
+
+      # Extract all possible name variants from a card name string
+      # Handles printed_name variants ("|||") and takes first face of split cards ("//")
+      def extract_names(name_str)
+        # Split by printed_name delimiter, then take first face of any split cards
+        name_str.split("|||").map { |n| n.split("//").first.strip }
       end
 
       # Overriding eql? and hash here to allow for matching against keys that only have a name instead of
@@ -52,7 +77,7 @@ module Models
                  other.card_number.nil?
           set_code == other.set_code && card_number == other.card_number
         else
-          name.split("//").first.strip == other.name.split("//").first.strip
+          name_matches?(other)
         end
       end
 

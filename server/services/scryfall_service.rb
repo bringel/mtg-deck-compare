@@ -49,9 +49,12 @@ class ScryfallService
 
           next {} unless response_data["data"]
 
-          response_data["data"]
-            .map { |card_data| parse_card_data(card_data) }
-            .to_h { |card| [Models::CardKey.from_card(card), card] }
+          response_data["data"].to_h do |card_data|
+            [
+              Models::CardKey.from_json_response(card_data),
+              parse_card_data(card_data)
+            ]
+          end
         end
 
     card_data.reduce({}, &:merge)
@@ -60,7 +63,13 @@ class ScryfallService
   private
 
   def parse_card_data(response_data)
-    name = response_data["name"]
+    # Use printed_name if available, formatted as "Printed Name (Canonical Name)"
+    name =
+      if response_data["printed_name"]
+        "#{response_data["printed_name"]} (#{response_data["name"]})"
+      else
+        response_data["name"]
+      end
     mana_cost = response_data["mana_cost"]
     card_image_urls = [response_data.dig("image_uris", "large")]
     card_art_urls = [response_data.dig("image_uris", "art_crop")]
