@@ -11,29 +11,19 @@ module DecklistParsers
   class DeckstatsParser < DecklistParser
     URL_PATTERN = %r{(?:https?://)?deckstats\.net/decks/(\d+)/(.+)}
 
-    def load_deck
-      user_id, deck_id = URL_PATTERN.match(url).captures
+    def deck_name
+      deck_data["name"]
+    end
 
-      response =
-        Faraday.get("https://deckstats.net/decks/#{user_id}/#{deck_id}/en")
-      doc = Nokogiri.HTML(response.body)
+    def author
+      author_from_data = deck_data.dig("saved_by", "username")
+      author_from_link = user_link&.text
+      author_from_link || author_from_data || "Unknown"
+    end
 
-      deck_data = extract_deck_data(doc)
-
+    def card_hashes
       set_mappings = fetch_set_mappings
 
-      name = deck_data["name"]
-      author = deck_data.dig("saved_by", "username") || "Unknown"
-
-      user_href = "https://deckstats.net/decks/#{user_id}"
-
-      user_link =
-        doc
-          .css("a[href^='#{user_href}']")
-          .find { |anchor| anchor["href"].split("?").first == user_href }
-      author = user_link&.text
-
-      # Process sections - anything not "Sideboard" goes to main deck
       main_deck_cards = []
       sideboard_cards = []
 
@@ -50,25 +40,37 @@ module DecklistParsers
         end
       end
 
-      main_deck = fetch_cards(card_hashes: main_deck_cards)
-      sideboard = fetch_cards(card_hashes: sideboard_cards)
+      { main_deck: main_deck_cards, sideboard: sideboard_cards }
+    end
 
-      Models::Deck.new(
-        name: name,
-        author: author,
-        source_type: :deckstats,
-        source_url: url,
-        main_deck: main_deck,
-        sideboard: sideboard
-      )
+    def source_type
+      :deckstats
     end
 
     private
 
-    def extract_sets_version(doc)
-      script_content = doc.css("script").map(&:content).join("\n")
-      match = script_content.match(/sets_version\s*=\s*(\d+)/)
-      match ? match[1] : ""
+    def doc
+      if @doc
+        @doc
+      else
+        user_id, deck_id = URL_PATTERN.match(url).captures
+        response =
+          Faraday.get("https://deckstats.net/decks/#{user_id}/#{deck_id}/en")
+        @doc = Nokogiri.HTML(response.body)
+      end
+    end
+
+    def deck_data
+      @deck_data ||= extract_deck_data(doc)
+    end
+
+    def user_link
+      user_id = URL_PATTERN.match(url).captures.first
+      user_href = "https://deckstats.net/decks/#{user_id}"
+
+      doc
+        .css("a[href^='#{user_href}']")
+        .find { |anchor| anchor["href"].split("?").first == user_href }
     end
 
     def extract_deck_data(doc)
