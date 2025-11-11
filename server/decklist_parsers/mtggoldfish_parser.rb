@@ -16,59 +16,39 @@ module DecklistParsers
     URL_PATTERN =
       %r{(?:https?://)?(?:www\.)?mtggoldfish\.com/(?:deck|archetype)/[^#?]+}
 
-    def load_deck
-      response = Faraday.get(url, {}, { "Accept" => "text/html" })
-      doc = Nokogiri.HTML(response.body)
+    def deck_name
+      name = doc.css(".deck-container h1.title").first&.text&.strip
+      name.sub(/\s+by\s+.+$/i, "").strip
+    end
 
-      name = extract_deck_name(doc)
+    def author
+      author_elem = doc.css(".deck-container span.author").first
+      author_elem.text.sub(/\s*by\s*/i, "").strip
+    end
 
-      author = extract_author(doc)
-
+    def card_hashes
       decklist_text = doc.css("input#deck_input_deck").first&.attr("value")
 
-      cards = parse_decklist_text(decklist_text)
+      unless decklist_text
+        return { main_deck: [], sideboard: [] }
+      end
 
-      Models::Deck.new(
-        name: name,
-        author: author,
-        source_type: :mtggoldfish,
-        source_url: url,
-        main_deck: cards[:main_deck],
-        sideboard: cards[:sideboard]
-      )
+      DecklistParsers::TextListParser.parse_decklist(decklist_text)
+    end
+
+    def source_type
+      :mtggoldfish
     end
 
     private
 
-    def extract_deck_name(doc)
-      # Try h1.deck-view-title first (user decks)
-      name = doc.css(".deck-container h1.title").first&.text&.strip
-
-      name.sub(/\s+by\s+.+$/i, "").strip
-    end
-
-    def extract_author(doc)
-      # Try to find author link in deck-view-author
-      author_elem = doc.css(".deck-container span.author").first
-      return author_elem.text.sub(/\s*by\s*/i, "").strip
-    end
-
-    def parse_decklist_text(text)
-      unless text
-        return(
-          {
-            main_deck: fetch_cards(card_hashes: []),
-            sideboard: fetch_cards(card_hashes: [])
-          }
-        )
+    def doc
+      if @doc
+        @doc
+      else
+        response = Faraday.get(url, {}, { "Accept" => "text/html" })
+        @doc = Nokogiri.HTML(response.body)
       end
-
-      cards = DecklistParsers::TextListParser.parse_decklist(text)
-
-      {
-        main_deck: fetch_cards(card_hashes: cards[:main_deck]),
-        sideboard: fetch_cards(card_hashes: cards[:sideboard])
-      }
     end
   end
 end

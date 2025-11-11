@@ -10,35 +10,41 @@ module DecklistParsers
   class AetherhubParser < DecklistParser
     URL_PATTERN = %r{(?:https?://)?aetherhub\.com/Deck/.*}
 
-    def load_deck_info
-      @page_content = Faraday.get(@url)
-      @doc = Nokogiri.HTML(@page_content.body)
-
-      page_title = @doc.css("title").text
-      name = page_title.split("-", 2).last.gsub(/youtube video/i, "").strip
-      user = @doc.css('a[href^="/User"]').first.text.strip
-
-      { name: name, author: user, source_type: :aetherhub, source_url: @url }
+    def deck_name
+      page_title = doc.css("title").text
+      page_title.split("-", 2).last.gsub(/youtube video/i, "").strip
     end
 
-    def load_deck
-      info = load_deck_info
+    def author
+      doc.css('a[href^="/User"]').first.text.strip
+    end
+
+    def card_hashes
       cards = get_card_info
 
-      main_deck_card_hashes =
-        cards[:main_deck].map { |c| card_to_hash(card_data: c) }
-      sideboard_card_hashes =
-        cards[:sideboard].map { |c| card_to_hash(card_data: c) }
-      main_deck = fetch_cards(card_hashes: main_deck_card_hashes)
-      sideboard = fetch_cards(card_hashes: sideboard_card_hashes)
+      {
+        main_deck: cards[:main_deck].map { |c| card_to_hash(card_data: c) },
+        sideboard: cards[:sideboard].map { |c| card_to_hash(card_data: c) }
+      }
+    end
 
-      Models::Deck.new(**info, main_deck: main_deck, sideboard: sideboard)
+    def source_type
+      :aetherhub
     end
 
     private
 
+    def doc
+      if @doc
+        @doc
+      else
+        page_content = Faraday.get(url)
+        @doc = Nokogiri.HTML(page_content.body)
+      end
+    end
+
     def get_card_info
-      deck_id = @doc.css("[data-deckid].mtgaExport").first["data-deckid"]
+      deck_id = doc.css("[data-deckid].mtgaExport").first["data-deckid"]
 
       deck_response =
         Faraday.get(
