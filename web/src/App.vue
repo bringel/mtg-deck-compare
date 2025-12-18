@@ -1,11 +1,10 @@
 <template>
   <AppShell>
-    <Compare />
+    <router-view />
   </AppShell>
 </template>
 
 <script setup lang="ts">
-import Compare from './Compare.vue';
 import AppShell from './components/AppShell.vue';
 import { useTheme } from './composables/useTheme';
 
