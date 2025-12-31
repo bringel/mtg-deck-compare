@@ -1,10 +1,4 @@
 <template>
-  <div class="text-background-800 mb-10 text-xl font-semibold">
-    MTG Deck Compare lets you instantly compare multiple MTG deck lists side-by-side by dropping in URLs from your
-    favorite deckbuilding sites. <br />
-    See what they share, what sets them apart, and make smarter decisions for analyzing the meta or refining your own
-    builds.
-  </div>
   <AddDeckURLInput @addURL="handleAdd" />
 
   <ol class="my-4 ml-4 max-w-fit list-outside list-decimal space-y-2 dark:text-white">
