@@ -1,17 +1,20 @@
 # frozen_string_literal: true
 require "json"
 require_relative "../services/cards_service"
+require_relative "../lib/service_registry"
+require_relative "../models/card_key"
 
 module DecklistParsers
   class DecklistParser
     attr_reader :url, :redis
 
-    def initialize(url, redis:)
+    def initialize(url, redis: ServiceRegistry.redis)
       @url = url
       @redis = redis
     end
 
     def self.can_handle_url?(url)
+      url.match?(self::URL_PATTERN)
     end
 
     def get_deck
@@ -23,10 +26,31 @@ module DecklistParsers
       deck
     end
 
-    def load_deck_info
+    def load_deck
+      Models::Deck.new(
+        name: deck_name,
+        author: author,
+        source_type: source_type,
+        source_url: url,
+        main_deck: fetch_cards(card_hashes: card_hashes[:main_deck]),
+        sideboard: fetch_cards(card_hashes: card_hashes[:sideboard])
+      )
     end
 
-    def load_deck
+    def deck_name
+      raise NotImplementedError
+    end
+
+    def author
+      raise NotImplementedError
+    end
+
+    def card_hashes
+      rase NotImplementedError
+    end
+
+    def source_type
+      raise NotImplementedError
     end
 
     private
@@ -43,21 +67,15 @@ module DecklistParsers
       cards = cards_service.get_cards(card_hashes: card_hashes)
 
       quantities = Hash.new { 0 }
+      full_card_keys = cards.keys
       card_hashes.each do |card_hash|
-        key = card_hash.except(:quantity)
-        card = cards[key]
-        # Allow subclasses to provide custom lookup logic if direct lookup fails
-        card = lookup_card_fallback(cards, card_hash) if card.nil?
+        key = Models::CardKey.from_card_hash(card_hash)
+        full_key = full_card_keys.find { |full_key| full_key == key }
+        card = cards[full_key]
         quantities[card.name] += card_hash[:quantity]
       end
 
       { quantities:, cards: cards.values.uniq { |c| c.name } }
-    end
-
-    # Override in subclasses if you need custom card lookup logic
-    # (e.g., fallback to name-based search)
-    def lookup_card_fallback(cards, card_hash)
-      nil
     end
 
     def deck_key

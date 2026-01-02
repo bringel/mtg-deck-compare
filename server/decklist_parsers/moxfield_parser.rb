@@ -7,41 +7,40 @@ require_relative "../models/deck"
 
 module DecklistParsers
   class MoxfieldParser < DecklistParser
-    def self.can_handle_url?(url)
-      url.match?(%r{(?:https?://)?moxfield\.com/decks/.*})
+    URL_PATTERN = %r{(?:https?://)?moxfield\.com/decks/(.*)}
+
+    def deck_name
+      deck_data["name"]
     end
 
-    def load_deck
-      deck_id =
-        %r{(?:https?://)?moxfield\.com/decks/(.*)}.match(url).captures.first
+    def author
+      deck_data["authors"].map { |u| u["displayName"] }.join(", ")
+    end
 
-      deck_data = api.get("https://api.moxfield.com/v2/decks/all/#{deck_id}")
+    def card_hashes
+      {
+        main_deck:
+          deck_data["mainboard"].values.map { |v| card_to_hash(card_data: v) },
+        sideboard:
+          deck_data["sideboard"].values.map { |v| card_to_hash(card_data: v) }
+      }
+    end
 
-      name = deck_data.body["name"]
-      author = deck_data.body["authors"].map { |u| u["displayName"] }.join(", ")
-
-      main_deck_cards =
-        deck_data.body["mainboard"].values.map do |v|
-          card_to_hash(card_data: v)
-        end
-      sideboard_cards =
-        deck_data.body["sideboard"].values.map do |v|
-          card_to_hash(card_data: v)
-        end
-      main_deck = fetch_cards(card_hashes: main_deck_cards)
-      sideboard = fetch_cards(card_hashes: sideboard_cards)
-
-      Models::Deck.new(
-        name: name,
-        author: author,
-        source_type: :moxfield,
-        source_url: url,
-        main_deck: main_deck,
-        sideboard: sideboard
-      )
+    def source_type
+      :moxfield
     end
 
     private
+
+    def deck_data
+      if @deck_data
+        @deck_data
+      else
+        deck_id = URL_PATTERN.match(url).captures.first
+        response = api.get("https://api.moxfield.com/v2/decks/all/#{deck_id}")
+        @deck_data = response.body
+      end
+    end
 
     def card_to_hash(card_data:)
       if card_data.dig("card", "set") == "plst"
@@ -59,7 +58,15 @@ module DecklistParsers
 
     def api
       options = { headers: { "user-agent" => ENV["MOXFIELD_USER_AGENT"] } }
-      @api ||= Faraday.new(url, options) { |f| f.response :json }
+      @api ||=
+        Faraday.new(url, options) do |f|
+          f.use Middleware::RateLimiter,
+                redis: ServiceRegistry.redis,
+                requests: 1,
+                period: 1,
+                unit: :seconds
+          f.response :json
+        end
     end
   end
 end

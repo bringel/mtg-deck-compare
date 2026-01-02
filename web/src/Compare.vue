@@ -1,16 +1,22 @@
 <template>
   <AddDeckURLInput @addURL="handleAdd" />
 
-  <ol class="my-4 list-inside list-decimal dark:text-white">
+  <ol class="my-4 flex list-inside list-decimal flex-wrap gap-2 dark:text-white">
     <li
       v-for="(url, index) in deckStore.deckURLs"
-      :class="`underline ${underlineColors[deckColors[index]]} decoration-2 underline-offset-2`"
+      :key="url"
+      :class="`rounded-full border-2 ${borderColors[deckColors[index]]} bg-gray-100 px-4 py-1 dark:bg-gray-800`"
     >
-      <template v-if="!deckFetchingMap[url]">
-        {{ deckNamesMap[url]?.name }} by {{ deckNamesMap[url]?.author }}&nbsp;-
-      </template>
-      <template v-else><LoadingIndicator class="h-[30px] w-[30px] pl-2 align-middle dark:text-white" /></template>
-      {{ url }}<XCircleIcon class="ml-2 inline-block size-6 cursor-pointer text-red-700" @click="removeURL(url)" />
+      <div class="inline-flex items-center gap-2" v-if="!deckFetchingMap[url]">
+        <a class="flex cursor-pointer flex-col" :href="url" rel="noopener noreferrer" target="_blank">
+          <span class="text-sm font-medium">{{ deckNamesMap[url]?.name }} by {{ deckNamesMap[url]?.author }}</span>
+          <span class="text-xs opacity-70">{{ url }}</span>
+        </a>
+        <XCircleIcon class="inline-block size-5 shrink-0 cursor-pointer hover:text-red-700" @click="removeURL(url)" />
+      </div>
+      <div class="inline-flex items-center gap-2" v-else>
+        <LoadingIndicator class="h-[30px] w-[30px] dark:text-white" />
+      </div>
     </li>
   </ol>
   <Button
@@ -27,26 +33,54 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { XCircleIcon } from '@heroicons/vue/24/outline';
+import { computed, onMounted, watch } from 'vue';
 import AddDeckURLInput from './components/AddDeckURLInput.vue';
-
-import LoadingIndicator from './components/LoadingIndicator.vue';
 import Button from './components/Button.vue';
 import DeckComparison from './components/DeckComparison.vue';
-import { useDeckStore } from './store/deckStore';
-import { useDeckComparisonStoreStore } from './store/deckComparisonStore';
+import LoadingIndicator from './components/LoadingIndicator.vue';
 import { deckColors } from './lib/deckColors';
-import { XCircleIcon } from '@heroicons/vue/24/outline';
+import { useDeckComparisonStoreStore } from './store/deckComparisonStore';
+import { useDeckStore } from './store/deckStore';
+import { useRouter, useRoute } from 'vue-router';
 
 const deckStore = useDeckStore();
 const comparisonStore = useDeckComparisonStoreStore();
 
+const route = useRoute();
+const router = useRouter();
+
+const queryDeckURLs = computed<string[]>(() => {
+  if (route.query.deckURLs) {
+    return typeof route.query.deckURLs === 'string'
+      ? JSON.parse(atob(decodeURIComponent(route.query.deckURLs)))
+      : route.query.deckURLs.flatMap((s) => JSON.parse(atob(decodeURIComponent(s ?? ''))));
+  } else {
+    return [];
+  }
+});
+
+watch(
+  queryDeckURLs,
+  (urls) => {
+    deckStore.updateDecks(urls);
+  },
+  { immediate: true }
+);
+
 function handleAdd(url: string) {
-  deckStore.loadDeck(url);
+  const updated = [...queryDeckURLs.value, url];
+  router.push({
+    query: { deckURLs: encodeURIComponent(btoa(JSON.stringify(updated))) }
+  });
 }
 
 function removeURL(url: string) {
-  deckStore.removeDeck(url);
+  const updated = queryDeckURLs.value.filter((q) => q !== url);
+  const urlString = updated.length > 0 ? encodeURIComponent(btoa(JSON.stringify(updated))) : '';
+  router.push({
+    query: { deckURLs: urlString }
+  });
 }
 
 const deckNamesMap = computed<{ [url: string]: { name: string; author: string } | undefined }>(() => {
@@ -76,13 +110,13 @@ function startCompare() {
   comparisonStore.getComparison();
 }
 
-const underlineColors = computed(() => {
+const borderColors = computed(() => {
   return {
-    orange: 'decoration-orange-500',
-    cyan: 'decoration-cyan-500',
-    violet: 'decoration-violet-500',
-    pink: 'decoration-pink-500',
-    white: 'decoration-white'
+    orange: 'border-orange-500',
+    cyan: 'border-cyan-500',
+    violet: 'border-violet-500',
+    pink: 'border-pink-500',
+    white: 'border-white'
   };
 });
 </script>

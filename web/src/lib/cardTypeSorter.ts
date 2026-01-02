@@ -13,7 +13,7 @@ export function groupByCardTypes(cards: Array<Card>): { [k in CardType]: Array<C
   };
 
   cards.forEach((card) => {
-    cardTypes[card.card_type] = [...cardTypes[card.card_type], card];
+    cardTypes[card.cardType] = [...cardTypes[card.cardType], card];
   });
 
   return cardTypes;

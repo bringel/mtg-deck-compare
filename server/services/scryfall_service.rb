@@ -3,10 +3,21 @@ require "faraday"
 require "json"
 
 require_relative "../models/card"
+require_relative "../middleware/rate_limiter"
+require_relative "../lib/service_registry"
+require_relative "../models/card_key"
 
 class ScryfallService
   def initialize
-    @api = Faraday.new(url: "https://api.scryfall.com")
+    @api =
+      Faraday.new(url: "https://api.scryfall.com") do |f|
+        f.use Middleware::RateLimiter,
+              redis: ServiceRegistry.redis,
+              requests: 10,
+              period: 1,
+              unit: :seconds
+        f.adapter Faraday.default_adapter
+      end
   end
 
   def get_card_from_set(set_code:, set_number:)
@@ -38,17 +49,12 @@ class ScryfallService
 
           next {} unless response_data["data"]
 
-          response_data["data"]
-            .map { |card_data| parse_card_data(card_data) }
-            .to_h do |card|
-              [
-                {
-                  set_code: card.set_code.downcase,
-                  set_number: card.set_number.to_i
-                },
-                card
-              ]
-            end
+          response_data["data"].to_h do |card_data|
+            [
+              Models::CardKey.from_json_response(card_data),
+              parse_card_data(card_data)
+            ]
+          end
         end
 
     card_data.reduce({}, &:merge)
@@ -57,7 +63,13 @@ class ScryfallService
   private
 
   def parse_card_data(response_data)
-    name = response_data["name"]
+    # Use printed_name if available, formatted as "Printed Name (Canonical Name)"
+    name =
+      if response_data["printed_name"]
+        "#{response_data["printed_name"]} (#{response_data["name"]})"
+      else
+        response_data["name"]
+      end
     mana_cost = response_data["mana_cost"]
     card_image_urls = [response_data.dig("image_uris", "large")]
     card_art_urls = [response_data.dig("image_uris", "art_crop")]
@@ -72,6 +84,7 @@ class ScryfallService
       card_art_urls = faces.map { |f| f.dig("image_uris", "art_crop") }
       card_type = parse_card_type(type_line: faces.first["type_line"])
     elsif card_layout_type == "modal_dfc"
+      faces = response_data["card_faces"]
       name = faces.map { |f| f["name"] }.join(" // ")
       mana_cost =
         "#{response_data["card_faces"].first["mana_cost"]} / #{response_data["card_faces"].last["mana_cost"]}"

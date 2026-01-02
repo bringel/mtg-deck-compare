@@ -12,7 +12,7 @@
         <ManaCost :mana-cost="cost" />
         <span v-if="index < manaCosts.length - 1">&nbsp;//&nbsp;</span>
       </template>
-      <SetIcon :set="card.set_code" :rarity="card.rarity" class="ml-2" />
+      <SetIcon :set="card.setCode" :rarity="card.rarity" class="ml-2" />
     </span>
     <FloatingCardImage ref="floating" :card="card" :style="floatingStyles" />
   </div>
@@ -36,5 +36,5 @@ const { floatingStyles }: UseFloatingReturn = useFloating(anchor, cardImageRef, 
   middleware: [autoPlacement(), shift()]
 });
 
-const manaCosts = computed(() => props.card.mana_cost.split('//'));
+const manaCosts = computed(() => props.card.manaCost.split('//'));
 </script>
