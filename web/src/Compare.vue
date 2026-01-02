@@ -33,26 +33,54 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { XCircleIcon } from '@heroicons/vue/24/outline';
+import { computed, onMounted, watch } from 'vue';
 import AddDeckURLInput from './components/AddDeckURLInput.vue';
-
-import LoadingIndicator from './components/LoadingIndicator.vue';
 import Button from './components/Button.vue';
 import DeckComparison from './components/DeckComparison.vue';
-import { useDeckStore } from './store/deckStore';
-import { useDeckComparisonStoreStore } from './store/deckComparisonStore';
+import LoadingIndicator from './components/LoadingIndicator.vue';
 import { deckColors } from './lib/deckColors';
-import { XCircleIcon } from '@heroicons/vue/24/outline';
+import { useDeckComparisonStoreStore } from './store/deckComparisonStore';
+import { useDeckStore } from './store/deckStore';
+import { useRouter, useRoute } from 'vue-router';
 
 const deckStore = useDeckStore();
 const comparisonStore = useDeckComparisonStoreStore();
 
+const route = useRoute();
+const router = useRouter();
+
+const queryDeckURLs = computed<string[]>(() => {
+  if (route.query.deckURLs) {
+    return typeof route.query.deckURLs === 'string'
+      ? JSON.parse(atob(decodeURIComponent(route.query.deckURLs)))
+      : route.query.deckURLs.flatMap((s) => JSON.parse(atob(decodeURIComponent(s ?? ''))));
+  } else {
+    return [];
+  }
+});
+
+watch(
+  queryDeckURLs,
+  (urls) => {
+    deckStore.updateDecks(urls);
+  },
+  { immediate: true }
+);
+
 function handleAdd(url: string) {
-  deckStore.loadDeck(url);
+  const updated = [...queryDeckURLs.value, url];
+  router.push({
+    query: { deckURLs: encodeURIComponent(btoa(JSON.stringify(updated))) }
+  });
 }
 
 function removeURL(url: string) {
-  deckStore.removeDeck(url);
+  const updated = queryDeckURLs.value.filter((q) => q !== url);
+  const urlString = updated.length > 0 ? encodeURIComponent(btoa(JSON.stringify(updated))) : '';
+  router.push({
+    query: { deckURLs: urlString }
+  });
 }
 
 const deckNamesMap = computed<{ [url: string]: { name: string; author: string } | undefined }>(() => {
