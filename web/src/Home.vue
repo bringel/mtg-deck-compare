@@ -1,7 +1,5 @@
 <template>
   <div class="mx-auto max-w-3xl">
-    <h1 class="text-background-800 mb-6 text-4xl font-bold dark:text-white">MTG Deck Compare</h1>
-
     <div class="text-background-700 mb-8 space-y-4 text-lg dark:text-gray-300">
       <p>Level up your next brew by comparing multiple Magic: The Gathering deck lists side-by-side.</p>
 
@@ -23,7 +21,7 @@
     </div>
 
     <div class="bg-background-50 dark:bg-background-800 rounded-lg p-6">
-      <h2 class="text-background-800 mb-4 text-xl font-semibold dark:text-white">Get Started</h2>
+      <h2 class="text-background-800 font-display mb-4 text-xl font-semibold dark:text-white">Get Started</h2>
       <p class="text-background-700 mb-4 dark:text-gray-300">Add your first deck URL to begin comparing:</p>
       <AddDeckURLInput hideLabel @addURL="handleAdd" />
     </div>
