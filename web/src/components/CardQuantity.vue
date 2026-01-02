@@ -39,8 +39,8 @@ function borderClass(color: DeckColor) {
   switch (color) {
     case 'orange':
       return 'border-orange-600 dark:border-orange-500';
-    case 'cyan':
-      return 'border-cyan-600 dark:border-cyan-500';
+    case 'sky':
+      return 'border-sky-600 dark:border-sky-500';
     case 'violet':
       return 'border-violet-600 dark:border-violet-500';
     case 'pink':
@@ -54,8 +54,8 @@ function backgroundClass(color: string) {
   switch (color) {
     case 'orange':
       return 'bg-orange-600 dark:bg-orange-500';
-    case 'cyan':
-      return 'bg-cyan-600 dark:bg-cyan-500';
+    case 'sky':
+      return 'bg-sky-600 dark:bg-sky-500';
     case 'violet':
       return 'bg-violet-600 dark:bg-violet-500';
     case 'pink':
@@ -69,8 +69,8 @@ function textClass(color: string) {
   switch (color) {
     case 'orange':
       return 'text-orange-600 dark:text-orange-500';
-    case 'cyan':
-      return 'text-cyan-600 dark:text-cyan-500';
+    case 'sky':
+      return 'text-sky-600 dark:text-sky-500';
     case 'violet':
       return 'text-violet-600 dark:text-violet-500';
     case 'pink':
