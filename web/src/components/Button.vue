@@ -35,7 +35,7 @@ const isDisabled = computed(() => {
 const themeClasses = computed(() => {
   switch (props.theme) {
     case 'primary':
-      return ['bg-primary-500', 'border-primary-700'];
+      return ['bg-primary-400', 'border-primary-700'];
     case 'secondary':
       return ['bg-secondary-500', 'border-secondary-700'];
     default:

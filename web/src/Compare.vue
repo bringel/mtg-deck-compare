@@ -113,7 +113,7 @@ function startCompare() {
 const borderColors = computed(() => {
   return {
     orange: 'border-orange-500',
-    cyan: 'border-cyan-500',
+    sky: 'border-sky-500',
     violet: 'border-violet-500',
     pink: 'border-pink-500',
     white: 'border-white'
