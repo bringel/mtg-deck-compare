@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 require "faraday"
 require "nokogiri"
-require "byebug"
 require "capybara/dsl"
 require "selenium/webdriver"
 
@@ -96,6 +95,7 @@ module DecklistParsers
     def card_hashes
       text_input = first(id: "deck_input_deck", visible: false)
       decklist_text = text_input.value
+      puts decklist_text
 
       return { main_deck: [], sideboard: [] } unless decklist_text
 
