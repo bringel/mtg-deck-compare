@@ -13,7 +13,21 @@ module DecklistParsers
   class MtggoldfishParser < DecklistParser
     include Capybara::DSL
 
-    Capybara.default_driver = :selenium_chrome_headless
+    Capybara.register_driver :headless_chrome do |app|
+      options =
+        Selenium::WebDriver::Chrome::Options.new(
+          args: %w[
+            headless
+            no-sandbox
+            disable-gpu
+            disable-dev-shm-usage
+            verbose
+          ]
+        )
+
+      Capybara::Selenium::Driver.new(app, browser: :chrome, options: options)
+    end
+    Capybara.default_driver = :headless_chrome
     # Matches both user decks and archetype decks
     # User deck: https://www.mtggoldfish.com/deck/1234567
     # Archetype: https://www.mtggoldfish.com/archetype/standard-dimir-midrange-woe
