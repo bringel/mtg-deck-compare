@@ -3,6 +3,7 @@ require "faraday"
 require "nokogiri"
 require "byebug"
 require "capybara/dsl"
+require "selenium/webdriver"
 
 require_relative "./decklist_parser"
 require_relative "../services/cards_service"
