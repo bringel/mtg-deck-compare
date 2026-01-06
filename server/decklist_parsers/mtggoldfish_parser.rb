@@ -15,16 +15,35 @@ module DecklistParsers
     include Capybara::DSL
 
     Capybara.register_driver :headless_chrome do |app|
-      options =
-        Selenium::WebDriver::Chrome::Options.new(
-          args: %w[
-            headless
-            no-sandbox
-            disable-gpu
-            disable-dev-shm-usage
-            verbose
-          ]
-        )
+      options = Selenium::WebDriver::Chrome::Options.new
+
+      # Use new headless mode (less detectable than old headless)
+      options.add_argument("--headless=new")
+
+      # Basic required flags
+      options.add_argument("--no-sandbox")
+      options.add_argument("--disable-dev-shm-usage")
+
+      # Anti-detection flags
+      options.add_argument("--disable-blink-features=AutomationControlled")
+      options.add_argument("--disable-infobars")
+      options.add_argument("--disable-extensions")
+
+      # Realistic window size
+      options.add_argument("--window-size=1920,1080")
+
+      # Realistic user agent (Chrome 120 on Windows)
+      options.add_argument(
+        "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+      )
+
+      # Disable automation flags that Cloudflare detects
+      options.add_preference("credentials_enable_service", false)
+      options.add_preference("profile.password_manager_enabled", false)
+
+      # Exclude automation switches
+      options.exclude_switches << "enable-automation"
+      options.exclude_switches << "enable-logging"
 
       Capybara::Selenium::Driver.new(app, browser: :chrome, options: options)
     end
@@ -37,6 +56,30 @@ module DecklistParsers
 
     def initialize(url, redis: ServiceRegistry.redis)
       super(url, redis: redis)
+
+      # Use CDP to remove webdriver flag and add stealth scripts
+      driver = page.driver.browser
+      driver.execute_cdp(
+        "Page.addScriptToEvaluateOnNewDocument",
+        source: <<~JS
+          // Remove webdriver property
+          Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
+
+          // Mock plugins array
+          Object.defineProperty(navigator, 'plugins', {
+            get: () => [1, 2, 3, 4, 5]
+          });
+
+          // Mock languages
+          Object.defineProperty(navigator, 'languages', {
+            get: () => ['en-US', 'en']
+          });
+
+          // Remove Chrome automation indicators
+          window.chrome = { runtime: {} };
+        JS
+      )
+
       visit(url)
     end
 
