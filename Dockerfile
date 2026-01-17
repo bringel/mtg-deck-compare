@@ -25,12 +25,10 @@ RUN npm run build
 # Stage 2: Ruby application
 FROM ruby:3.3.2-slim
 
-# Install system dependencies including Chrome for Selenium
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpq-dev \
-    chromium \
-    chromium-driver \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
