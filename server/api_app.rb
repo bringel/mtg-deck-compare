@@ -40,6 +40,13 @@ ServiceRegistry.register(
 class ApiApp < Sinatra::Application
   set :public_folder, File.expand_path("#{__dir__}/../public")
   set :default_content_type, :json
+
+  # Allow CORS for development (Vite dev server)
+  # In production, the static app serves from same origin so this only affects dev
+  configure :development do
+    set :protection, except: [:json_csrf]
+  end
+
   use CamelCaseToSnakeCase
   use SnakeCaseToCamelCase
 
