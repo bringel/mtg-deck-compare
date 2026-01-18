@@ -1,0 +1,43 @@
+alerts:
+- rule: DEPLOYMENT_FAILED
+- rule: DOMAIN_FAILED
+databases:
+- cluster_name: db-valkey-nyc3-39788
+  engine: VALKEY
+  name: db-valkey-nyc3-39788
+  production: true
+domains:
+- domain: mtgdeckcompare.com
+  type: PRIMARY
+- domain: www.mtgdeckcompare.com
+  type: ALIAS
+egress: {}
+features:
+- buildpack-stack=ubuntu-22
+ingress:
+  rules:
+  - component:
+      name: web
+    match:
+      path:
+        prefix: /
+name: mtg-deck-compare
+region: nyc
+services:
+- envs:
+  - key: MOXFIELD_USER_AGENT
+    scope: RUN_AND_BUILD_TIME
+    type: SECRET
+    value: EV[1:F1t3th97GaAV0Kswe9ajbud8X3eSlmcb:/xcdw/STC7RjuVPZ+vOy2VkRIVm4C4Nu+HvC3hCQ7uM/uB5Jk45GuwBsHAo=]
+  - key: REDIS_URL
+    scope: RUN_AND_BUILD_TIME
+    value: ${db-valkey-nyc3-39788.DATABASE_URL}
+  http_port: 8080
+  image:
+    registry: bringel
+    registry_type: GHCR
+    repository: mtg-deck-compare
+    digest: ${DIGEST}
+  instance_count: 1
+  instance_size_slug: apps-s-1vcpu-1gb
+  name: web 
