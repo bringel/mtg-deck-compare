@@ -17,7 +17,7 @@ module DecklistParsers
       options = Selenium::WebDriver::Chrome::Options.new
 
       # Use new headless mode (less detectable than old headless)
-      options.add_argument("--headless=new")
+      # options.add_argument("--headless=new")
 
       # Basic required flags
       options.add_argument("--no-sandbox")
@@ -29,20 +29,34 @@ module DecklistParsers
       options.add_argument("--disable-extensions")
 
       # Realistic window size
-      options.add_argument("--window-size=1920,1080")
+      options.add_argument("--window-size=1732,925")
 
-      # Realistic user agent (Chrome 120 on Windows)
+      # More anti-fingerprinting
+      options.add_argument("--disable-features=IsolateOrigins,site-per-process")
+
+      # Realistic user agent (updated to Chrome 131)
       options.add_argument(
-        "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
       )
 
       # Disable automation flags that Cloudflare detects
       options.add_preference("credentials_enable_service", false)
       options.add_preference("profile.password_manager_enabled", false)
 
+      # Additional preferences to appear more like a real browser
+      options.add_preference(
+        "profile.default_content_setting_values.notifications",
+        2
+      )
+      options.add_preference(
+        "profile.managed_default_content_settings.images",
+        1
+      )
+
       # Exclude automation switches
       options.exclude_switches << "enable-automation"
       options.exclude_switches << "enable-logging"
+
       client = Selenium::WebDriver::Remote::Http::Default.new
       client.read_timeout = 180
 
@@ -69,9 +83,13 @@ module DecklistParsers
           // Remove webdriver property
           Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
 
-          // Mock plugins array
+          // Mock plugins array with realistic plugins
           Object.defineProperty(navigator, 'plugins', {
-            get: () => [1, 2, 3, 4, 5]
+            get: () => [
+              { name: 'Chrome PDF Plugin' },
+              { name: 'Chrome PDF Viewer' },
+              { name: 'Native Client' }
+            ]
           });
 
           // Mock languages
@@ -79,11 +97,38 @@ module DecklistParsers
             get: () => ['en-US', 'en']
           });
 
+          // Mock permissions
+          const originalQuery = window.navigator.permissions.query;
+          window.navigator.permissions.query = (parameters) => (
+            parameters.name === 'notifications' ?
+              Promise.resolve({ state: Notification.permission }) :
+              originalQuery(parameters)
+          );
+
           // Remove Chrome automation indicators
-          window.chrome = { runtime: {} };
+          window.chrome = {
+            runtime: {},
+            loadTimes: function() {},
+            csi: function() {},
+            app: {}
+          };
+
+          // Mock realistic screen properties
+          Object.defineProperty(screen, 'availWidth', { get: () => 1920 });
+          Object.defineProperty(screen, 'availHeight', { get: () => 1040 });
+          Object.defineProperty(screen, 'colorDepth', { get: () => 24 });
+
+          // Override navigator.platform
+          Object.defineProperty(navigator, 'platform', { get: () => 'Win32' });
         JS
 
+      # Add random delay before visiting (mimic human behavior)
+      sleep(rand(1.0..2.5))
+
       visit(url)
+
+      # Wait for page to fully load and add another small delay
+      sleep(rand(0.5..1.5))
     end
 
     def deck_name
