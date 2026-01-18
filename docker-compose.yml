@@ -21,10 +21,10 @@ services:
       - "5173:5173"
     environment:
       - DOCKER=true
-  server:
+  server_dev:
     build:
       context: .
-      target: server
+      target: server_dev
     ports:
       - "9292:9292"
     environment:

@@ -4,7 +4,7 @@ import { defineConfig } from 'vite';
 
 // https://vitejs.dev/config/
 export default defineConfig(() => {
-  const backend_host = process.env['DOCKER'] ? 'server' : 'localhost';
+  const backend_host = process.env['DOCKER'] ? 'server_dev' : 'localhost';
   return {
     plugins: [vue()],
     resolve: {
