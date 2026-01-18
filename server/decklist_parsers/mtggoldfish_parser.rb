@@ -43,8 +43,15 @@ module DecklistParsers
       # Exclude automation switches
       options.exclude_switches << "enable-automation"
       options.exclude_switches << "enable-logging"
+      client = Selenium::WebDriver::Remote::Http::Default.new
+      client.read_timeout = 180
 
-      Capybara::Selenium::Driver.new(app, browser: :chrome, options: options)
+      Capybara::Selenium::Driver.new(
+        app,
+        browser: :chrome,
+        http_client: client,
+        options: options
+      )
     end
     Capybara.default_driver = :headless_chrome
     # Matches both user decks and archetype decks
@@ -58,9 +65,7 @@ module DecklistParsers
 
       # Use CDP to remove webdriver flag and add stealth scripts
       driver = page.driver.browser
-      driver.execute_cdp(
-        "Page.addScriptToEvaluateOnNewDocument",
-        source: <<~JS
+      driver.execute_cdp("Page.addScriptToEvaluateOnNewDocument", source: <<~JS)
           // Remove webdriver property
           Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
 
@@ -77,7 +82,6 @@ module DecklistParsers
           // Remove Chrome automation indicators
           window.chrome = { runtime: {} };
         JS
-      )
 
       visit(url)
     end
