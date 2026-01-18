@@ -57,7 +57,7 @@ RUN apt-get update && apt-get install -y \
   && rm -rf /var/lib/apt/lists/*
 
 COPY --from=server_base /app ./
-COPY .env ./
+COPY .env* ./
 RUN bundle install
 
 CMD ["bundle", "exec", "rackup", "--host", "0.0.0.0", "--port", "9292"]
