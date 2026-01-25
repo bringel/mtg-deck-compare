@@ -4,7 +4,7 @@
       <label for="deck-url" :class="['dark:text-white', { 'sr-only': props.hideLabel }]">Enter a deck list URL</label>
       <input id="deck-url" type="text" class="mr-4 w-full rounded-xs md:w-96" v-model="url" />
     </div>
-    <Button theme="primary" @click="handleAdd">Add URL</Button>
+    <Button theme="primary" @click="handleAdd" :loading="loading">Add URL</Button>
   </div>
 </template>
 
@@ -15,7 +15,7 @@ const url = ref<string>('');
 const emit = defineEmits<{
   addURL: [url: string];
 }>();
-const props = withDefaults(defineProps<{ hideLabel?: boolean }>(), { hideLabel: false });
+const props = withDefaults(defineProps<{ hideLabel?: boolean; loading: boolean }>(), { hideLabel: false });
 
 function handleAdd() {
   emit('addURL', url.value);

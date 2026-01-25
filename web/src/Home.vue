@@ -23,7 +23,7 @@
     <div class="bg-background-50 dark:bg-background-800 rounded-lg p-6">
       <h2 class="text-background-800 font-display mb-4 text-xl font-semibold dark:text-white">Get Started</h2>
       <p class="text-background-700 mb-4 dark:text-gray-300">Add your first deck URL to begin comparing:</p>
-      <AddDeckURLInput hideLabel @addURL="handleAdd" />
+      <AddDeckURLInput hideLabel @addURL="handleAdd" :loading="false" />
     </div>
   </div>
 </template>

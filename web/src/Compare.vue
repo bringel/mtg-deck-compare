@@ -1,6 +1,19 @@
 <template>
-  <ErrorDialog />
-  <AddDeckURLInput @addURL="handleAdd" />
+  <ErrorDialog :is-open="errorDialogOpen" @close="handleErrorDialogClose">
+    <template #title>Error loading deck list</template>
+    <template #body>
+      Sorry! We're having some trouble loading the deck from the URL you entered. While we work on fixing it, you can
+      enter the deck list manually, or try again in a little bit
+      <br />
+      <hr />
+      <a :href="currentLoadingURL" class="underline">{{ currentLoadingURL }}</a>
+    </template>
+    <template #buttons>
+      <Button theme="error">Add Manually</Button>
+      <Button theme="error" @click="handleErrorDialogClose">Close</Button>
+    </template>
+  </ErrorDialog>
+  <AddDeckURLInput @addURL="handleAdd" :loading="currentLoadingURL !== ''" />
 
   <ol class="my-4 flex list-inside list-decimal flex-wrap gap-2 dark:text-white">
     <li
@@ -35,7 +48,7 @@
 
 <script setup lang="ts">
 import { XCircleIcon } from '@heroicons/vue/24/outline';
-import { computed, onMounted, watch } from 'vue';
+import { computed, watch, ref } from 'vue';
 import AddDeckURLInput from './components/AddDeckURLInput.vue';
 import Button from './components/Button.vue';
 import DeckComparison from './components/DeckComparison.vue';
@@ -52,6 +65,10 @@ const comparisonStore = useDeckComparisonStoreStore();
 
 const route = useRoute();
 const router = useRouter();
+const currentLoadingURL = ref('');
+const errorDialogOpen = computed(() => {
+  return !!deckStore.deckFetchers.get(currentLoadingURL.value)?.error;
+});
 
 const queryDeckURLs = computed<string[]>(() => {
   if (route.query.deckURLs) {
@@ -71,8 +88,18 @@ watch(
   { immediate: true }
 );
 
+watch(deckStore.deckFetchers, () => {
+  if (currentLoadingURL.value) {
+    const fetcher = deckStore.deckFetchers.get(currentLoadingURL.value);
+    if (fetcher?.isFinished && !fetcher?.error) {
+      currentLoadingURL.value = '';
+    }
+  }
+});
+
 function handleAdd(url: string) {
   const updated = [...queryDeckURLs.value, url];
+  currentLoadingURL.value = url;
   router.push({
     query: { deckURLs: encodeDeckURLs(updated) }
   });
@@ -84,6 +111,11 @@ function removeURL(url: string) {
   router.push({
     query: { deckURLs: urlString }
   });
+}
+
+function handleErrorDialogClose() {
+  removeURL(currentLoadingURL.value);
+  currentLoadingURL.value = '';
 }
 
 const deckNamesMap = computed<{ [url: string]: { name: string; author: string } | undefined }>(() => {
@@ -104,7 +136,7 @@ const deckFetchingMap = computed<{ [url: string]: boolean }>(() => {
   return Object.fromEntries(
     Array.from(deckStore.deckFetchers.keys()).map((k) => {
       const fetcher = deckStore.deckFetchers.get(k);
-      return [k, fetcher?.isFetching ?? true];
+      return [k, (fetcher?.isFetching || !!fetcher?.error) ?? true];
     })
   );
 });

@@ -9,6 +9,20 @@ export const useDeckStore = defineStore('decks', () => {
   const deckURLs = computed(() => {
     return Array.from(deckFetchers.keys());
   });
+  const currentLoadingDecks = computed(() => {
+    return Array.from(deckFetchers.entries())
+      .filter(([, fetcher]) => {
+        return fetcher.isFetching;
+      })
+      .map(([url]) => url);
+  });
+  const failedDecks = computed(() => {
+    return Array.from(deckFetchers.entries())
+      .filter(([, fetcher]) => {
+        return fetcher.error;
+      })
+      .map(([url]) => url);
+  });
 
   function updateDecks(urls: string[]) {
     const currentURLs = Array.from(deckFetchers.keys());
@@ -41,6 +55,8 @@ export const useDeckStore = defineStore('decks', () => {
   return {
     deckURLs,
     deckFetchers,
+    currentLoadingDecks,
+    failedDecks,
     loadDeck,
     removeDeck,
     updateDecks
