@@ -32,12 +32,13 @@
 import { useRouter } from 'vue-router';
 import AddDeckURLInput from './components/AddDeckURLInput.vue';
 import { useDeckStore } from './store/deckStore';
+import { encodeDeckURLs } from './lib/queryStringDeckURLs';
 
 const router = useRouter();
 const deckStore = useDeckStore();
 
 function handleAdd(url: string) {
-  deckStore.loadDeck(url);
-  router.push('/compare');
+  const urls = encodeDeckURLs([url]);
+  router.push({ path: '/compare', query: { deckURLs: urls } });
 }
 </script>

@@ -43,6 +43,7 @@ import { deckColors } from './lib/deckColors';
 import { useDeckComparisonStoreStore } from './store/deckComparisonStore';
 import { useDeckStore } from './store/deckStore';
 import { useRouter, useRoute } from 'vue-router';
+import { encodeDeckURLs, decodeDeckURLs } from './lib/queryStringDeckURLs';
 
 const deckStore = useDeckStore();
 const comparisonStore = useDeckComparisonStoreStore();
@@ -53,8 +54,8 @@ const router = useRouter();
 const queryDeckURLs = computed<string[]>(() => {
   if (route.query.deckURLs) {
     return typeof route.query.deckURLs === 'string'
-      ? JSON.parse(atob(decodeURIComponent(route.query.deckURLs)))
-      : route.query.deckURLs.flatMap((s) => JSON.parse(atob(decodeURIComponent(s ?? ''))));
+      ? decodeDeckURLs(route.query.deckURLs)
+      : route.query.deckURLs.flatMap((s) => decodeDeckURLs(s ?? ''));
   } else {
     return [];
   }
@@ -71,13 +72,13 @@ watch(
 function handleAdd(url: string) {
   const updated = [...queryDeckURLs.value, url];
   router.push({
-    query: { deckURLs: encodeURIComponent(btoa(JSON.stringify(updated))) }
+    query: { deckURLs: encodeDeckURLs(updated) }
   });
 }
 
 function removeURL(url: string) {
   const updated = queryDeckURLs.value.filter((q) => q !== url);
-  const urlString = updated.length > 0 ? encodeURIComponent(btoa(JSON.stringify(updated))) : '';
+  const urlString = updated.length > 0 ? encodeDeckURLs(updated) : '';
   router.push({
     query: { deckURLs: urlString }
   });
