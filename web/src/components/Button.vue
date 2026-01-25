@@ -22,11 +22,14 @@
 import { computed } from 'vue';
 import LoadingIndicator from './LoadingIndicator.vue';
 
-const props = withDefaults(defineProps<{ theme: 'primary' | 'secondary'; loading?: boolean; disabled?: boolean }>(), {
-  theme: 'primary',
-  loading: false,
-  disabled: false
-});
+const props = withDefaults(
+  defineProps<{ theme: 'primary' | 'secondary' | 'error'; loading?: boolean; disabled?: boolean }>(),
+  {
+    theme: 'primary',
+    loading: false,
+    disabled: false
+  }
+);
 
 const isDisabled = computed(() => {
   return props.disabled || props.loading;
@@ -38,6 +41,8 @@ const themeClasses = computed(() => {
       return ['bg-primary-400', 'border-primary-700'];
     case 'secondary':
       return ['bg-secondary-500', 'border-secondary-700'];
+    case 'error':
+      return ['bg-red-500', 'border-red-500', 'text-white'];
     default:
       return [];
   }

@@ -1,4 +1,5 @@
 <template>
+  <ErrorDialog />
   <AddDeckURLInput @addURL="handleAdd" />
 
   <ol class="my-4 flex list-inside list-decimal flex-wrap gap-2 dark:text-white">
@@ -44,6 +45,7 @@ import { useDeckComparisonStoreStore } from './store/deckComparisonStore';
 import { useDeckStore } from './store/deckStore';
 import { useRouter, useRoute } from 'vue-router';
 import { encodeDeckURLs, decodeDeckURLs } from './lib/queryStringDeckURLs';
+import ErrorDialog from './components/ErrorDialog.vue';
 
 const deckStore = useDeckStore();
 const comparisonStore = useDeckComparisonStoreStore();
