@@ -23,22 +23,35 @@
     <div class="bg-background-50 dark:bg-background-800 rounded-lg p-6">
       <h2 class="text-background-800 font-display mb-4 text-xl font-semibold dark:text-white">Get Started</h2>
       <p class="text-background-700 mb-4 dark:text-gray-300">Add your first deck URL to begin comparing:</p>
-      <AddDeckURLInput hideLabel @addURL="handleAdd" :loading="false" />
+      <div class="flex grow-0 flex-col gap-2 md:flex-row md:items-end">
+        <Input
+          v-model="deckURL"
+          id="deck-url"
+          label="Enter a deck list URL"
+          hide-label
+          class="mr-4 w-full md:w-96"
+        />
+        <Button theme="primary" @click="handleAdd" :loading="false">Add URL</Button>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import AddDeckURLInput from './components/AddDeckURLInput.vue';
+import Button from './components/Button.vue';
+import Input from './components/Input.vue';
 import { useDeckStore } from './store/deckStore';
 import { encodeDeckURLs } from './lib/queryStringDeckURLs';
 
 const router = useRouter();
 const deckStore = useDeckStore();
+const deckURL = ref('');
 
-function handleAdd(url: string) {
-  const urls = encodeDeckURLs([url]);
+function handleAdd() {
+  const urls = encodeDeckURLs([deckURL.value]);
+  deckURL.value = '';
   router.push({ path: '/compare', query: { deckURLs: urls } });
 }
 </script>

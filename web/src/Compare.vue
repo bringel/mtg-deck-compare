@@ -14,8 +14,16 @@
     </template>
   </ErrorDialog>
   <ManualDeckModal :open="manualDeckModalOpen" @close="manualDeckModalOpen = false" />
-  <AddDeckURLInput @addURL="handleAdd" :loading="currentLoadingURL !== ''" />
-  <Button @click="manualDeckModalOpen = true" theme="primary">Add Manual Deck</Button>
+  <div class="flex grow-0 flex-col gap-2 md:flex-row md:items-end">
+    <Input
+      v-model="deckURL"
+      id="deck-url"
+      label="Enter a deck list URL"
+      class="mr-4 w-full md:w-96"
+    />
+    <Button theme="primary" @click="handleAdd" :loading="currentLoadingURL !== ''">Add URL</Button>
+    <Button @click="manualDeckModalOpen = true" theme="primary">Add Manual Deck</Button>
+  </div>
 
   <ol class="my-4 flex list-inside list-decimal flex-wrap gap-2 dark:text-white">
     <li
@@ -51,8 +59,8 @@
 <script setup lang="ts">
 import { XCircleIcon } from '@heroicons/vue/24/outline';
 import { computed, watch, ref } from 'vue';
-import AddDeckURLInput from './components/AddDeckURLInput.vue';
 import Button from './components/Button.vue';
+import Input from './components/Input.vue';
 import DeckComparison from './components/DeckComparison.vue';
 import LoadingIndicator from './components/LoadingIndicator.vue';
 import { deckColors } from './lib/deckColors';
@@ -68,6 +76,7 @@ const comparisonStore = useDeckComparisonStoreStore();
 
 const route = useRoute();
 const router = useRouter();
+const deckURL = ref('');
 const currentLoadingURL = ref('');
 const errorDialogOpen = computed(() => {
   return !!deckStore.deckFetchers.get(currentLoadingURL.value)?.error;
@@ -101,9 +110,10 @@ watch(deckStore.deckFetchers, () => {
   }
 });
 
-function handleAdd(url: string) {
-  const updated = [...queryDeckURLs.value, url];
-  currentLoadingURL.value = url;
+function handleAdd() {
+  const updated = [...queryDeckURLs.value, deckURL.value];
+  currentLoadingURL.value = deckURL.value;
+  deckURL.value = '';
   router.push({
     query: { deckURLs: encodeDeckURLs(updated) }
   });
