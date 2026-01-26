@@ -13,7 +13,9 @@
       <Button theme="error" @click="handleErrorDialogClose">Close</Button>
     </template>
   </ErrorDialog>
+  <ManualDeckModal :open="manualDeckModalOpen" @close="manualDeckModalOpen = false" />
   <AddDeckURLInput @addURL="handleAdd" :loading="currentLoadingURL !== ''" />
+  <Button @click="manualDeckModalOpen = true" theme="primary">Add Manual Deck</Button>
 
   <ol class="my-4 flex list-inside list-decimal flex-wrap gap-2 dark:text-white">
     <li
@@ -59,6 +61,7 @@ import { useDeckStore } from './store/deckStore';
 import { useRouter, useRoute } from 'vue-router';
 import { encodeDeckURLs, decodeDeckURLs } from './lib/queryStringDeckURLs';
 import ErrorDialog from './components/ErrorDialog.vue';
+import ManualDeckModal from './components/ManualDeckModal.vue';
 
 const deckStore = useDeckStore();
 const comparisonStore = useDeckComparisonStoreStore();
@@ -69,6 +72,7 @@ const currentLoadingURL = ref('');
 const errorDialogOpen = computed(() => {
   return !!deckStore.deckFetchers.get(currentLoadingURL.value)?.error;
 });
+const manualDeckModalOpen = ref(false);
 
 const queryDeckURLs = computed<string[]>(() => {
   if (route.query.deckURLs) {

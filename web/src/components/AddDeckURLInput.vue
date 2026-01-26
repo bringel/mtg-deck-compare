@@ -1,9 +1,12 @@
 <template>
   <div class="flex grow-0 flex-col gap-2 md:flex-row md:items-end">
-    <div class="flex flex-col">
-      <label for="deck-url" :class="['dark:text-white', { 'sr-only': props.hideLabel }]">Enter a deck list URL</label>
-      <input id="deck-url" type="text" class="mr-4 w-full rounded-xs md:w-96" v-model="url" />
-    </div>
+    <Input
+      v-model="url"
+      id="deck-url"
+      label="Enter a deck list URL"
+      :hide-label="hideLabel"
+      class="mr-4 w-full md:w-96"
+    />
     <Button theme="primary" @click="handleAdd" :loading="loading">Add URL</Button>
   </div>
 </template>
@@ -11,6 +14,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import Button from './Button.vue';
+import Input from './Input.vue';
 const url = ref<string>('');
 const emit = defineEmits<{
   addURL: [url: string];
