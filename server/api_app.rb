@@ -13,6 +13,7 @@ require_relative "./lib/sequel/extensions/read_through_database.rb"
 require_relative "./lib/service_registry.rb"
 require_relative "./middleware/camel_case_to_snake_case"
 require_relative "./middleware/snake_case_to_camel_case"
+require_relative "./services/deck_service"
 
 Dotenv.load
 
@@ -59,6 +60,20 @@ class ApiApp < Sinatra::Application
   get "/load_deck" do
     parser = DecklistParsers::ParserList.get_parser(request.params["url"])
     JSON.generate(parser.new(request.params["url"]).get_deck.to_h)
+  end
+
+  post "/create_manual_deck" do
+    deck_service = DeckService.new
+
+    body = JSON.parse(request.body.read)
+    res =
+      deck_service.save_manual_deck(
+        list: body["list"],
+        name: body["name"],
+        author: body["author"]
+      )
+
+    JSON.generate(res.merge({ deck: res[:deck].to_h }))
   end
 
   post "/compare_decks" do

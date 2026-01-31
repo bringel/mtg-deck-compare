@@ -44,6 +44,26 @@ class DeckService
     deck
   end
 
+  def save_manual_deck(name:, author:, list:)
+    parsed_list = DecklistParsers::TextListParser.parse_decklist(list)
+
+    deck_id = SecureRandom.uuid
+    deck_key = "decks:manual:#{deck_id}"
+
+    deck =
+      save_deck(
+        name: name,
+        author: author,
+        source_type: :manual,
+        source_url: nil,
+        card_hashes: parsed_list,
+        ttl: (60 * 60 * 24 * 30),
+        deck_key: deck_key
+      )
+
+    { deck_id: deck_id, deck: deck }
+  end
+
   private
 
   def fetch_cards(card_hashes:)
