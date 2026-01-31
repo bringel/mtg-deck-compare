@@ -8,7 +8,7 @@ module Models
         _key, set, number, name = str.split(":")
 
         new(
-          set_code: set.empty? ? nil : set,
+          set_code: set.empty? ? nil : set.downcase,
           card_number: number.empty? ? nil : number.to_i,
           name: name.empty? ? nil : name
         )
@@ -16,7 +16,7 @@ module Models
 
       def self.from_card_hash(hsh)
         new(
-          set_code: hsh[:set_code],
+          set_code: hsh[:set_code]&.downcase,
           card_number: hsh[:set_number]&.to_i,
           name: hsh[:name]
         )
@@ -33,7 +33,7 @@ module Models
             data["name"]
           end
         new(
-          set_code: data["set"],
+          set_code: data["set"].downcase,
           card_number: data["collector_number"].to_i,
           name: name
         )
@@ -41,7 +41,7 @@ module Models
 
       def self.from_card(card)
         new(
-          set_code: card.set_code,
+          set_code: card.set_code.downcase,
           card_number: card.set_number.to_i,
           name: card.name
         )

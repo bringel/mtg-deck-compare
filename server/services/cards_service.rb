@@ -84,4 +84,15 @@ class CardsService
       card_hash.transform_keys(&:to_sym).values_at(:set_code, :set_number)
     "cards:#{set_code.downcase}:#{set_number.to_i}"
   end
+
+  def find_any_matching_key(all_keys:, card_hash:)
+    key = all_keys.find { |k| k == Models::CardKey.from_card_hash(card_hash) }
+
+    unless key
+      name_only = card_hash.slice(:name)
+      key = all_keys.find { |k| k == Models::CardKey.from_card_hash(name_only) }
+    end
+
+    key
+  end
 end

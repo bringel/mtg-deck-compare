@@ -29,13 +29,15 @@ class ScryfallService
   def get_cards(card_hashes:)
     query_parts =
       card_hashes.map do |hash|
-        if hash.has_key?(:name)
+        if hash.has_key?(:set_code) && hash.has_key?(:set_number)
+          "(set:#{hash[:set_code]} number:#{hash[:set_number]})"
+        elsif hash.has_key?(:name)
           # see note in aetherhub_parser.rb about why some cards may have just a name
           "(!\"#{hash[:name]}\")"
-        else
-          "(set:#{hash[:set_code]} number:#{hash[:set_number]})"
         end
       end
+
+    card_hash_keys = card_hashes.map { |h| Models::CardKey.from_card_hash(h) }
 
     card_data =
       query_parts
@@ -50,10 +52,12 @@ class ScryfallService
           next {} unless response_data["data"]
 
           response_data["data"].to_h do |card_data|
-            [
-              Models::CardKey.from_json_response(card_data),
-              parse_card_data(card_data)
-            ]
+            key =
+              find_any_matching_key(
+                all_keys: card_hash_keys,
+                card_hash: Models::CardKey.from_json_response(card_data).to_h
+              )
+            [key, parse_card_data(card_data)]
           end
         end
 
@@ -140,5 +144,16 @@ class ScryfallService
     else
       "normal"
     end
+  end
+
+  def find_any_matching_key(all_keys:, card_hash:)
+    key = all_keys.find { |k| k == Models::CardKey.from_card_hash(card_hash) }
+
+    unless key
+      name_only = card_hash.slice(:name)
+      key = all_keys.find { |k| k == Models::CardKey.from_card_hash(name_only) }
+    end
+
+    key
   end
 end
