@@ -18,22 +18,18 @@ module DecklistParsers
     end
 
     def get_deck
-      if redis.exists?(deck_key)
-        return Models::Deck.from_json(redis.get(deck_key))
+      if deck_service.deck_exists?(deck_key)
+        return deck_service.load_deck(deck_key)
       end
-      deck = load_deck
-      redis.set(deck_key, JSON.generate(deck.to_h), ex: (5 * 60))
-      deck
-    end
 
-    def load_deck
-      Models::Deck.new(
+      deck_service.save_deck(
         name: deck_name,
         author: author,
         source_type: source_type,
         source_url: url,
-        main_deck: fetch_cards(card_hashes: card_hashes[:main_deck]),
-        sideboard: fetch_cards(card_hashes: card_hashes[:sideboard])
+        card_hashes: card_hashes,
+        ttl: (5 * 60),
+        deck_key: deck_key
       )
     end
 
@@ -55,27 +51,8 @@ module DecklistParsers
 
     private
 
-    # Fetches cards from CardsService and aggregates quantities by card name
-    # Subclasses should call this method with an array of card hashes from card_to_hash
-    #
-    # @param card_hashes [Array<Hash>] Array of hashes with format:
-    #   { set_code: String, set_number: Integer, quantity: Integer } or
-    #   { name: String, quantity: Integer }
-    # @return [Hash] { quantities: Hash<String, Integer>, cards: Array<Card> }
-    def fetch_cards(card_hashes:)
-      cards_service = CardsService.new(redis: redis)
-      cards = cards_service.get_cards(card_hashes: card_hashes)
-
-      quantities = Hash.new { 0 }
-      full_card_keys = cards.keys
-      card_hashes.each do |card_hash|
-        key = Models::CardKey.from_card_hash(card_hash)
-        full_key = full_card_keys.find { |full_key| full_key == key }
-        card = cards[full_key]
-        quantities[card.name] += card_hash[:quantity]
-      end
-
-      { quantities:, cards: cards.values.uniq { |c| c.name } }
+    def deck_service
+      @deck_service ||= DeckService.new
     end
 
     def deck_key
