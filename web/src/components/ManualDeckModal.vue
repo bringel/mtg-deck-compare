@@ -18,14 +18,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { Dialog, DialogTitle, DialogPanel } from '@headlessui/vue';
 import Input from './Input.vue';
 import Button from './Button.vue';
 import { useFetch } from '@vueuse/core';
+import { type Deck } from '../types/Deck';
+import { type ManualCreationResponse } from 'src/types/ManualCreationResponse';
 
 defineProps<{ open: boolean }>();
-const emit = defineEmits<{ close: [] }>();
+const emit = defineEmits<{ close: []; saveSuccessful: [deckID: string, deck: Deck] }>();
 
 const name = ref('');
 const author = ref('');
@@ -43,7 +45,13 @@ const {
   execute: saveDeck,
   data: deckResponse,
   isFetching
-} = useFetch('/api/create_manual_deck', { immediate: false }).post(data, 'json');
+} = useFetch<ManualCreationResponse>('/api/create_manual_deck', { immediate: false }).post(data, 'json').json();
+
+watch(deckResponse, (response) => {
+  if (response?.deckId && response?.deck) {
+    emit('saveSuccessful', response?.deckId, response?.deck);
+  }
+});
 
 function cancel() {
   name.value = '';
@@ -54,6 +62,5 @@ function cancel() {
 
 function save() {
   saveDeck();
-  emit('close');
 }
 </script>

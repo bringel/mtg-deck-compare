@@ -48,6 +48,14 @@ export const useDeckStore = defineStore('decks', () => {
     }
   }
 
+  function addManuallyCreatedDeck(deckID: string, deck: Deck) {
+    const url = `mtg-deck-compare://manualDeck/${deckID}`;
+    const apiURL = `/api/load_deck?url=${url}`;
+    const fetcher = useFetch(apiURL, { immediate: false, initialData: deck }).json<Deck>();
+    deckFetchers.set(url, reactive(fetcher));
+    return url;
+  }
+
   function removeDeck(url: string) {
     deckFetchers.delete(url);
   }
@@ -59,6 +67,7 @@ export const useDeckStore = defineStore('decks', () => {
     failedDecks,
     loadDeck,
     removeDeck,
-    updateDecks
+    updateDecks,
+    addManuallyCreatedDeck
   };
 });

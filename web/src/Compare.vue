@@ -13,7 +13,11 @@
       <Button theme="error" @click="handleErrorDialogClose">Close</Button>
     </template>
   </ErrorDialog>
-  <ManualDeckModal :open="manualDeckModalOpen" @close="manualDeckModalOpen = false" />
+  <ManualDeckModal
+    :open="manualDeckModalOpen"
+    @close="manualDeckModalOpen = false"
+    @save-successful="handleManualAdd"
+  />
   <div class="flex grow-0 flex-col gap-2 md:flex-row md:items-end">
     <Input v-model="deckURL" id="deck-url" label="Enter a deck list URL" class="mr-4 w-full md:w-96" />
     <Button theme="primary" @click="handleAdd" :loading="currentLoadingURL !== ''">Add URL</Button>
@@ -53,7 +57,7 @@
 
 <script setup lang="ts">
 import { XCircleIcon } from '@heroicons/vue/24/outline';
-import { computed, watch, ref } from 'vue';
+import { computed, watch, ref, type MaybeRefOrGetter, toValue } from 'vue';
 import Button from './components/Button.vue';
 import Input from './components/Input.vue';
 import DeckComparison from './components/DeckComparison.vue';
@@ -65,6 +69,7 @@ import { useRouter, useRoute } from 'vue-router';
 import { encodeDeckURLs, decodeDeckURLs } from './lib/queryStringDeckURLs';
 import ErrorDialog from './components/ErrorDialog.vue';
 import ManualDeckModal from './components/ManualDeckModal.vue';
+import { type Deck } from './types/Deck';
 
 const deckStore = useDeckStore();
 const comparisonStore = useDeckComparisonStoreStore();
@@ -105,13 +110,24 @@ watch(deckStore.deckFetchers, () => {
   }
 });
 
-function handleAdd() {
-  const updated = [...queryDeckURLs.value, deckURL.value];
-  currentLoadingURL.value = deckURL.value;
-  deckURL.value = '';
+function pushDeck(url: MaybeRefOrGetter<string>) {
+  const updated = [...queryDeckURLs.value, toValue(url)];
   router.push({
     query: { deckURLs: encodeDeckURLs(updated) }
   });
+}
+
+function handleAdd() {
+  const url = deckURL.value;
+  currentLoadingURL.value = deckURL.value;
+  deckURL.value = '';
+  pushDeck(url);
+}
+
+function handleManualAdd(deckID: string, deck: Deck) {
+  const url = deckStore.addManuallyCreatedDeck(deckID, deck);
+  manualDeckModalOpen.value = false;
+  pushDeck(url);
 }
 
 function removeURL(url: string) {
