@@ -31,10 +31,16 @@
       :class="`rounded-full border-2 ${borderColors[deckColors[index]]} bg-gray-100 px-4 py-1 dark:bg-gray-800`"
     >
       <div class="inline-flex items-center gap-2" v-if="!deckFetchingMap[url]">
-        <a class="flex cursor-pointer flex-col" :href="url" rel="noopener noreferrer" target="_blank">
-          <span class="text-sm font-medium">{{ deckNamesMap[url]?.name }} by {{ deckNamesMap[url]?.author }}</span>
-          <span class="text-xs opacity-70">{{ url }}</span>
-        </a>
+        <component
+          :is="decksByURL[url]?.sourceType === 'manual' ? 'span' : 'a'"
+          class="flex cursor-pointer flex-col"
+          :href="url"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          <span class="text-sm font-medium">{{ decksByURL[url]?.name }} by {{ decksByURL[url]?.author }}</span>
+          <span class="text-xs opacity-70" v-if="decksByURL[url]?.sourceType !== 'manual'">{{ url }}</span>
+        </component>
         <XCircleIcon class="inline-block size-5 shrink-0 cursor-pointer hover:text-red-700" @click="removeURL(url)" />
       </div>
       <div class="inline-flex items-center gap-2" v-else>
@@ -149,25 +155,24 @@ function switchToManualAdd() {
   manualDeckModalOpen.value = true;
 }
 
-const deckNamesMap = computed<{ [url: string]: { name: string; author: string } | undefined }>(() => {
-  return Object.fromEntries(
-    Array.from(deckStore.deckFetchers.keys()).map((k: string) => {
-      if (deckFetchingMap.value[k]) {
-        return [k, { name: '', author: '' }];
-      } else {
-        const data = deckStore.deckFetchers.get(k)?.data ?? {};
-        // @ts-ignore - object will have a data property if the fetcher isn't loading
-        return [k, { name: data['name'], author: data['author'] }];
-      }
-    })
-  );
-});
-
 const deckFetchingMap = computed<{ [url: string]: boolean }>(() => {
   return Object.fromEntries(
     Array.from(deckStore.deckFetchers.keys()).map((k) => {
       const fetcher = deckStore.deckFetchers.get(k);
       return [k, (fetcher?.isFetching || !!fetcher?.error) ?? true];
+    })
+  );
+});
+
+const decksByURL = computed<{ [url: string]: Deck | null | undefined }>(() => {
+  return Object.fromEntries(
+    Array.from(deckStore.deckFetchers.keys()).map((k: string) => {
+      const fetcher = deckStore.deckFetchers.get(k);
+      if (fetcher?.isFetching) {
+        return [k, null];
+      } else {
+        return [k, fetcher?.data];
+      }
     })
   );
 });
