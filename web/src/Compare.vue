@@ -9,18 +9,13 @@
       <a :href="currentLoadingURL" class="underline">{{ currentLoadingURL }}</a>
     </template>
     <template #buttons>
-      <Button theme="error">Add Manually</Button>
+      <Button theme="error" @click="switchToManualAdd">Add Manually</Button>
       <Button theme="error" @click="handleErrorDialogClose">Close</Button>
     </template>
   </ErrorDialog>
   <ManualDeckModal :open="manualDeckModalOpen" @close="manualDeckModalOpen = false" />
   <div class="flex grow-0 flex-col gap-2 md:flex-row md:items-end">
-    <Input
-      v-model="deckURL"
-      id="deck-url"
-      label="Enter a deck list URL"
-      class="mr-4 w-full md:w-96"
-    />
+    <Input v-model="deckURL" id="deck-url" label="Enter a deck list URL" class="mr-4 w-full md:w-96" />
     <Button theme="primary" @click="handleAdd" :loading="currentLoadingURL !== ''">Add URL</Button>
     <Button @click="manualDeckModalOpen = true" theme="primary">Add Manual Deck</Button>
   </div>
@@ -130,6 +125,12 @@ function removeURL(url: string) {
 function handleErrorDialogClose() {
   removeURL(currentLoadingURL.value);
   currentLoadingURL.value = '';
+}
+
+function switchToManualAdd() {
+  removeURL(currentLoadingURL.value);
+  currentLoadingURL.value = '';
+  manualDeckModalOpen.value = true;
 }
 
 const deckNamesMap = computed<{ [url: string]: { name: string; author: string } | undefined }>(() => {
