@@ -40,9 +40,10 @@ class CardsService
     missing_card_hashes = []
     card_hashes.each do |c|
       key =
-        all_card_keys.find do |existing_key|
-          existing_key == Models::CardKey.from_card_hash(c)
-        end
+        Models::CardKey.find_matching_key(
+          all_keys: all_card_keys,
+          card_hash: c
+        )
       key ? existing_card_keys << key : missing_card_hashes << c
     end
     # existing_card_hashes, missing_card_hashes =
@@ -69,7 +70,8 @@ class CardsService
       missing_card_data =
         missing_cards.to_h do |card_key, card|
           data = card.to_h
-          key = card_key.to_s
+          # Always store with complete key from actual card data
+          key = Models::CardKey.from_card(card).to_s
           [key, JSON.generate(data)]
         end
       redis.mapped_mset(missing_card_data)
@@ -83,16 +85,5 @@ class CardsService
     set_code, set_number =
       card_hash.transform_keys(&:to_sym).values_at(:set_code, :set_number)
     "cards:#{set_code.downcase}:#{set_number.to_i}"
-  end
-
-  def find_any_matching_key(all_keys:, card_hash:)
-    key = all_keys.find { |k| k == Models::CardKey.from_card_hash(card_hash) }
-
-    unless key
-      name_only = card_hash.slice(:name)
-      key = all_keys.find { |k| k == Models::CardKey.from_card_hash(name_only) }
-    end
-
-    key
   end
 end

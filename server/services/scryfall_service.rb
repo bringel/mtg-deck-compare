@@ -46,14 +46,13 @@ class ScryfallService
           query = queries.join(" or ")
 
           res = @api.get("cards/search") { |req| req.params["q"] = query }
-
           response_data = JSON.parse(res.body)
 
           next {} unless response_data["data"]
 
           response_data["data"].to_h do |card_data|
             key =
-              find_any_matching_key(
+              Models::CardKey.find_matching_key(
                 all_keys: card_hash_keys,
                 card_hash: Models::CardKey.from_json_response(card_data).to_h
               )
@@ -146,14 +145,4 @@ class ScryfallService
     end
   end
 
-  def find_any_matching_key(all_keys:, card_hash:)
-    key = all_keys.find { |k| k == Models::CardKey.from_card_hash(card_hash) }
-
-    unless key
-      name_only = card_hash.slice(:name)
-      key = all_keys.find { |k| k == Models::CardKey.from_card_hash(name_only) }
-    end
-
-    key
-  end
 end
