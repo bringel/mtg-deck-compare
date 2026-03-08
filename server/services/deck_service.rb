@@ -51,7 +51,7 @@ class DeckService
     deck
   end
 
-  def save_manual_deck(name:, author:, list:)
+  def save_manual_deck(name:, author:, url: nil, list:)
     parsed_list = DecklistParsers::TextListParser.parse_decklist(list)
 
     deck_id = SecureRandom.uuid
@@ -62,7 +62,7 @@ class DeckService
         name: name,
         author: author,
         source_type: :manual,
-        source_url: nil,
+        source_url: url,
         card_hashes: parsed_list,
         ttl: (60 * 60 * 24 * 30),
         deck_key: deck_key

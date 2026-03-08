@@ -5,7 +5,10 @@ module Models
   CardKey =
     Data.define(:set_code, :card_number, :name) do
       def self.parse(str)
-        _key, set, number, name = str.split(":")
+        parts = str.split(":")
+        set = parts[1]
+        number = parts[2]
+        name = parts[3..].join(":")
 
         new(
           set_code: set.empty? ? nil : set.downcase,

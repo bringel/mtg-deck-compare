@@ -5,6 +5,7 @@ require_relative "../models/card"
 require_relative "../models/card_key"
 require_relative "../lib/service_registry"
 require "json"
+require "byebug"
 
 class CardsService
   attr_reader :scryfall_service, :redis
@@ -40,10 +41,7 @@ class CardsService
     missing_card_hashes = []
     card_hashes.each do |c|
       key =
-        Models::CardKey.find_matching_key(
-          all_keys: all_card_keys,
-          card_hash: c
-        )
+        Models::CardKey.find_matching_key(all_keys: all_card_keys, card_hash: c)
       key ? existing_card_keys << key : missing_card_hashes << c
     end
     # existing_card_hashes, missing_card_hashes =

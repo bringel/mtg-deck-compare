@@ -32,14 +32,24 @@
     >
       <div class="inline-flex items-center gap-2" v-if="!deckFetchingMap[url]">
         <component
-          :is="decksByURL[url]?.sourceType === 'manual' ? 'span' : 'a'"
-          class="flex cursor-pointer flex-col"
-          :href="url"
+          :is="deckHasRoutableURL(decksByURL[url]) ? 'a' : 'span'"
+          class="flex flex-col"
+          :class="{ 'cursor-pointer': deckHasRoutableURL(decksByURL[url]) }"
+          :href="decksByURL[url]?.sourceUrl"
           rel="noopener noreferrer"
           target="_blank"
         >
-          <span class="text-sm font-medium">{{ decksByURL[url]?.name }} by {{ decksByURL[url]?.author }}</span>
-          <span class="text-xs opacity-70" v-if="decksByURL[url]?.sourceType !== 'manual'">{{ url }}</span>
+          <span class="text-sm font-medium">
+            <template v-if="decksByURL[url]?.author">
+              {{ decksByURL[url]?.name }} by {{ decksByURL[url]?.author }}
+            </template>
+            <template v-else>
+              {{ decksByURL[url]?.name }}
+            </template>
+          </span>
+          <span class="text-xs opacity-70" v-if="deckHasRoutableURL(decksByURL[url])">{{
+            decksByURL[url]?.sourceUrl
+          }}</span>
         </component>
         <XCircleIcon class="inline-block size-5 shrink-0 cursor-pointer hover:text-red-700" @click="removeURL(url)" />
       </div>
@@ -153,6 +163,13 @@ function switchToManualAdd() {
   removeURL(currentLoadingURL.value);
   currentLoadingURL.value = '';
   manualDeckModalOpen.value = true;
+}
+
+function deckHasRoutableURL(deck: Deck | null | undefined) {
+  if (!deck) {
+    return false;
+  }
+  return deck.sourceType !== 'manual' || deck.sourceUrl !== null;
 }
 
 const deckFetchingMap = computed<{ [url: string]: boolean }>(() => {

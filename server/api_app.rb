@@ -70,6 +70,7 @@ class ApiApp < Sinatra::Application
       deck_service.save_manual_deck(
         list: body["list"],
         name: body["name"],
+        url: body["url"],
         author: body["author"]
       )
 
