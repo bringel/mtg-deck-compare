@@ -22,6 +22,12 @@ class DeckService
     Models::Deck.from_json(redis.get(deck_key))
   end
 
+  def load_manual_deck(deck_id)
+    deck_key = manual_deck_key(deck_id)
+
+    load_deck(deck_key)
+  end
+
   def save_deck(
     name:,
     author:,
@@ -49,7 +55,7 @@ class DeckService
     parsed_list = DecklistParsers::TextListParser.parse_decklist(list)
 
     deck_id = SecureRandom.uuid
-    deck_key = "decks:manual:#{deck_id}"
+    deck_key = manual_deck_key(deck_id)
 
     deck =
       save_deck(
@@ -81,5 +87,9 @@ class DeckService
     end
 
     { quantities:, cards: cards.values.uniq { |c| c.name } }
+  end
+
+  def manual_deck_key(deck_id)
+    "decks:manual:#{deck_id}"
   end
 end
