@@ -65,13 +65,18 @@ The application can parse and import decklists from:
 - **Aetherhub** (aetherhub.com)
 - **Deckstats** (deckstats.net)
 - **MTGGoldfish** (mtggoldfish.com)
+- **MTGDecks** (mtgdecks.net)
+- **Manual entry** - users can paste a decklist directly via the UI (stored in Redis with 30-day TTL)
 
-Each parser handles site-specific deck formats and normalizes them into a common structure.
+Each parser handles site-specific deck formats and normalizes them into a common structure. Manual decks use a `mtg-deck-compare://manualDeck/<uuid>` URL scheme to identify them in the comparison flow.
+
+`TextListParser` (`server/decklist_parsers/text_list_parser.rb`) handles parsing raw card list text in multiple formats (quantity-first, quantity-last, or with set code and collector number). It recognizes `Commander:`, `Sideboard:`, and `Deck:` section headers.
 
 ## API Endpoints
 
 - `GET /api/deck_info?url=<deck_url>` - Get basic deck information (name, format, etc.)
 - `GET /api/load_deck?url=<deck_url>` - Load full deck data
+- `POST /api/create_manual_deck` - Save a manually entered decklist; returns `{deckId, deck}`
 - `POST /api/compare_decks` - Compare multiple decks (expects `{deckListUrls: [...]}`)
 - `GET /api/check_card/:set/:number` - Get card data from Scryfall
 - `POST /api/check_cards` - Batch fetch card data
@@ -81,13 +86,22 @@ Each parser handles site-specific deck formats and normalizes them into a common
 - `/server/` - Ruby backend code
   - `/api_app.rb` - Main API endpoints
   - `/models/` - Data models (Card, Deck, CardKey)
-  - `/services/` - External service integrations (Scryfall API with rate limiting)
+  - `/services/` - External service integrations
+    - `scryfall_service.rb` - Scryfall API with rate limiting
+    - `cards_service.rb` - Card fetching/caching
+    - `deck_service.rb` - Deck persistence (save/load manual decks from Redis)
   - `/decklist_parsers/` - Site-specific parsers for different MTG deck sites
+    - `text_list_parser.rb` - Parses raw card list text (used by manual entry and MTGDecks)
+    - `manual_deck_parser.rb` - Loads manually saved decks from Redis by UUID
   - `/lib/` - Core business logic (DeckComparer, ServiceRegistry)
   - `/middleware/` - Rack middleware (rate limiting, case conversion)
 - `/web/` - Vue 3 frontend
-  - `/src/components/` - Vue components
-  - `/src/lib/` - Frontend utilities
+  - `/src/components/` - Vue components (includes `ManualDeckModal.vue` for manual deck entry)
+  - `/src/composables/` - Vue composables (`useTheme.ts` for dark/light/auto mode)
+  - `/src/store/` - Pinia stores (`deckStore.ts`, `deckComparisonStore.ts`)
+  - `/src/router/` - Vue Router (routes: `/` Home, `/compare` Compare)
+  - `/src/lib/` - Frontend utilities (`bingo.ts` fetch wrapper, `cardTypeSorter.ts`, `deckColors.ts`, `queryStringDeckURLs.ts`)
+  - `/src/types/` - TypeScript type definitions
 - `/public/` - Built frontend assets (generated)
 - `config.ru` - Rack application configuration
 
@@ -95,22 +109,27 @@ Each parser handles site-specific deck formats and normalizes them into a common
 
 The application allows users to:
 1. Input multiple MTG decklist URLs from supported sites
-2. Parse and load deck data using site-specific parsers
-3. Fetch card images and metadata from Scryfall API (with rate limiting)
-4. Compare decks to find:
+2. Manually enter a decklist via a modal (saved to Redis for 30 days, referenced by UUID)
+3. Parse and load deck data using site-specific parsers
+4. Fetch card images and metadata from Scryfall API (with rate limiting)
+5. Compare decks to find:
    - Cards common to all decks
    - Cards appearing in multiple (but not all) decks
    - Unique cards per deck
    - Card quantities across decks
-5. Handle complex card layouts (transform, modal DFC, split, aftermath, etc.)
+6. Handle complex card layouts (transform, modal DFC, split, aftermath, etc.)
+7. Dark/light/auto theme toggle
 
 ## Technical Notes
 
-- **Redis**: Used for caching Scryfall API responses and rate limiting (10 requests/second)
+- **Redis**: Used for caching Scryfall API responses, rate limiting (10 req/s), and storing manual decks (30-day TTL)
 - **Case Conversion**: Frontend uses camelCase, backend uses snake_case - automatically converted via middleware
 - **ServiceRegistry**: Shared connection pool for Redis accessed via `ServiceRegistry.redis`
 - **Card Comparison**: Uses `CardKey` model for comparing cards (by set/number or name fallback)
 - **Environment**: Requires `REDIS_URL` environment variable (SSL configured for production)
+- **Manual deck URL scheme**: `mtg-deck-compare://manualDeck/<uuid>` — recognized by `ManualDeckParser` to load from Redis
+- **DeckService**: Handles saving/loading decks from Redis; `save_manual_deck` parses text, fetches cards via Scryfall, and persists the result
+- **Dockerfile**: Multi-stage build with separate frontend/backend dev and production targets; production image bundles the built frontend into the Ruby server image
 
 ## Development Workflow
 

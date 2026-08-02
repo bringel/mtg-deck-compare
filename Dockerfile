@@ -41,21 +41,6 @@ ENV SE_CACHE_PATH=/selenium_cache
 FROM ruby:3.3.2-bookworm as server_dev
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y \
-  build-essential \
-  libpq-dev \
-  curl \
-  libnss3 \
-  libnspr4 \
-  libatk1.0-0 \
-  libatk-bridge2.0-0 \
-  libcups2 \
-  libdrm2 \
-  libgtk-3-0 \
-  libgbm1 \
-  libasound2 \
-  && rm -rf /var/lib/apt/lists/*
-
 COPY --from=server_base /app ./
 COPY .env ./
 RUN bundle install
@@ -63,21 +48,6 @@ RUN bundle install
 CMD ["bundle", "exec", "rackup", "--host", "0.0.0.0", "--port", "9292"]
 FROM ruby:3.3.2-bookworm as server_production
 WORKDIR /app
-
-RUN apt-get update && apt-get install -y \
-  build-essential \
-  libpq-dev \
-  curl \
-  libnss3 \
-  libnspr4 \
-  libatk1.0-0 \
-  libatk-bridge2.0-0 \
-  libcups2 \
-  libdrm2 \
-  libgtk-3-0 \
-  libgbm1 \
-  libasound2 \
-  && rm -rf /var/lib/apt/lists/*
 
 COPY --from=server_base /app ./
 COPY --from=frontend_production /app/public ./public

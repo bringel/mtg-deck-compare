@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__todoist__add-tasks",
+      "mcp__todoist__update-tasks"
+    ]
+  }
+}

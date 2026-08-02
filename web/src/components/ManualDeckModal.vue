@@ -25,7 +25,7 @@ import Input from './Input.vue';
 import Button from './Button.vue';
 import { useFetch } from '@vueuse/core';
 import { type Deck } from '../types/Deck';
-import { type ManualCreationResponse } from 'src/types/ManualCreationResponse';
+import { type ManualCreationResponse } from '../types/ManualCreationResponse';
 
 defineProps<{ open: boolean }>();
 const emit = defineEmits<{ close: []; saveSuccessful: [deckID: string, deck: Deck] }>();
