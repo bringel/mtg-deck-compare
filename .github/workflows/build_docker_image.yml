@@ -31,7 +31,7 @@ jobs:
         uses: digitalocean/app_action/deploy@v2
         env:
           DIGEST: ${{ steps.build_and_push.outputs.digest }}
-          GHCR_CREDENTIALS: ${{github.repository.owner}}:${{ secrets.GITHUB_TOKEN }}
+          GHCR_CREDENTIALS: ${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
           project_id: 8b7469c5-302e-42f6-b86f-9e0b1771b70a
