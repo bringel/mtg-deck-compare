@@ -5,7 +5,6 @@ require_relative "../models/card"
 require_relative "../models/card_key"
 require_relative "../lib/service_registry"
 require "json"
-require "byebug"
 
 class CardsService
   attr_reader :scryfall_service, :redis

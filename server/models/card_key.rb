@@ -63,6 +63,10 @@ module Models
       # Extract all possible name variants from a card name string
       # Handles printed_name variants ("|||") and takes first face of split cards ("//")
       def extract_names(name_str)
+        # A key without a name (e.g. one identified by set/number only) can't be
+        # matched by name, so treat it as having no name variants to compare against
+        return [] if name_str.nil?
+
         # Split by printed_name delimiter, then take first face of any split cards
         name_str.split("|||").map { |n| n.split("//").first.strip }
       end
@@ -106,6 +110,8 @@ module Models
 
         unless key
           name_only = card_hash.slice(:name)
+          return if name_only.empty?
+
           key = all_keys.find { |k| k == from_card_hash(name_only) }
         end
 

@@ -2,7 +2,10 @@
   "permissions": {
     "allow": [
       "mcp__todoist__add-tasks",
-      "mcp__todoist__update-tasks"
+      "mcp__todoist__update-tasks",
+      "Bash(cd ~/.vscode/extensions/shopify.ruby-lsp-0.10.6; grep -o '.\\\\{150\\\\}ruby-debug-sock.\\\\{150\\\\}' out/extension.js | head -20; echo \"===\"; grep -o '.\\\\{150\\\\}resolveDebugConfiguration.\\\\{150\\\\}' out/extension.js | head -5; echo \"===\"; grep -o '.\\\\{200\\\\}debugPort.\\\\{200\\\\}' out/extension.js | head -20)",
+      "Read(//Users/bringel/.vscode/extensions/shopify.ruby-lsp-0.10.6/**)",
+      "Bash(python3 -c ' *)"
     ]
   }
 }
