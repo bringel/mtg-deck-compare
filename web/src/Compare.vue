@@ -2,11 +2,19 @@
   <ErrorDialog :is-open="errorDialogOpen" @close="handleErrorDialogClose">
     <template #title>Error loading deck list</template>
     <template #body>
-      Sorry! We're having some trouble loading the deck from the URL you entered. While we work on fixing it, you can
-      enter the deck list manually, or try again in a little bit
-      <br />
-      <hr />
-      <a :href="currentLoadingURL" class="underline">{{ currentLoadingURL }}</a>
+      <p>{{ describeDeckLoadError(currentLoadingError) }}</p>
+      <p class="mt-2" v-if="currentLoadingError?.fallbackUrl">
+        You can copy the list from
+        <a :href="currentLoadingError.fallbackUrl" target="_blank" rel="noopener noreferrer" class="underline">
+          this page</a
+        >
+        yourself and paste it in with "Add Manually".
+      </p>
+      <p class="mt-2" v-else-if="currentLoadingError?.code !== 'unsupported_url'">
+        You can enter the deck list manually, or try again in a little bit.
+      </p>
+      <hr class="my-2" />
+      <a :href="currentLoadingURL" class="break-all underline">{{ currentLoadingURL }}</a>
     </template>
     <template #buttons>
       <Button theme="error" @click="switchToManualAdd">Add Manually</Button>
@@ -15,13 +23,14 @@
   </ErrorDialog>
   <ManualDeckModal
     :open="manualDeckModalOpen"
+    :initial-url="manualDeckInitialURL"
     @close="manualDeckModalOpen = false"
     @save-successful="handleManualAdd"
   />
   <div class="flex grow-0 flex-col gap-2 md:flex-row md:items-end">
     <Input v-model="deckURL" id="deck-url" label="Enter a deck list URL" class="mr-4 w-full md:w-96" />
     <Button theme="primary" @click="handleAdd" :loading="currentLoadingURL !== ''">Add URL</Button>
-    <Button @click="manualDeckModalOpen = true" theme="primary">Add Manual Deck</Button>
+    <Button @click="openManualDeckModal" theme="primary">Add Manual Deck</Button>
   </div>
 
   <ol class="my-4 flex list-inside list-decimal flex-wrap gap-2 dark:text-white">
@@ -86,6 +95,8 @@ import { encodeDeckURLs, decodeDeckURLs } from './lib/queryStringDeckURLs';
 import ErrorDialog from './components/ErrorDialog.vue';
 import ManualDeckModal from './components/ManualDeckModal.vue';
 import { type Deck } from './types/Deck';
+import { type DeckLoadError } from './types/DeckLoadError';
+import { describeDeckLoadError } from './lib/deckLoadError';
 
 const deckStore = useDeckStore();
 const comparisonStore = useDeckComparisonStoreStore();
@@ -94,10 +105,14 @@ const route = useRoute();
 const router = useRouter();
 const deckURL = ref('');
 const currentLoadingURL = ref('');
+const currentLoadingError = computed<DeckLoadError | null>(() => {
+  return deckStore.deckFetchers.get(currentLoadingURL.value)?.error ?? null;
+});
 const errorDialogOpen = computed(() => {
-  return !!deckStore.deckFetchers.get(currentLoadingURL.value)?.error;
+  return !!currentLoadingError.value;
 });
 const manualDeckModalOpen = ref(false);
+const manualDeckInitialURL = ref('');
 
 const queryDeckURLs = computed<string[]>(() => {
   if (route.query.deckURLs) {
@@ -160,8 +175,15 @@ function handleErrorDialogClose() {
 }
 
 function switchToManualAdd() {
+  // keep the link to the original deck on the manually entered copy
+  manualDeckInitialURL.value = currentLoadingURL.value;
   removeURL(currentLoadingURL.value);
   currentLoadingURL.value = '';
+  manualDeckModalOpen.value = true;
+}
+
+function openManualDeckModal() {
+  manualDeckInitialURL.value = '';
   manualDeckModalOpen.value = true;
 }
 

@@ -10,7 +10,13 @@ require_relative "../models/card_key"
 class ScryfallService
   def initialize
     @api =
-      Faraday.new(url: "https://api.scryfall.com") do |f|
+      Faraday.new(
+        url: "https://api.scryfall.com",
+        request: {
+          open_timeout: 5,
+          timeout: 20
+        }
+      ) do |f|
         f.use Middleware::RateLimiter,
               redis: ServiceRegistry.redis,
               requests: 10,

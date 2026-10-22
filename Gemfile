@@ -11,6 +11,7 @@ gem "redis", "~> 5.4"
 gem "puma", "~> 6.1"
 
 gem "faraday", "~> 2.7"
+gem "faraday-follow_redirects", "~> 0.3"
 
 gem "nokogiri", "~> 1.14"
 gem "byebug"
@@ -22,6 +23,7 @@ gem "connection_pool", "~> 2.5"
 
 gem "debug", "~> 1.11"
 
-gem "capybara", "~> 3.40"
-
-gem "selenium-webdriver", "~> 4.39"
+group :development, :test do
+  gem "rake"
+  gem "minitest", "~> 5.25"
+end

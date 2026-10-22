@@ -1,98 +1,72 @@
 # frozen_string_literal: true
-require "faraday"
-require "nokogiri"
 
 require_relative "./decklist_parser"
-require_relative "../services/cards_service"
-require_relative "../models/deck"
 
 module DecklistParsers
   class AetherhubParser < DecklistParser
-    URL_PATTERN = %r{(?:https?://)?aetherhub\.com/Deck/.*}
+    URL_PATTERN = %r{(?:https?://)?(?:www\.)?aetherhub\.com/Deck/.*}
 
-    def deck_name
-      page_title = doc.css("title").text
-      page_title.split("-", 2).last.gsub(/youtube video/i, "").strip
-    end
+    SET_CODE_CONVERSIONS = {
+      "dar" => "dom" # for some reason, some cards from Dominaria show up with the code DAR, but scryfall doesn't like it
+    }.freeze
 
-    def author
-      doc.css('a[href^="/User"]').first.text.strip
-    end
-
-    def card_hashes
-      cards = get_card_info
-
-      {
-        main_deck: cards[:main_deck].map { |c| card_to_hash(card_data: c) },
-        sideboard: cards[:sideboard].map { |c| card_to_hash(card_data: c) }
-      }
-    end
-
-    def source_type
+    def self.source_type
       :aetherhub
+    end
+
+    def parse
+      doc = html(fetcher.get(url))
+
+      deck_id = doc.at_css("[data-deckid].mtgaExport")&.[]("data-deckid")
+      raise extraction_error("Couldn't find the deck id on the page") unless deck_id
+
+      deck =
+        fetcher.get(
+          "https://aetherhub.com/Deck/FetchMtgaDeckJson",
+          params: {
+            "deckId" => deck_id,
+            "lang" => 0,
+            "simple" => false
+          },
+          accept: :json
+        ).json
+
+      sections = split_sections(deck["convertedDeck"])
+
+      Models::ParsedDeck.new(
+        name: deck_name(doc),
+        author: doc.at_css('a[href^="/User"]')&.text&.strip,
+        main_deck: sections[:main_deck].map { |c| card_to_hash(card_data: c) },
+        sideboard: sections[:sideboard].map { |c| card_to_hash(card_data: c) }
+      )
     end
 
     private
 
-    def doc
-      if @doc
-        @doc
-      else
-        page_content = Faraday.get(url)
-        @doc = Nokogiri.HTML(page_content.body)
-      end
+    def deck_name(doc)
+      page_title = doc.at_css("title")&.text.to_s
+      page_title.split("-", 2).last.to_s.gsub(/youtube video/i, "").strip
     end
 
-    def get_card_info
-      deck_id = doc.css("[data-deckid].mtgaExport").first["data-deckid"]
-
-      deck_response =
-        Faraday.get(
-          "https://aetherhub.com/Deck/FetchMtgaDeckJson",
-          { "deckId" => deck_id, "lang" => 0, "simple" => false }
-        )
-
-      deck = JSON.parse(deck_response.body)
-
-      set_code_conversions = {
-        "dar" => "dom" # for some reason, some cards from Dominaria show up with the code DAR, but scryfall doesn't like it
-      }
-
-      main_deck = []
-      sideboard = []
-
+    # convertedDeck is a flat list where entries without a quantity are
+    # section headers ("Deck", "Commander", "Sideboard") for the cards after them
+    def split_sections(converted_deck)
+      sections = { main_deck: [], sideboard: [] }
       category = ""
-      deck["convertedDeck"].each do |card|
-        category = card["name"] if card["quantity"].nil?
 
-        if card["quantity"] && card["name"]
-          if category.downcase == "deck" || category.downcase == "commander"
-            main_deck << card.except("cardId")
-          elsif category.downcase == "sideboard"
-            sideboard << card.except("cardId")
-          end
+      Array(converted_deck).each do |card|
+        category = card["name"].to_s.downcase if card["quantity"].nil?
+        next unless card["quantity"] && card["name"]
+
+        case category
+        when "deck", "commander"
+          sections[:main_deck] << card
+        when "sideboard"
+          sections[:sideboard] << card
         end
       end
 
-      main_deck =
-        main_deck.map do |c|
-          if set_code_conversions.key?(c["set"].downcase)
-            c.merge({ "set" => set_code_conversions[c["set"].downcase] })
-          else
-            c
-          end
-        end
-
-      sideboard =
-        sideboard.map do |c|
-          if set_code_conversions.key?(c["set"].downcase)
-            c.merge({ "set" => set_code_conversions[c["set"].downcase] })
-          else
-            c
-          end
-        end
-
-      return { main_deck:, sideboard: }
+      sections
     end
 
     def card_to_hash(card_data:)
@@ -105,8 +79,9 @@ module DecklistParsers
         # if that's the case scryfall wont find them so we can just search them by name
         { name: card_data["name"], quantity: card_data["quantity"] }
       else
+        set_code = card_data["set"].downcase
         {
-          set_code: card_data["set"].downcase,
+          set_code: SET_CODE_CONVERSIONS.fetch(set_code, set_code),
           set_number: card_data["number"].to_i,
           quantity: card_data["quantity"]
         }

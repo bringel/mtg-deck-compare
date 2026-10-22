@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "../decklist_parsers/parser_list.rb"
+require_relative "../services/deck_service"
 require_relative "../lib/service_registry.rb"
 
 class DeckComparer
@@ -92,14 +92,15 @@ class DeckComparer
     end
   end
 
+  # memoized: this is called for every card in cards_to_quantities
   def parsed_decks
-    @deck_list_urls.map.with_index do |url, index|
-      parser = DecklistParsers::ParserList.get_parser(url)
-      {
-        index: index,
-        url: url,
-        deck: parser.new(url, redis: ServiceRegistry.redis).get_deck
-      }
-    end
+    @parsed_decks ||=
+      @deck_list_urls.map.with_index do |url, index|
+        { index: index, url: url, deck: deck_service.load_from_url(url) }
+      end
+  end
+
+  def deck_service
+    @deck_service ||= DeckService.new(redis: ServiceRegistry.redis)
   end
 end

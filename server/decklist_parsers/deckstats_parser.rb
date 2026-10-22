@@ -1,35 +1,30 @@
 # frozen_string_literal: true
-require "faraday"
-require "nokogiri"
-require "json"
 
 require_relative "./decklist_parser"
-require_relative "../services/cards_service"
-require_relative "../models/deck"
+require_relative "../lib/app_logger"
+require "uri"
 
 module DecklistParsers
   class DeckstatsParser < DecklistParser
-    URL_PATTERN = %r{(?:https?://)?deckstats\.net/decks/(\d+)/(.+)}
+    URL_PATTERN = %r{(?:https?://)?(?:www\.)?deckstats\.net/decks/(\d+)/([^/?#]+)}
 
-    def deck_name
-      deck_data["name"]
+    SET_MAPPINGS_CACHE_KEY = "deckstats:set_mappings"
+
+    def self.source_type
+      :deckstats
     end
 
-    def author
-      author_from_data = deck_data.dig("saved_by", "username")
-      author_from_link = user_link&.text
-      author_from_link || author_from_data || "Unknown"
-    end
-
-    def card_hashes
+    def parse
+      doc = html(fetcher.get(page_url))
+      deck_data = extract_deck_data(doc)
       set_mappings = fetch_set_mappings
 
       main_deck_cards = []
       sideboard_cards = []
 
-      deck_data["sections"]&.each do |section|
+      Array(deck_data["sections"]).each do |section|
         cards =
-          section["cards"].map do |c|
+          Array(section["cards"]).map do |c|
             card_to_hash(card_data: c, set_mappings: set_mappings)
           end
 
@@ -40,79 +35,81 @@ module DecklistParsers
         end
       end
 
-      { main_deck: main_deck_cards, sideboard: sideboard_cards }
-    end
-
-    def source_type
-      :deckstats
+      Models::ParsedDeck.new(
+        name: deck_data["name"],
+        author: author(doc, deck_data),
+        main_deck: main_deck_cards,
+        sideboard: sideboard_cards
+      )
     end
 
     private
 
-    def doc
-      if @doc
-        @doc
-      else
-        user_id, deck_id = URL_PATTERN.match(url).captures
-        response =
-          Faraday.get("https://deckstats.net/decks/#{user_id}/#{deck_id}/en")
-        @doc = Nokogiri.HTML(response.body)
-      end
+    def page_url
+      user_id, deck_slug = URL_PATTERN.match(url).captures
+      query = URI.parse(url).query
+      "https://deckstats.net/decks/#{user_id}/#{deck_slug}/en#{query ? "?#{query}" : ""}"
     end
 
-    def deck_data
-      @deck_data ||= extract_deck_data(doc)
-    end
-
-    def user_link
+    def author(doc, deck_data)
       user_id = URL_PATTERN.match(url).captures.first
       user_href = "https://deckstats.net/decks/#{user_id}"
 
-      doc
-        .css("a[href^='#{user_href}']")
-        .find { |anchor| anchor["href"].split("?").first == user_href }
+      user_link =
+        doc
+          .css("a[href^='#{user_href}']")
+          .find { |anchor| anchor["href"].split("?").first == user_href }
+
+      user_link&.text || deck_data.dig("saved_by", "username") || "Unknown"
     end
 
     def extract_deck_data(doc)
-      script_tags = doc.css("script")
-      deck_data_json = nil
-      script_tags.each do |script|
-        if script.content.include?("init_deck_data")
-          json_match =
-            script.content.match(/init_deck_data\(({.*?}), false\);/m)
-          deck_data_json = json_match[1] if json_match
-          break
-        end
-      end
+      script =
+        doc.css("script").find { |s| s.content.include?("init_deck_data") }
+      json_match =
+        script&.content&.match(/init_deck_data\(({.*?}), false\);/m)
 
-      raise "Could not find deck_data in page" unless deck_data_json
-      JSON.parse(deck_data_json)
+      raise extraction_error("Couldn't find the deck data on the page") unless json_match
+
+      JSON.parse(json_match[1])
     end
 
+    # Deckstats uses its own set ids, so we need their set list to turn them
+    # into real set codes. If we can't get it, every card falls back to a name
+    # lookup instead of failing the whole deck
     def fetch_set_mappings
-      cache_key = "deckstats:set_mappings"
+      cached = redis.get(SET_MAPPINGS_CACHE_KEY)
+      return JSON.parse(cached) if cached
 
-      return JSON.parse(redis.get(cache_key)) if redis.exists?(cache_key)
-
-      response =
-        Faraday.get(
+      data =
+        fetcher.get(
           "https://deckstats.net/api.php",
-          { cached: "", action: "get_sets2" }
-        )
-
-      data = JSON.parse(response.body)
-      sets = data["sets"] || {}
+          params: {
+            cached: "",
+            action: "get_sets2"
+          },
+          accept: :json
+        ).json
 
       # Build a mapping of set_id (as string) -> abbreviation (set code)
-      mappings = {}
-      sets.each do |set_id, set_info|
-        code = set_info["wotc_abbreviation"] || set_info["abbreviation"]
-        mappings[set_id] = code&.downcase
-      end
+      mappings =
+        (data["sets"] || {}).to_h do |set_id, set_info|
+          code = set_info["wotc_abbreviation"] || set_info["abbreviation"]
+          [set_id, code&.downcase]
+        end
 
-      redis.set(cache_key, JSON.generate(mappings), ex: (7 * 24 * 60 * 60))
+      redis.set(
+        SET_MAPPINGS_CACHE_KEY,
+        JSON.generate(mappings),
+        ex: (7 * 24 * 60 * 60)
+      )
 
       mappings
+    rescue DecklistParsers::Error, JSON::ParserError => e
+      AppLogger.warn(
+        "deckstats set mappings unavailable, falling back to card names: #{e.message}"
+      )
+      {}
     end
 
     def card_to_hash(card_data:, set_mappings:)

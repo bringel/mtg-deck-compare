@@ -25,6 +25,10 @@ module Middleware
   #   - key_prefix: Prefix for Redis keys (default: "rate_limit")
   #   - max_wait_time: Maximum time to wait for lock in seconds (default: 60)
   class RateLimiter < Faraday::Middleware
+    # Raised when we give up waiting for a slot. It subclasses Faraday::TimeoutError
+    # for backwards compatibility, but is distinct so callers can avoid retrying it
+    class WaitTimeout < Faraday::TimeoutError; end
+
     UNITS = {
       seconds: 1,
       minutes: 60,
@@ -98,7 +102,7 @@ module Middleware
 
         # Check if we've exceeded max wait time
         if Time.now - start_time > @max_wait_time
-          raise Faraday::TimeoutError, "Rate limiter timeout after #{@max_wait_time}s waiting for slot to #{origin}"
+          raise WaitTimeout, "Rate limiter timeout after #{@max_wait_time}s waiting for slot to #{origin}"
         end
       end
     end

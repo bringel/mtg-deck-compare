@@ -1,0 +1,1310 @@
+{
+  "id": 7031486,
+  "name": "Buffs by Hans",
+  "owner": {
+    "username": "SalubriousSnail"
+  },
+  "categories": [
+    {
+      "id": 67295189,
+      "name": "Beats",
+      "includedInDeck": true,
+      "isPremier": false
+    },
+    {
+      "id": 67295190,
+      "name": "Land",
+      "includedInDeck": true,
+      "isPremier": false
+    },
+    {
+      "id": 67295192,
+      "name": "Enchantment",
+      "includedInDeck": true,
+      "isPremier": false
+    },
+    {
+      "id": 67295193,
+      "name": "Artifact",
+      "includedInDeck": true,
+      "isPremier": false
+    },
+    {
+      "id": 67295194,
+      "name": "Big Draw",
+      "includedInDeck": true,
+      "isPremier": false
+    },
+    {
+      "id": 67295195,
+      "name": "Sorcery",
+      "includedInDeck": true,
+      "isPremier": false
+    },
+    {
+      "id": 67295196,
+      "name": "Removal",
+      "includedInDeck": true,
+      "isPremier": false
+    },
+    {
+      "id": 67295188,
+      "name": "Ramp",
+      "includedInDeck": true,
+      "isPremier": false
+    },
+    {
+      "id": 67295191,
+      "name": "Planeswalker",
+      "includedInDeck": true,
+      "isPremier": false
+    },
+    {
+      "id": 67295198,
+      "name": "Instant",
+      "includedInDeck": true,
+      "isPremier": false
+    },
+    {
+      "id": 67295200,
+      "name": "Commander",
+      "includedInDeck": true,
+      "isPremier": true
+    },
+    {
+      "id": 67295201,
+      "name": "Creature",
+      "includedInDeck": true,
+      "isPremier": false
+    },
+    {
+      "id": 67295197,
+      "name": "Buff",
+      "includedInDeck": true,
+      "isPremier": false
+    },
+    {
+      "id": 67295199,
+      "name": "Engines",
+      "includedInDeck": true,
+      "isPremier": false
+    }
+  ],
+  "cards": [
+    {
+      "quantity": 1,
+      "categories": [
+        "Buff"
+      ],
+      "card": {
+        "collectorNumber": "182",
+        "edition": {
+          "editioncode": "bro"
+        },
+        "oracleCard": {
+          "name": "Gaea's Gift"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Buff"
+      ],
+      "card": {
+        "collectorNumber": "190",
+        "edition": {
+          "editioncode": "one"
+        },
+        "oracleCard": {
+          "name": "Tyvar's Stand"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Buff"
+      ],
+      "card": {
+        "collectorNumber": "173",
+        "edition": {
+          "editioncode": "a25"
+        },
+        "oracleCard": {
+          "name": "Invigorate"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Buff"
+      ],
+      "card": {
+        "collectorNumber": "157",
+        "edition": {
+          "editioncode": "tsr"
+        },
+        "oracleCard": {
+          "name": "Brute Force"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Ramp"
+      ],
+      "card": {
+        "collectorNumber": "300",
+        "edition": {
+          "editioncode": "cmm"
+        },
+        "oracleCard": {
+          "name": "Kodama's Reach"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Land"
+      ],
+      "card": {
+        "collectorNumber": "156",
+        "edition": {
+          "editioncode": "woc"
+        },
+        "oracleCard": {
+          "name": "Command Tower"
+        }
+      }
+    },
+    {
+      "quantity": 10,
+      "categories": [
+        "Land"
+      ],
+      "card": {
+        "collectorNumber": "281",
+        "edition": {
+          "editioncode": "mom"
+        },
+        "oracleCard": {
+          "name": "Forest"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Ramp"
+      ],
+      "card": {
+        "collectorNumber": "C18-150",
+        "edition": {
+          "editioncode": "plst"
+        },
+        "oracleCard": {
+          "name": "Harrow"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Engines"
+      ],
+      "card": {
+        "collectorNumber": "232",
+        "edition": {
+          "editioncode": "cmr"
+        },
+        "oracleCard": {
+          "name": "Hunter's Insight"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Engines"
+      ],
+      "card": {
+        "collectorNumber": "57",
+        "edition": {
+          "editioncode": "ddm"
+        },
+        "oracleCard": {
+          "name": "Ohran Viper"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Removal"
+      ],
+      "card": {
+        "collectorNumber": "155",
+        "edition": {
+          "editioncode": "dmu"
+        },
+        "oracleCard": {
+          "name": "Bite Down"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Removal"
+      ],
+      "card": {
+        "collectorNumber": "170",
+        "edition": {
+          "editioncode": "iko"
+        },
+        "oracleCard": {
+          "name": "Ram Through"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Engines"
+      ],
+      "card": {
+        "collectorNumber": "69",
+        "edition": {
+          "editioncode": "vow"
+        },
+        "oracleCard": {
+          "name": "Mischievous Catgeist // Catlike Curiosity"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Removal"
+      ],
+      "card": {
+        "collectorNumber": "182",
+        "edition": {
+          "editioncode": "mom"
+        },
+        "oracleCard": {
+          "name": "Cosmic Hunger"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Buff"
+      ],
+      "card": {
+        "collectorNumber": "104",
+        "edition": {
+          "editioncode": "wwk"
+        },
+        "oracleCard": {
+          "name": "Groundswell"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Ramp"
+      ],
+      "card": {
+        "collectorNumber": "153",
+        "edition": {
+          "editioncode": "dmc"
+        },
+        "oracleCard": {
+          "name": "Growth Spiral"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Ramp"
+      ],
+      "card": {
+        "collectorNumber": "184",
+        "edition": {
+          "editioncode": "stx"
+        },
+        "oracleCard": {
+          "name": "Eureka Moment"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Removal"
+      ],
+      "card": {
+        "collectorNumber": "303",
+        "edition": {
+          "editioncode": "moc"
+        },
+        "oracleCard": {
+          "name": "Inscription of Abundance"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Buff"
+      ],
+      "card": {
+        "collectorNumber": "130",
+        "edition": {
+          "editioncode": "ktk"
+        },
+        "oracleCard": {
+          "name": "Become Immense"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Engines"
+      ],
+      "card": {
+        "collectorNumber": "104",
+        "edition": {
+          "editioncode": "arb"
+        },
+        "oracleCard": {
+          "name": "Vedalken Heretic"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Removal"
+      ],
+      "card": {
+        "collectorNumber": "177",
+        "edition": {
+          "editioncode": "stx"
+        },
+        "oracleCard": {
+          "name": "Decisive Denial"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Ramp"
+      ],
+      "card": {
+        "collectorNumber": "184",
+        "edition": {
+          "editioncode": "mom"
+        },
+        "oracleCard": {
+          "name": "Deeproot Wayfinder"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Ramp"
+      ],
+      "card": {
+        "collectorNumber": "56",
+        "edition": {
+          "editioncode": "dmu"
+        },
+        "oracleCard": {
+          "name": "Joint Exploration"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Buff"
+      ],
+      "card": {
+        "collectorNumber": "230",
+        "edition": {
+          "editioncode": "c20"
+        },
+        "oracleCard": {
+          "name": "Temur Charm"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Land"
+      ],
+      "card": {
+        "collectorNumber": "402",
+        "edition": {
+          "editioncode": "moc"
+        },
+        "oracleCard": {
+          "name": "Frontier Bivouac"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Land"
+      ],
+      "card": {
+        "collectorNumber": "424",
+        "edition": {
+          "editioncode": "moc"
+        },
+        "oracleCard": {
+          "name": "Simic Growth Chamber"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Land"
+      ],
+      "card": {
+        "collectorNumber": "243",
+        "edition": {
+          "editioncode": "afc"
+        },
+        "oracleCard": {
+          "name": "Gruul Turf"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Land"
+      ],
+      "card": {
+        "collectorNumber": "283",
+        "edition": {
+          "editioncode": "c20"
+        },
+        "oracleCard": {
+          "name": "Izzet Boilerworks"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Land"
+      ],
+      "card": {
+        "collectorNumber": "256",
+        "edition": {
+          "editioncode": "woe"
+        },
+        "oracleCard": {
+          "name": "Evolving Wilds"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Land"
+      ],
+      "card": {
+        "collectorNumber": "439",
+        "edition": {
+          "editioncode": "moc"
+        },
+        "oracleCard": {
+          "name": "Terramorphic Expanse"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Land"
+      ],
+      "card": {
+        "collectorNumber": "433",
+        "edition": {
+          "editioncode": "moc"
+        },
+        "oracleCard": {
+          "name": "Temple of Epiphany"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Land"
+      ],
+      "card": {
+        "collectorNumber": "430",
+        "edition": {
+          "editioncode": "moc"
+        },
+        "oracleCard": {
+          "name": "Temple of Abandon"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Land"
+      ],
+      "card": {
+        "collectorNumber": "255",
+        "edition": {
+          "editioncode": "m20"
+        },
+        "oracleCard": {
+          "name": "Temple of Mystery"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Buff"
+      ],
+      "card": {
+        "collectorNumber": "195",
+        "edition": {
+          "editioncode": "gtc"
+        },
+        "oracleCard": {
+          "name": "Simic Charm"
+        }
+      }
+    },
+    {
+      "quantity": 6,
+      "categories": [
+        "Land"
+      ],
+      "card": {
+        "collectorNumber": "278",
+        "edition": {
+          "editioncode": "mom"
+        },
+        "oracleCard": {
+          "name": "Island"
+        }
+      }
+    },
+    {
+      "quantity": 6,
+      "categories": [
+        "Land"
+      ],
+      "card": {
+        "collectorNumber": "280",
+        "edition": {
+          "editioncode": "mom"
+        },
+        "oracleCard": {
+          "name": "Mountain"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Buff"
+      ],
+      "card": {
+        "collectorNumber": "173",
+        "edition": {
+          "editioncode": "scd"
+        },
+        "oracleCard": {
+          "name": "Blossoming Defense"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Land"
+      ],
+      "card": {
+        "collectorNumber": "252",
+        "edition": {
+          "editioncode": "grn"
+        },
+        "oracleCard": {
+          "name": "Izzet Guildgate"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Land"
+      ],
+      "card": {
+        "collectorNumber": "250",
+        "edition": {
+          "editioncode": "rna"
+        },
+        "oracleCard": {
+          "name": "Gruul Guildgate"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Land"
+      ],
+      "card": {
+        "collectorNumber": "258",
+        "edition": {
+          "editioncode": "rna"
+        },
+        "oracleCard": {
+          "name": "Simic Guildgate"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Buff"
+      ],
+      "card": {
+        "collectorNumber": "145",
+        "edition": {
+          "editioncode": "ths"
+        },
+        "oracleCard": {
+          "name": "Titan's Strength"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Engines"
+      ],
+      "card": {
+        "collectorNumber": "167",
+        "edition": {
+          "editioncode": "eld"
+        },
+        "oracleCard": {
+          "name": "Oakhame Adversary"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Removal"
+      ],
+      "card": {
+        "collectorNumber": "200",
+        "edition": {
+          "editioncode": "cmr"
+        },
+        "oracleCard": {
+          "name": "Soul's Fire"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Buff"
+      ],
+      "card": {
+        "collectorNumber": "64",
+        "edition": {
+          "editioncode": "dmu"
+        },
+        "oracleCard": {
+          "name": "Shore Up"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Buff"
+      ],
+      "card": {
+        "collectorNumber": "168",
+        "edition": {
+          "editioncode": "mm2"
+        },
+        "oracleCard": {
+          "name": "Vines of Vastwood"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Buff"
+      ],
+      "card": {
+        "collectorNumber": "323",
+        "edition": {
+          "editioncode": "cmm"
+        },
+        "oracleCard": {
+          "name": "Snakeskin Veil"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Buff"
+      ],
+      "card": {
+        "collectorNumber": "211",
+        "edition": {
+          "editioncode": "neo"
+        },
+        "oracleCard": {
+          "name": "Tamiyo's Safekeeping"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Engines"
+      ],
+      "card": {
+        "collectorNumber": "210",
+        "edition": {
+          "editioncode": "c20"
+        },
+        "oracleCard": {
+          "name": "Djinn Illuminatus"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Engines"
+      ],
+      "card": {
+        "collectorNumber": "204",
+        "edition": {
+          "editioncode": "c20"
+        },
+        "oracleCard": {
+          "name": "Cold-Eyed Selkie"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Engines"
+      ],
+      "card": {
+        "collectorNumber": "82",
+        "edition": {
+          "editioncode": "vow"
+        },
+        "oracleCard": {
+          "name": "Stormchaser Drake"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Removal"
+      ],
+      "card": {
+        "collectorNumber": "192",
+        "edition": {
+          "editioncode": "znr"
+        },
+        "oracleCard": {
+          "name": "Khalni Ambush // Khalni Territory"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Engines"
+      ],
+      "card": {
+        "collectorNumber": "61",
+        "edition": {
+          "editioncode": "one"
+        },
+        "oracleCard": {
+          "name": "Mercurial Spelldancer"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Ramp"
+      ],
+      "card": {
+        "collectorNumber": "295",
+        "edition": {
+          "editioncode": "moc"
+        },
+        "oracleCard": {
+          "name": "Cultivate"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Buff"
+      ],
+      "card": {
+        "collectorNumber": "158",
+        "edition": {
+          "editioncode": "dmu"
+        },
+        "oracleCard": {
+          "name": "Colossal Growth"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Buff"
+      ],
+      "card": {
+        "collectorNumber": "116",
+        "edition": {
+          "editioncode": "nph"
+        },
+        "oracleCard": {
+          "name": "Mutagenic Growth"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Ramp"
+      ],
+      "card": {
+        "collectorNumber": "124",
+        "edition": {
+          "editioncode": "snc"
+        },
+        "oracleCard": {
+          "name": "Sticky Fingers"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Ramp"
+      ],
+      "card": {
+        "collectorNumber": "201",
+        "edition": {
+          "editioncode": "znr"
+        },
+        "oracleCard": {
+          "name": "Roiling Regrowth"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Ramp"
+      ],
+      "card": {
+        "collectorNumber": "239",
+        "edition": {
+          "editioncode": "khm"
+        },
+        "oracleCard": {
+          "name": "Goldvein Pick"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Ramp"
+      ],
+      "card": {
+        "collectorNumber": "131",
+        "edition": {
+          "editioncode": "mom"
+        },
+        "oracleCard": {
+          "name": "Beamtown Beatstick"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Engines"
+      ],
+      "card": {
+        "collectorNumber": "133",
+        "edition": {
+          "editioncode": "woc"
+        },
+        "oracleCard": {
+          "name": "Snake Umbra"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Engines"
+      ],
+      "card": {
+        "collectorNumber": "44",
+        "edition": {
+          "editioncode": "dmu"
+        },
+        "oracleCard": {
+          "name": "Combat Research"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Engines"
+      ],
+      "card": {
+        "collectorNumber": "386",
+        "edition": {
+          "editioncode": "cmm"
+        },
+        "oracleCard": {
+          "name": "Geode Golem"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Commander"
+      ],
+      "card": {
+        "collectorNumber": "175",
+        "edition": {
+          "editioncode": "dmc"
+        },
+        "oracleCard": {
+          "name": "Xyris, the Writhing Storm"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Buff"
+      ],
+      "card": {
+        "collectorNumber": "154",
+        "edition": {
+          "editioncode": "iko"
+        },
+        "oracleCard": {
+          "name": "Fully Grown"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Removal"
+      ],
+      "card": {
+        "collectorNumber": "210",
+        "edition": {
+          "editioncode": "rna"
+        },
+        "oracleCard": {
+          "name": "Sunder Shaman"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Buff"
+      ],
+      "card": {
+        "collectorNumber": "223",
+        "edition": {
+          "editioncode": "rna"
+        },
+        "oracleCard": {
+          "name": "Collision // Colossus"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Engines"
+      ],
+      "card": {
+        "collectorNumber": "90",
+        "edition": {
+          "editioncode": "roe"
+        },
+        "oracleCard": {
+          "name": "Surrakar Spellblade"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Buff"
+      ],
+      "card": {
+        "collectorNumber": "210",
+        "edition": {
+          "editioncode": "m21"
+        },
+        "oracleCard": {
+          "name": "Titanic Growth"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Engines"
+      ],
+      "card": {
+        "collectorNumber": "300",
+        "edition": {
+          "editioncode": "cmr"
+        },
+        "oracleCard": {
+          "name": "Bladegriff Prototype"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Buff"
+      ],
+      "card": {
+        "collectorNumber": "264",
+        "edition": {
+          "editioncode": "cmm"
+        },
+        "oracleCard": {
+          "name": "Temur Battle Rage"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Removal"
+      ],
+      "card": {
+        "collectorNumber": "229",
+        "edition": {
+          "editioncode": "rna"
+        },
+        "oracleCard": {
+          "name": "Thrash // Threat"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Ramp"
+      ],
+      "card": {
+        "collectorNumber": "157",
+        "edition": {
+          "editioncode": "mm3"
+        },
+        "oracleCard": {
+          "name": "Coiling Oracle"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Land"
+      ],
+      "card": {
+        "collectorNumber": "898",
+        "edition": {
+          "editioncode": "clb"
+        },
+        "oracleCard": {
+          "name": "Kessig Wolf Run"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Removal"
+      ],
+      "card": {
+        "collectorNumber": "232",
+        "edition": {
+          "editioncode": "c20"
+        },
+        "oracleCard": {
+          "name": "Trygon Predator"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Buff"
+      ],
+      "card": {
+        "collectorNumber": "183",
+        "edition": {
+          "editioncode": "bro"
+        },
+        "oracleCard": {
+          "name": "Giant Growth"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Engines"
+      ],
+      "card": {
+        "collectorNumber": "61",
+        "edition": {
+          "editioncode": "wot"
+        },
+        "oracleCard": {
+          "name": "Season of Growth"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Engines"
+      ],
+      "card": {
+        "collectorNumber": "125",
+        "edition": {
+          "editioncode": "dmc"
+        },
+        "oracleCard": {
+          "name": "Neheb, Dreadhorde Champion"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Removal"
+      ],
+      "card": {
+        "collectorNumber": "202",
+        "edition": {
+          "editioncode": "neo"
+        },
+        "oracleCard": {
+          "name": "Master's Rebuke"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Buff"
+      ],
+      "card": {
+        "collectorNumber": "123",
+        "edition": {
+          "editioncode": "one"
+        },
+        "oracleCard": {
+          "name": "Blazing Crescendo"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Removal"
+      ],
+      "card": {
+        "collectorNumber": "122",
+        "edition": {
+          "editioncode": "dgm"
+        },
+        "oracleCard": {
+          "name": "Armed // Dangerous"
+        }
+      }
+    },
+    {
+      "quantity": 1,
+      "categories": [
+        "Removal"
+      ],
+      "card": {
+        "collectorNumber": "145",
+        "edition": {
+          "editioncode": "ktk"
+        },
+        "oracleCard": {
+          "name": "Roar of Challenge"
+        }
+      }
+    }
+  ]
+}

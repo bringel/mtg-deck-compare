@@ -34,9 +34,6 @@ COPY config ./config
 COPY config.ru ./
 
 RUN mkdir -p tmp
-RUN mkdir -p -m 766 /selenium_cache
-
-ENV SE_CACHE_PATH=/selenium_cache
 
 FROM ruby:3.3.2-bookworm as server_dev
 WORKDIR /app

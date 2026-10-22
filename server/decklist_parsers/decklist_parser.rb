@@ -1,62 +1,78 @@
 # frozen_string_literal: true
 require "json"
-require_relative "../services/cards_service"
+require "nokogiri"
+
+require_relative "./errors"
+require_relative "./text_list_parser"
+require_relative "../fetchers/fetchers"
 require_relative "../lib/service_registry"
-require_relative "../models/card_key"
+require_relative "../models/parsed_deck"
 
 module DecklistParsers
+  # Base class for site-specific parsers.
+  #
+  # A parser knows how to turn one site's deck URL into a Models::ParsedDeck.
+  # It does all of its network access through `fetcher`, so it never deals
+  # with timeouts, retries, or blocks itself, and tests can hand it a fake
+  # fetcher that serves fixture files. Caching and Scryfall lookups live in
+  # DeckService.
   class DecklistParser
-    attr_reader :url, :redis
-
-    def initialize(url, redis: ServiceRegistry.redis)
-      @url = url
-      @redis = redis
-    end
+    attr_reader :url, :fetcher
 
     def self.can_handle_url?(url)
       url.match?(self::URL_PATTERN)
     end
 
-    def get_deck
-      if deck_service.deck_exists?(deck_key)
-        return deck_service.load_deck(deck_key)
-      end
-
-      deck_service.save_deck(
-        name: deck_name,
-        author: author,
-        source_type: source_type,
-        source_url: url,
-        card_hashes: card_hashes,
-        ttl: (5 * 60),
-        deck_key: deck_key
-      )
-    end
-
-    def deck_name
+    def self.source_type
       raise NotImplementedError
     end
 
-    def author
-      raise NotImplementedError
+    # Extra options for this source's HttpFetcher (headers, rate_limit, ...)
+    def self.fetcher_options
+      {}
     end
 
-    def card_hashes
-      rase NotImplementedError
+    def self.build_fetcher
+      Fetchers.for(source_type, **fetcher_options)
+    end
+
+    def initialize(url, fetcher: nil, redis: nil)
+      @url = url
+      @fetcher = fetcher || self.class.build_fetcher
+      @redis = redis
+    end
+
+    # Returns a Models::ParsedDeck
+    def parse
+      raise NotImplementedError
     end
 
     def source_type
-      raise NotImplementedError
+      self.class.source_type
+    end
+
+    # A page the user can open in their own browser to copy the list from when
+    # we can't fetch it from the server
+    def fallback_url
+      url
     end
 
     private
 
-    def deck_service
-      @deck_service ||= DeckService.new
+    def redis
+      @redis || ServiceRegistry.redis
     end
 
-    def deck_key
-      "decks:#{url}"
+    def html(response)
+      Nokogiri.HTML(response.body)
+    end
+
+    def extraction_error(message)
+      ExtractionError.new(
+        message,
+        source_type: source_type,
+        fallback_url: fallback_url
+      )
     end
   end
 end

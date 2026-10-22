@@ -27,13 +27,23 @@ import { useFetch } from '@vueuse/core';
 import { type Deck } from '../types/Deck';
 import { type ManualCreationResponse } from '../types/ManualCreationResponse';
 
-defineProps<{ open: boolean }>();
+const props = defineProps<{ open: boolean; initialUrl?: string }>();
 const emit = defineEmits<{ close: []; saveSuccessful: [deckID: string, deck: Deck] }>();
 
 const name = ref('');
 const author = ref('');
 const url = ref('');
 const list = ref('');
+
+// prefill the URL when we're opened as a fallback for a deck that failed to load
+watch(
+  () => props.open,
+  (open) => {
+    if (open && props.initialUrl) {
+      url.value = props.initialUrl;
+    }
+  }
+);
 
 const data = computed(() => {
   return {

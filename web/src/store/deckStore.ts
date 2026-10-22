@@ -3,6 +3,7 @@ import { defineStore } from 'pinia';
 import { reactive, type Reactive } from 'vue';
 import { type Deck } from '../types/Deck';
 import { computed } from 'vue';
+import { toDeckLoadError } from '../lib/deckLoadError';
 
 export const useDeckStore = defineStore('decks', () => {
   const deckFetchers = reactive(new Map<string, Reactive<UseFetchReturn<Deck>>>());
@@ -40,17 +41,23 @@ export const useDeckStore = defineStore('decks', () => {
     });
   }
 
+  function loadDeckURL(url: string) {
+    return `/api/load_deck?url=${encodeURIComponent(url)}`;
+  }
+
   function loadDeck(url: string) {
     if (!deckFetchers.has(url)) {
-      const apiURL = `/api/load_deck?url=${url}`;
-      const fetcher = useFetch(apiURL).json<Deck>();
+      const fetcher = useFetch(loadDeckURL(url), {
+        // expose the API's error details (code, fallbackUrl, ...) as `error`
+        onFetchError: (ctx) => ({ ...ctx, error: toDeckLoadError(ctx.data, ctx.error) })
+      }).json<Deck>();
       deckFetchers.set(url, reactive(fetcher));
     }
   }
 
   function addManuallyCreatedDeck(deckID: string, deck: Deck) {
     const url = `mtg-deck-compare://manualDeck/${deckID}`;
-    const apiURL = `/api/load_deck?url=${url}`;
+    const apiURL = loadDeckURL(url);
     const fetcher = useFetch(apiURL, { immediate: false, initialData: deck }).json<Deck>();
     deckFetchers.set(url, reactive(fetcher));
     return url;
