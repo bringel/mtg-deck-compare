@@ -18,6 +18,12 @@ module DeckData
         f.response :json
       end
 
+      def deck_data
+        raise NotImplementedError
+      end
+
+      private
+
       def http_client
         @http_client ||=
           Faraday.new(http_options, &method(:faraday_setup_block))
