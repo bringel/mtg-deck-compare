@@ -15,11 +15,6 @@ module DeckData
       end
 
       def faraday_setup_block(f)
-        f.use Middleware::RateLimiter,
-              redis: ServiceRegistry.redis,
-              requests: 1,
-              period: 1,
-              unit: :seconds
         f.response :json
       end
 
