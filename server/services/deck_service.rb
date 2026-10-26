@@ -37,6 +37,8 @@ class DeckService
     ttl:,
     deck_key:
   )
+    require "byebug"
+    byebug
     deck =
       Models::Deck.new(
         name: name,
