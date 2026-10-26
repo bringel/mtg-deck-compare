@@ -7,43 +7,28 @@ module DeckData
         url.match?(self::URL_PATTERN)
       end
 
-      def self.fetcher_class
-        raise NotImplementedError
-      end
+      attr_reader :definition, :deck, :url
 
-      def self.parser_class
-        raise NotImplementedError
-      end
-
-      attr_reader :url, :deck
-
-      def initialize(url:)
+      def initialize(url:, definition:)
+        @definition = definition
         @url = url
       end
 
       def get_deck
-        if @deck
-          @deck
-        else
-          init_data =
-            self.class::URL_PATTERN
-              .match(url)
-              .named_captures
-              .transform_keys(&:to_sym)
-          fetcher = self.class.fetcher_class.new(url: url, **init_data)
-          data = fetcher.deck_data
-          parser = self.class.parser_class.new(deck_data: data)
+        @deck ||=
+          begin
+            init_data =
+              definition
+                .url_pattern
+                .match(url)
+                .named_captures
+                .transform_keys(&:to_sym)
+            fetcher = definition.fetcher_class.new(url: url, **init_data)
+            data = fetcher.deck_data
+            parser = definition.parser_class.new(deck_data: data)
 
-          parsed_data = parser.parsed_deck
-
-          @deck = {
-            **parsed_data,
-            source_type: self.class.to_s,
-            source_url: url,
-            ttl: (5 * 60),
-            deck_key: deck_key
-          }
-        end
+            parser.parsed_deck
+          end
       end
 
       def deck_key
