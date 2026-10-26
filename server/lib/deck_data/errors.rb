@@ -6,4 +6,7 @@ module DeckData
       super("No deck source can handle #{url}")
     end
   end
+
+  class ParseError < StandardError
+  end
 end

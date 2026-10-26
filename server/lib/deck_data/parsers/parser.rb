@@ -2,7 +2,7 @@
 
 module DeckData
   module Parsers
-    class HashParser
+    class Parser
       attr_reader :deck_data
 
       def initialize(deck_data:)

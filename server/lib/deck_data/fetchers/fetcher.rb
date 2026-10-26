@@ -3,19 +3,11 @@ require "faraday"
 
 module DeckData
   module Fetchers
-    class HttpFetcher
+    class Fetcher
       attr_reader :url
 
       def initialize(url:)
         @url = url
-      end
-
-      def http_options
-        { url: url }
-      end
-
-      def faraday_setup_block(f)
-        f.response :json
       end
 
       def deck_data
@@ -23,6 +15,14 @@ module DeckData
       end
 
       private
+
+      def http_options
+        {}
+      end
+
+      def faraday_setup_block(f)
+        f.response :json
+      end
 
       def http_client
         @http_client ||=

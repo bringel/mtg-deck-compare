@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require_relative "./hash_parser"
+require_relative "./parser"
 
 module DeckData
   module Parsers
-    class MoxfieldParser < HashParser
+    class MoxfieldParser < Parser
       def deck_name
         deck_data["name"]
       end
