@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require_relative "./errors"
 require_relative "./sources/source_def"
 require_relative "./sources/deck_source"
 require_relative "./fetchers/moxfield_fetcher"
@@ -10,7 +11,7 @@ module DeckData
     SOURCE_DEFINITIONS = [
       DeckData::Sources::SourceDef.new(
         type: :moxfield,
-        url_pattern: %r{(?:https?://)?moxfield\.com/decks/(?<id>.*)},
+        url_pattern: %r{(?:https?://)?moxfield\.com/decks/(?<id>[^/?#]+)},
         fetcher_class: DeckData::Fetchers::MoxfieldFetcher,
         parser_class: DeckData::Parsers::MoxfieldParser
       )
@@ -24,7 +25,7 @@ module DeckData
       deck_service = DeckService.new
 
       if deck_service.deck_exists?(source.deck_key)
-        deck_service.load_deck(source.deck_key)
+        return deck_service.load_deck(source.deck_key)
       end
 
       deck_data = source.get_deck
@@ -41,7 +42,9 @@ module DeckData
     private
 
     def source_definition_for(url:)
-      SOURCE_DEFINITIONS.find { |definition| definition.can_handle_url?(url) }
+      SOURCE_DEFINITIONS.find do |definition|
+        definition.can_handle_url?(url)
+      end or raise UnsupportedUrlError, url
     end
   end
 end

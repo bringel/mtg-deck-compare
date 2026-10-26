@@ -24,14 +24,14 @@ module DeckData
         )
       end
 
-      # def faraday_setup_block(f)
-      #   super(f)
-      #   f.use Middleware::RateLimiter,
-      #         redis: ServiceRegistry.redis,
-      #         requests: 1,
-      #         period: 1,
-      #         unit: :seconds
-      # end
+      def faraday_setup_block(f)
+        super(f)
+        f.use Middleware::RateLimiter,
+              redis: ServiceRegistry.redis,
+              requests: 1,
+              period: 1,
+              unit: :seconds
+      end
 
       def deck_data
         if @deck_data

@@ -3,10 +3,6 @@
 module DeckData
   module Sources
     class DeckSource
-      def self.can_handle_url?(url)
-        url.match?(self::URL_PATTERN)
-      end
-
       attr_reader :definition, :deck, :url
 
       def initialize(url:, definition:)
@@ -17,13 +13,7 @@ module DeckData
       def get_deck
         @deck ||=
           begin
-            init_data =
-              definition
-                .url_pattern
-                .match(url)
-                .named_captures
-                .transform_keys(&:to_sym)
-            fetcher = definition.fetcher_class.new(url: url, **init_data)
+            fetcher = definition.fetcher_class.new(url: url, **url_params)
             data = fetcher.deck_data
             parser = definition.parser_class.new(deck_data: data)
 
@@ -32,7 +22,18 @@ module DeckData
       end
 
       def deck_key
-        "decks:#{url}"
+        ["decks", definition.type, *url_params.values].join(":")
+      end
+
+      private
+
+      def url_params
+        @url_params ||=
+          definition
+            .url_pattern
+            .match(url)
+            .named_captures
+            .transform_keys(&:to_sym)
       end
     end
   end
