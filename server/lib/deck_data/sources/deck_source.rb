@@ -22,7 +22,8 @@ module DeckData
       end
 
       def deck_key
-        ["decks", definition.type, *url_params.values].join(":")
+        ids = url_params.empty? ? [url] : url_params.values
+        ["decks", definition.type, *ids].join(":")
       end
 
       private

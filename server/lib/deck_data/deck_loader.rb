@@ -4,6 +4,8 @@ require_relative "./sources/source_def"
 require_relative "./sources/deck_source"
 require_relative "./fetchers/moxfield_fetcher"
 require_relative "./parsers/moxfield_parser"
+require_relative "./fetchers/aetherhub_fetcher"
+require_relative "./parsers/aetherhub_parser"
 require_relative "../../services/deck_service"
 
 module DeckData
@@ -14,6 +16,12 @@ module DeckData
         url_pattern: %r{(?:https?://)?moxfield\.com/decks/(?<id>[^/?#]+)},
         fetcher_class: DeckData::Fetchers::MoxfieldFetcher,
         parser_class: DeckData::Parsers::MoxfieldParser
+      ),
+      DeckData::Sources::SourceDef.new(
+        type: :aetherhub,
+        url_pattern: %r{(?:https?://)?aetherhub\.com/Deck/.*},
+        fetcher_class: DeckData::Fetchers::AetherhubFetcher,
+        parser_class: DeckData::Parsers::AetherhubParser
       )
     ]
 
