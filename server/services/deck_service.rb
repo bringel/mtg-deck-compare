@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 require "json"
-require "byebug"
 
 require_relative "../lib/service_registry"
 require_relative "./cards_service"
@@ -41,8 +40,6 @@ class DeckService
     ttl:,
     deck_key:
   )
-    require "byebug"
-    byebug
     deck =
       Models::Deck.new(
         name: name,
