@@ -22,6 +22,10 @@ class DeckService
     Models::Deck.from_json(redis.get(deck_key))
   end
 
+  def manual_deck_exists?(deck_id)
+    deck_exists?(manual_deck_key(deck_id))
+  end
+
   def load_manual_deck(deck_id)
     deck_key = manual_deck_key(deck_id)
 

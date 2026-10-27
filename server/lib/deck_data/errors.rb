@@ -9,4 +9,10 @@ module DeckData
 
   class ParseError < StandardError
   end
+
+  class DeckNotFoundError < StandardError
+    def initialize(deck_id)
+      super("No saved deck found for #{deck_id}")
+    end
+  end
 end
