@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "../decklist_parsers/parser_list.rb"
+require_relative "./deck_data/deck_loader"
 require_relative "../lib/service_registry.rb"
 
 class DeckComparer
@@ -14,31 +14,36 @@ class DeckComparer
     comparison = { common: {}, multiple: {}, decks_remaining: Hash.new { {} } }
 
     %i[main_deck sideboard].each do |section|
-      deck_cards = parsed_decks.map { |deck| deck.dig(:deck, section, :cards) }
+      deck_card_names =
+        parsed_decks.map { |deck| deck.dig(:deck, section, :cards).map(&:name) }
 
-      cards_in_all_decks = find_common_cards(deck_cards)
-      cards_in_all_decks_quantities =
-        cards_to_quantities(section: section, cards: cards_in_all_decks)
-
-      decks_without_common = deck_cards.map { |deck| deck - cards_in_all_decks }
-      cards_in_multiple = find_cards_in_multiple_decks(decks_without_common)
-      cards_in_multiple_quantities =
-        cards_to_quantities(section: section, cards: cards_in_multiple)
+      names_in_all_decks = find_common_cards(deck_card_names)
+      names_without_common =
+        deck_card_names.map { |names| names - names_in_all_decks }
+      names_in_multiple = find_cards_in_multiple_decks(names_without_common)
 
       decks_remaining =
         build_remaining_decks_for_section(
           section: section,
-          cards_in_all: cards_in_all_decks,
-          cards_in_multiple: cards_in_multiple
+          names_in_all: names_in_all_decks,
+          names_in_multiple: names_in_multiple
         )
 
       comparison[:common][section] = {
-        cards: cards_in_all_decks.compact,
-        quantities: cards_in_all_decks_quantities.transform_values(&:compact)
+        cards: cards_for_names(section: section, names: names_in_all_decks),
+        quantities:
+          cards_to_quantities(
+            section: section,
+            names: names_in_all_decks
+          ).transform_values(&:compact)
       }
       comparison[:multiple][section] = {
-        cards: cards_in_multiple.to_a.compact,
-        quantities: cards_in_multiple_quantities.transform_values(&:compact)
+        cards: cards_for_names(section: section, names: names_in_multiple),
+        quantities:
+          cards_to_quantities(
+            section: section,
+            names: names_in_multiple
+          ).transform_values(&:compact)
       }
 
       decks_remaining.each do |index, deck_portion|
@@ -52,26 +57,30 @@ class DeckComparer
 
   private
 
-  def find_common_cards(deck_cards)
-    deck_cards.first.intersection(*deck_cards[1..-1])
+  def find_common_cards(deck_card_names)
+    deck_card_names.first.intersection(*deck_card_names[1..-1])
   end
 
-  def find_cards_in_multiple_decks(decks_without_common)
-    cards_in_multiple = Set.new
-    decks_without_common
+  def find_cards_in_multiple_decks(names_without_common)
+    names_in_multiple = Set.new
+    names_without_common
       .combination(2)
-      .each { |a, b| cards_in_multiple.merge(a & b) }
-    cards_in_multiple
+      .each { |a, b| names_in_multiple.merge(a & b) }
+    names_in_multiple.to_a
   end
 
   def build_remaining_decks_for_section(
     section:,
-    cards_in_all:,
-    cards_in_multiple:
+    names_in_all:,
+    names_in_multiple:
   )
+    shared_names = names_in_all + names_in_multiple
+
     parsed_decks.to_h do |deck|
       remaining_cards =
-        deck.dig(:deck, section, :cards) - cards_in_all - cards_in_multiple.to_a
+        deck
+          .dig(:deck, section, :cards)
+          .reject { |card| shared_names.include?(card.name) }
       card_names = remaining_cards.map(&:name)
       quantities =
         deck
@@ -82,24 +91,35 @@ class DeckComparer
     end
   end
 
-  def cards_to_quantities(section:, cards:)
-    cards.to_h do |card|
+  def cards_for_names(section:, names:)
+    names.map { |name| cards_by_name(section: section)[name] }
+  end
+
+  def cards_by_name(section:)
+    @cards_by_name ||= {}
+    @cards_by_name[section] ||= parsed_decks
+      .flat_map { |deck| deck.dig(:deck, section, :cards) }
+      .uniq(&:name)
+      .to_h { |card| [card.name, card] }
+  end
+
+  def cards_to_quantities(section:, names:)
+    names.to_h do |name|
       card_quantities =
         parsed_decks.to_h do |deck|
-          [deck[:index], deck.dig(:deck, section, :quantities, card.name)]
+          [deck[:index], deck.dig(:deck, section, :quantities, name)]
         end
-      [card.name, card_quantities]
+      [name, card_quantities]
     end
   end
 
   def parsed_decks
-    @deck_list_urls.map.with_index do |url, index|
-      parser = DecklistParsers::ParserList.get_parser(url)
-      {
-        index: index,
-        url: url,
-        deck: parser.new(url, redis: ServiceRegistry.redis).get_deck
-      }
-    end
+    @parsed_decks ||=
+      begin
+        deck_loader = DeckData::DeckLoader.new
+        @deck_list_urls.map.with_index do |url, index|
+          { index: index, url: url, deck: deck_loader.load_deck(url: url) }
+        end
+      end
   end
 end
