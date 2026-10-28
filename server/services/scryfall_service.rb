@@ -54,7 +54,7 @@ class ScryfallService
             key =
               Models::CardKey.find_matching_key(
                 all_keys: card_hash_keys,
-                card_hash: Models::CardKey.from_json_response(card_data).to_h
+                key: Models::CardKey.from_json_response(card_data)
               )
             [key, parse_card_data(card_data)]
           end

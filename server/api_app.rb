@@ -7,13 +7,13 @@ require "dotenv"
 require "redis"
 require "connection_pool"
 
-require_relative "./decklist_parsers/parser_list.rb"
 require_relative "./lib/deck_comparer.rb"
 require_relative "./lib/sequel/extensions/read_through_database.rb"
 require_relative "./lib/service_registry.rb"
 require_relative "./middleware/camel_case_to_snake_case"
 require_relative "./middleware/snake_case_to_camel_case"
 require_relative "./services/deck_service"
+require_relative "./lib/deck_data/deck_loader"
 
 Dotenv.load
 
@@ -51,15 +51,10 @@ class ApiApp < Sinatra::Application
   use CamelCaseToSnakeCase
   use SnakeCaseToCamelCase
 
-  get "/deck_info" do
-    parser = DecklistParsers::ParserList.get_parser(request.params["url"])
-
-    parser.new(request.params["url"]).load_deck_info.to_json
-  end
-
   get "/load_deck" do
-    parser = DecklistParsers::ParserList.get_parser(request.params["url"])
-    JSON.generate(parser.new(request.params["url"]).get_deck.to_h)
+    deck_loader = DeckData::DeckLoader.new
+    deck = deck_loader.load_deck(url: request.params["url"])
+    JSON.generate(deck.to_h)
   end
 
   post "/create_manual_deck" do

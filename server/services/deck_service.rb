@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 require "json"
-require "byebug"
 
 require_relative "../lib/service_registry"
 require_relative "./cards_service"
 require_relative "../models/card_key"
 require_relative "../models/deck"
+require_relative "../decklist_parsers/text_list_parser"
 
 class DeckService
   attr_reader :redis
@@ -20,6 +20,10 @@ class DeckService
 
   def load_deck(deck_key)
     Models::Deck.from_json(redis.get(deck_key))
+  end
+
+  def manual_deck_exists?(deck_id)
+    deck_exists?(manual_deck_key(deck_id))
   end
 
   def load_manual_deck(deck_id)

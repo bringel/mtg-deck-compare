@@ -105,17 +105,17 @@ module Models
       # Find a matching key from a collection, with fallback logic:
       # 1. Try exact match (set + number if available)
       # 2. Fall back to name-only match if no exact match found
-      def self.find_matching_key(all_keys:, card_hash:)
-        key = all_keys.find { |k| k == from_card_hash(card_hash) }
+      def self.find_matching_key(all_keys:, key:)
+        match = all_keys.find { |k| k == key }
 
-        unless key
-          name_only = card_hash.slice(:name)
-          return if name_only.empty?
+        unless match
+          return if key.name.nil?
 
-          key = all_keys.find { |k| k == from_card_hash(name_only) }
+          name_only = key.with(set_code: nil, card_number: nil)
+          match = all_keys.find { |k| k == name_only }
         end
 
-        key
+        match
       end
     end
 end
