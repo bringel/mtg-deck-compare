@@ -5,6 +5,7 @@ require_relative "../lib/service_registry"
 require_relative "./cards_service"
 require_relative "../models/card_key"
 require_relative "../models/deck"
+require_relative "../decklist_parsers/text_list_parser"
 
 class DeckService
   attr_reader :redis
